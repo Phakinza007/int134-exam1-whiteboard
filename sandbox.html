@@ -201,6 +201,11 @@
   function freshFS(){
     return {
       '/home/sysadmin': {type:'dir'},
+      '/home/sysadmin/.bashrc': {type:'file', content:
+        '# ~/.bashrc: executed by bash for non-login shells\n\n' +
+        'HISTSIZE=1000\n' +
+        'HISTFILESIZE=2000\n\n' +
+        'export PATH\n'},
       '/etc': {type:'dir'},
       '/etc/nginx': {type:'dir'},
       '/etc/nginx/conf.d': {type:'dir'},
@@ -417,7 +422,9 @@
         vm.cwd = cdTarget; return;
       }
       case 'ls': {
-        var showAll = tokens.indexOf('-la')!==-1 || tokens.indexOf('-al')!==-1 || tokens.indexOf('-l')!==-1;
+        var lsFlags = tokens.slice(1).filter(function(t){ return t[0]==='-'; }).join('');
+        var longFormat = /l/.test(lsFlags);
+        var showHidden = /a/.test(lsFlags);
         var lsArg = null;
         for(var i=1;i<tokens.length;i++){ if(tokens[i][0] !== '-'){ lsArg = tokens[i]; break; } }
         var lsTarget = resolvePath(lsArg || '.');
@@ -429,9 +436,9 @@
           if(p === lsTarget) return false;
           if(p.indexOf(prefix) !== 0) return false;
           return p.slice(prefix.length).indexOf('/') === -1;
-        }).map(function(p){ return p.slice(prefix.length); }).sort();
+        }).map(function(p){ return p.slice(prefix.length); }).filter(function(n){ return showHidden || n[0] !== '.'; }).sort();
         if(names.length === 0){ return; }
-        if(showAll){
+        if(longFormat){
           names.forEach(function(n){
             var node = vm.fs[prefix+n];
             var size = node.type==='file' ? (node.content||'').length : 4096;
@@ -1204,70 +1211,81 @@
   }
 
   // ================= checker =================
+  var PORT22_CHECK = {label:'the port 22 (ssh) firewall rule is still there', hint:'you deleted it — a real course VM would now be unreachable. There is no undo in this sandbox except Reset.', test:function(v){ return v.ufw.rules[22]==='ALLOW'; }};
   var checklists = {
     W1: [
-      {label:'unzip is installed', test:function(v){ return v.packages.unzip.installed; }},
-      {label:'you have run apt update at least once', test:function(v){ return v.aptUpdated; }},
-      {label:'cron is currently disabled', test:function(v){ return v.services.cron.installed && !v.services.cron.enabled; }},
-      {label:'~/int134/lab01 exists', test:function(v){ return !!v.fs['/home/sysadmin/int134/lab01']; }},
-      {label:'the port 22 (ssh) firewall rule is still there', test:function(v){ return v.ufw.rules[22]==='ALLOW'; }}
+      {label:'stty -ixon is in your ~/.bashrc (frees Ctrl+S for forward search)', hint:'micro ~/.bashrc — add a line: stty -ixon', test:function(v){ var f=v.fs['/home/sysadmin/.bashrc']; return !!(f && /(^|\n)\s*stty\s+-ixon\b/.test(f.content||'')); }},
+      {label:'HISTSIZE=10000 is set in ~/.bashrc', hint:'micro ~/.bashrc — change the existing HISTSIZE= line to HISTSIZE=10000', test:function(v){ var f=v.fs['/home/sysadmin/.bashrc']; return !!(f && /HISTSIZE=10000\b/.test(f.content||'')); }},
+      {label:'HISTFILESIZE=20000 is set in ~/.bashrc', hint:'micro ~/.bashrc — change the existing HISTFILESIZE= line to HISTFILESIZE=20000', test:function(v){ var f=v.fs['/home/sysadmin/.bashrc']; return !!(f && /HISTFILESIZE=20000\b/.test(f.content||'')); }},
+      {label:'unzip is installed', hint:'sudo apt install unzip -y', test:function(v){ return v.packages.unzip.installed; }},
+      {label:'you have run apt update at least once', hint:'sudo apt update', test:function(v){ return v.aptUpdated; }},
+      {label:'cron is currently disabled', hint:'sudo systemctl disable cron', test:function(v){ return v.services.cron.installed && !v.services.cron.enabled; }},
+      {label:'~/int134/lab01 exists', hint:'mkdir -p ~/int134/lab01', test:function(v){ return !!v.fs['/home/sysadmin/int134/lab01']; }},
+      PORT22_CHECK
     ],
     W2: [
-      {label:'a script file (e.g. heartbeat.sh) exists somewhere', test:function(v){ return Object.keys(v.fs).some(function(p){ return p.slice(-3)==='.sh' && v.fs[p].type==='file'; }); }},
-      {label:'int134-heartbeat is a real systemd unit and enabled', test:function(v){ var s=v.services['int134-heartbeat']; return !!(s && s.installed && s.enabled); }},
-      {label:'int134-heartbeat is currently active', test:function(v){ var s=v.services['int134-heartbeat']; return !!(s && s.active); }},
-      {label:'the port 22 (ssh) firewall rule is still there', test:function(v){ return v.ufw.rules[22]==='ALLOW'; }}
+      {label:'a script file (e.g. heartbeat.sh) exists somewhere', hint:'micro heartbeat.sh — save it, even with the template content', test:function(v){ return Object.keys(v.fs).some(function(p){ return p.slice(-3)==='.sh' && v.fs[p].type==='file'; }); }},
+      {label:'int134-heartbeat is a real systemd unit and enabled', hint:'sudo micro /etc/systemd/system/int134-heartbeat.service, then sudo systemctl daemon-reload && sudo systemctl enable --now int134-heartbeat', test:function(v){ var s=v.services['int134-heartbeat']; return !!(s && s.installed && s.enabled); }},
+      {label:'int134-heartbeat is currently active', hint:'sudo systemctl enable --now int134-heartbeat', test:function(v){ var s=v.services['int134-heartbeat']; return !!(s && s.active); }},
+      PORT22_CHECK
     ],
     W3: [
-      {label:'nginx is installed from nginx.org (1.30.x)', test:function(v){ return v.services.nginx.installed && /^1\.30/.test(v.services.nginx.version||''); }},
-      {label:'nginx is enabled and active', test:function(v){ return v.services.nginx.enabled && v.services.nginx.active; }},
-      {label:'ufw allows 80/tcp', test:function(v){ return v.ufw.rules[80]==='ALLOW'; }},
-      {label:'you wrote your own /etc/nginx/conf.d/site.conf', test:function(v){ return !!v.fs['/etc/nginx/conf.d/site.conf']; }},
-      {label:'the config on disk currently passes "nginx -t"', test:function(v){ return v.nginxConfigValid; }},
-      {label:'the port 22 (ssh) firewall rule is still there', test:function(v){ return v.ufw.rules[22]==='ALLOW'; }}
+      {label:'nginx is installed from nginx.org (1.30.x)', hint:'sudo apt update, then sudo apt install nginx -y — installing before "apt update" gets you Ubuntu\'s 1.24 instead', test:function(v){ return v.services.nginx.installed && /^1\.30/.test(v.services.nginx.version||''); }},
+      {label:'nginx is enabled and active', hint:'sudo systemctl enable --now nginx', test:function(v){ return v.services.nginx.enabled && v.services.nginx.active; }},
+      {label:'ufw allows 80/tcp', hint:'sudo ufw allow 80/tcp', test:function(v){ return v.ufw.rules[80]==='ALLOW'; }},
+      {label:'you wrote your own /etc/nginx/conf.d/site.conf', hint:'sudo micro /etc/nginx/conf.d/site.conf', test:function(v){ return !!v.fs['/etc/nginx/conf.d/site.conf']; }},
+      {label:'the config on disk currently passes "nginx -t"', hint:'nginx -t — read the line number it complains about, then sudo micro the file again', test:function(v){ return v.nginxConfigValid; }},
+      PORT22_CHECK
     ],
     W4: [
-      {label:'mysql-server is installed and active', test:function(v){ return v.services.mysql.installed && v.services.mysql.active; }},
-      {label:"a 'school' database exists", test:function(v){ return !!v.mysqlDbs.school; }},
-      {label:"a 'school' mysql user is scoped to the school database", test:function(v){ return !!(v.mysqlUsers.school && v.mysqlUsers.school.scope==='school'); }},
-      {label:'you wrote a school-api systemd unit', test:function(v){ return !!v.fs['/etc/systemd/system/school-api.service']; }},
-      {label:'school-api is enabled and active', test:function(v){ var s=v.services['school-api']; return !!(s && s.enabled && s.active); }},
-      {label:'port 3306 is NOT open on the firewall', test:function(v){ return !v.ufw.rules[3306]; }}
+      {label:'mysql-server is installed and active', hint:'sudo apt install mysql-server -y', test:function(v){ return v.services.mysql.installed && v.services.mysql.active; }},
+      {label:"a 'school' database exists", hint:"sudo mysql, then: CREATE DATABASE school;", test:function(v){ return !!v.mysqlDbs.school; }},
+      {label:"a 'school' mysql user is scoped to the school database", hint:"in sudo mysql: CREATE USER 'school'@'localhost' IDENTIFIED BY RANDOM PASSWORD; then GRANT ALL PRIVILEGES ON school.* TO 'school'@'localhost';", test:function(v){ return !!(v.mysqlUsers.school && v.mysqlUsers.school.scope==='school'); }},
+      {label:'you wrote a school-api systemd unit', hint:'sudo micro /etc/systemd/system/school-api.service', test:function(v){ return !!v.fs['/etc/systemd/system/school-api.service']; }},
+      {label:'school-api is enabled and active', hint:'sudo systemctl daemon-reload && sudo systemctl enable --now school-api', test:function(v){ var s=v.services['school-api']; return !!(s && s.enabled && s.active); }},
+      {label:'port 3306 is NOT open on the firewall', hint:'sudo ufw delete allow 3306 — MySQL binds 127.0.0.1, it never needed a rule', test:function(v){ return !v.ufw.rules[3306]; }}
     ],
     W5: [
-      {label:'the nginx config proxies /api/ to the backend', test:function(v){
+      {label:'the nginx config proxies /api/ to the backend', hint:'sudo micro /etc/nginx/conf.d/site.conf — add a location /api/ { proxy_pass http://localhost:3xxx/; } block (or use the reverse-proxy Scenario toggle)', test:function(v){
         return v.reverseProxyConfigured || Object.keys(v.fs).some(function(p){
           return /conf\.d\/.*\.conf$/.test(p) && /proxy_pass/i.test(v.fs[p].content||'') && /\/api\//.test(v.fs[p].content||'');
         });
       }},
-      {label:'you successfully posted a record to /api/students', test:function(v){ return v.apiRecords.length>0; }},
-      {label:'school-api is currently active (survives a restart)', test:function(v){ var s=v.services['school-api']; return !!(s && s.active); }},
-      {label:'port 3306 is still not open', test:function(v){ return !v.ufw.rules[3306]; }},
-      {label:'the port 22 (ssh) firewall rule is still there', test:function(v){ return v.ufw.rules[22]==='ALLOW'; }}
+      {label:'you successfully posted a record to /api/students', hint:"curl -X POST -H 'Content-Type: application/json' -d '{\"studentId\":\"...\",\"firstName\":\"...\"}' http://localhost/api/students", test:function(v){ return v.apiRecords.length>0; }},
+      {label:'school-api is currently active (survives a restart)', hint:'sudo systemctl restart school-api, then check it came back active', test:function(v){ var s=v.services['school-api']; return !!(s && s.active); }},
+      {label:'port 3306 is still not open', hint:'sudo ufw delete allow 3306', test:function(v){ return !v.ufw.rules[3306]; }},
+      PORT22_CHECK
     ]
   };
   function runCheck(weekKey){
     var list = checklists[weekKey];
     if(!list){ pr('err', 'check: unknown week "' + weekKey + '"'); return; }
-    pr('dim', 'Checking ' + weekKey.toLowerCase() + ' against your sandbox VM ...');
+    pr('dim', 'Checking ' + weekKey.toLowerCase() + ' ...');
+    pr('', '');
     var passed = 0;
     list.forEach(function(item){
       var ok = false;
       try{ ok = !!item.test(vm); }catch(e){ ok = false; }
-      if(ok) passed++;
-      pr(ok ? 'ok' : 'err', (ok ? '[PASS] ' : '[FAIL] ') + item.label);
+      if(ok){
+        passed++;
+        pr('ok', '  PASS  ' + item.label);
+      } else {
+        pr('err', '  FAIL  ' + item.label);
+        if(item.hint) pr('warn', '        hint: ' + item.hint);
+      }
     });
     pr('', '');
-    pr(passed===list.length ? 'ok' : 'warn', passed + ' / ' + list.length + ' steps passed.');
+    pr(passed===list.length ? 'ok' : 'warn', '  ' + passed + ' of ' + list.length + ' checks passed');
   }
 
   // ================= weeks / try-this =================
   var weeks = {
     W1:{ label:'W1 · Packages & systemd', tips:[
       'pwd', 'mkdir -p ~/int134/lab01', 'cd ~/int134/lab01', 'ls -la',
+      'cat ~/.bashrc', 'micro ~/.bashrc', 'cat ~/.bashrc',
       'sudo apt update', 'sudo apt install unzip -y', 'apt list --installed',
       'systemctl status cron', 'sudo systemctl disable cron', 'sudo reboot', 'systemctl status cron'
-    ], mission:'Watch cron\'s status flip through disable → reboot. Enabled/disabled and active/inactive move independently — that\'s the W1 matrix.'},
+    ], mission:'Add "stty -ixon" to ~/.bashrc with micro, and set HISTSIZE=10000 / HISTFILESIZE=20000 there too. Then watch cron\'s status flip through disable → reboot — enabled/disabled and active/inactive move independently, that\'s the W1 matrix.'},
     W2:{ label:'W2 · Processes', tips:[
       'micro heartbeat.sh', './heartbeat.sh &', 'jobs', 'ps aux',
       'micro nohup-demo.sh', 'nohup ./nohup-demo.sh &', 'kill %1', 'kill -9 <pid from ps>'
