@@ -1,7 +1,9 @@
 <title>INT134 Exam 1 Whiteboard</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mali:wght@400;700&display=swap">
 <style>
   :root{
+    --wall:#c9cec8;
+    --frame:#eceee9;
     --bg:#eef1ef;
     --grid-line:#dbe3df;
     --surface:#ffffff;
@@ -20,12 +22,21 @@
     --red-soft:#f7e0da;
     --green:#3c7a49;
     --green-soft:#dcefe0;
+    --violet:#6a53b8;
+    --violet-soft:#e7e1f7;
+    --rose:#c23f66;
+    --rose-soft:#f6dde5;
+    --note-yellow:#fbeead;
+    --note-blue:#cfe6f0;
     --shadow:0 1px 2px rgba(19,32,37,.06), 0 8px 24px rgba(19,32,37,.06);
     --font-sans:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
     --font-mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+    --font-marker:"Mali","IBM Plex Sans Thai","IBM Plex Sans",sans-serif;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
+      --wall:#05080a;
+      --frame:#232f31;
       --bg:#0e1517;
       --grid-line:#182123;
       --surface:#151f21;
@@ -44,10 +55,18 @@
       --red-soft:#3d241d;
       --green:#82c891;
       --green-soft:#1d3526;
+      --violet:#a897e6;
+      --violet-soft:#2c2540;
+      --rose:#e989a6;
+      --rose-soft:#3a2130;
+      --note-yellow:#3c331c;
+      --note-blue:#1b2f39;
       --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.4);
     }
   }
   :root[data-theme="dark"]{
+    --wall:#05080a;
+    --frame:#232f31;
     --bg:#0e1517;
     --grid-line:#182123;
     --surface:#151f21;
@@ -66,31 +85,84 @@
     --red-soft:#3d241d;
     --green:#82c891;
     --green-soft:#1d3526;
+    --violet:#a897e6;
+    --violet-soft:#2c2540;
+    --rose:#e989a6;
+    --rose-soft:#3a2130;
+    --note-yellow:#3c331c;
+    --note-blue:#1b2f39;
     --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.4);
   }
+  html.lang-th{ --font-sans:"IBM Plex Sans Thai","IBM Plex Sans","Segoe UI",system-ui,sans-serif; }
 
   *{box-sizing:border-box;}
   body{
     margin:0;
-    background:
-      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/100% 28px,
-      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/28px 100%,
-      var(--bg);
+    background:var(--wall);
     color:var(--ink);
     font-family:var(--font-sans);
     -webkit-font-smoothing:antialiased;
   }
   h1,h2,h3{text-wrap:balance; margin:0;}
-  .wrap{max-width:1100px; margin:0 auto; padding:40px 24px 80px;}
+
+  .board-frame{
+    position:relative;
+    max-width:1180px; margin:28px auto; border:10px solid var(--frame); border-radius:16px; overflow:hidden;
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/100% 28px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/28px 100%,
+      var(--bg);
+    box-shadow:0 30px 70px -30px rgba(0,0,0,.4), 0 0 0 1px rgba(0,0,0,.05) inset;
+  }
+  @media (max-width:600px){ .board-frame{ border-width:6px; border-radius:10px; margin:14px auto; } }
+
+  .marker-tray{ height:28px; background:var(--frame); display:flex; align-items:center; gap:12px; padding:0 26px; box-shadow:inset 0 3px 6px rgba(0,0,0,.15); }
+  .marker-tray .cap{ width:24px; height:8px; border-radius:3px 3px 1px 1px; opacity:.85; }
+
+  .wrap{max-width:1100px; margin:0 auto; padding:40px 24px 56px; position:relative;}
+
+  .step-badge{
+    display:inline-flex; align-items:center; font-family:var(--font-mono); font-size:10.5px; font-weight:700;
+    letter-spacing:.02em; padding:3px 8px; border-radius:6px; margin-right:8px; white-space:nowrap; vertical-align:middle;
+  }
+  .step-badge[data-thread="sys"]{ background:var(--accent-soft); color:var(--accent); }
+  .step-badge[data-thread="diag"]{ background:var(--violet-soft); color:var(--violet); }
+  .step-badge[data-thread="fw"]{ background:var(--rose-soft); color:var(--rose); }
+  .step-badge[data-thread="loop"]{ background:var(--green-soft); color:var(--green); }
+  .step-badge[data-thread="cors"]{ background:var(--amber-soft); color:var(--amber); }
+  li.pinned{ padding-left:0; }
+  li.pinned::before{ content:none; }
+  td.pinned{ padding-top:9px; }
+
+  .thread-legend{ display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:16px; font-size:12px; color:var(--ink-soft); }
+  .lg-item{ display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
+  .lg-dot{ width:8px; height:8px; border-radius:2px; flex:0 0 auto; }
+  .lg-dot[data-thread="sys"]{ background:var(--accent); }
+  .lg-dot[data-thread="diag"]{ background:var(--violet); }
+  .lg-dot[data-thread="fw"]{ background:var(--rose); }
+  .lg-dot[data-thread="loop"]{ background:var(--green); }
+  .lg-dot[data-thread="cors"]{ background:var(--amber); }
 
   /* ---------- masthead ---------- */
-  .masthead{padding:12px 0 32px; border-bottom:2px solid var(--line-strong); margin-bottom:36px;}
+  .masthead{padding:12px 0 32px; border-bottom:2px solid var(--line-strong); margin-bottom:36px; position:relative;}
   .eyebrow{
     font-family:var(--font-mono); font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
     color:var(--accent); font-weight:600; margin-bottom:10px;
   }
-  .masthead h1{font-size:clamp(28px,4vw,40px); font-weight:700; line-height:1.15;}
+  .masthead h1{font-family:var(--font-marker); font-size:clamp(28px,4vw,40px); font-weight:700; line-height:1.2;}
   .masthead p{margin:12px 0 0; max-width:62ch; color:var(--ink-soft); font-size:15.5px; line-height:1.55;}
+
+  .lang-toggle{
+    position:absolute; top:4px; right:0; cursor:pointer; border:1.5px solid var(--line-strong); background:var(--surface);
+    border-radius:999px; padding:4px; font-family:var(--font-mono); font-size:11.5px; font-weight:700;
+    display:inline-flex; gap:2px; color:var(--ink-soft); box-shadow:var(--shadow); transform:rotate(-2deg);
+  }
+  .lang-toggle span{ padding:4px 10px; border-radius:999px; transition:background .15s,color .15s; }
+  .lang-toggle .lt-en{ background:var(--accent); color:var(--accent-ink); }
+  .lang-toggle.is-th .lt-en{ background:none; color:var(--ink-soft); }
+  .lang-toggle.is-th .lt-th{ background:var(--accent); color:var(--accent-ink); }
+  .lang-toggle .lt-sep{ color:var(--ink-faint); padding:4px 0; }
+  @media (max-width:600px){ .lang-toggle{ position:static; margin-bottom:14px; transform:none; } }
 
   .roadmap{display:flex; flex-wrap:wrap; align-items:center; gap:0; margin-top:28px;}
   .rchip{
@@ -110,7 +182,7 @@
     font-family:var(--font-mono); font-weight:700; font-size:14px;
     background:var(--ink); color:var(--bg); border-radius:6px; padding:4px 10px; flex:0 0 auto;
   }
-  .band-head h2{font-size:22px; font-weight:700;}
+  .band-head h2{font-family:var(--font-marker); font-size:23px; font-weight:700;}
   .band-date{font-family:var(--font-mono); font-size:12.5px; color:var(--ink-faint); margin-left:auto;}
   .band-tag{
     font-size:13px; color:var(--ink-soft); background:var(--surface-2); border:1px solid var(--line);
@@ -118,8 +190,14 @@
   }
 
   figure.diagram{
-    margin:20px 0 22px; background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    position:relative; transform:rotate(-0.25deg);
+    margin:22px 0 22px; background:var(--surface); border:1px solid var(--line); border-radius:12px;
     padding:18px 18px 14px; box-shadow:var(--shadow); overflow-x:auto;
+  }
+  figure.diagram::before{
+    content:""; position:absolute; top:-7px; left:50%; width:14px; height:14px; margin-left:-7px;
+    border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff, var(--rose) 62%);
+    box-shadow:0 2px 3px rgba(0,0,0,.35);
   }
   figure.diagram svg{display:block; width:100%; height:auto; min-width:560px;}
   figure.diagram figcaption{
@@ -130,11 +208,18 @@
   svg .lbl{font-size:11.5px; fill:var(--ink-soft);}
   svg .strong{font-weight:600;}
 
-  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
   @media (max-width:820px){.cards{grid-template-columns:1fr;}}
   .card{
-    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px;
-    box-shadow:var(--shadow);
+    position:relative; background:var(--note-yellow); border:1px solid var(--line); border-radius:6px; padding:18px 18px 16px;
+    box-shadow:var(--shadow); transform:rotate(-0.6deg);
+  }
+  .cards .card:nth-child(2){ background:var(--note-blue); transform:rotate(0.5deg); }
+  .cards .card:nth-child(3){ transform:rotate(-0.3deg); }
+  .card::before{
+    content:""; position:absolute; top:-9px; left:50%; width:48px; height:18px; margin-left:-24px;
+    background:rgba(255,255,255,.4); border:1px solid rgba(255,255,255,.55); transform:rotate(-3deg);
+    box-shadow:0 1px 2px rgba(0,0,0,.15);
   }
   .card h3{
     font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint);
@@ -143,19 +228,21 @@
   .card ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:9px;}
   .card li{font-size:13.6px; line-height:1.5; padding-left:15px; position:relative;}
   .card li::before{content:"–"; position:absolute; left:0; color:var(--ink-faint);}
+  .card li.pinned{padding-left:0;}
   .card code{
-    font-family:var(--font-mono); font-size:12.3px; background:var(--surface-2); border-radius:4px;
+    font-family:var(--font-mono); font-size:12.3px; background:rgba(0,0,0,.06); border-radius:4px;
     padding:1px 5px;
   }
   .cmdtable{width:100%; border-collapse:collapse; font-size:12.3px;}
-  .cmdtable td{padding:6px 0; border-top:1px solid var(--line); vertical-align:top;}
+  .cmdtable td{padding:6px 0; border-top:1px solid rgba(0,0,0,.08); vertical-align:top;}
   .cmdtable tr:first-child td{border-top:none;}
   .cmdtable td:first-child{font-family:var(--font-mono); white-space:nowrap; padding-right:12px; color:var(--ink);}
   .cmdtable td:last-child{color:var(--ink-soft);}
 
-  .watch li::before{content:"!"; color:var(--red); font-weight:700; font-family:var(--font-mono);}
   .watch{background:var(--red-soft);}
+  .watch li::before{content:"!"; color:var(--red); font-weight:700; font-family:var(--font-mono);}
   .watch h3{color:var(--red);}
+  .watch code{background:rgba(0,0,0,.08);}
 
   .cmp-block{margin-top:16px;}
   .cmp-row{
@@ -167,36 +254,53 @@
   .cmp-code{font-weight:700;}
   .cmp-row.bad .cmp-code{color:var(--red);}
   .cmp-row.good .cmp-code{color:var(--green);}
-  .cmp-arrow{color:var(--ink-faint);}
+  .cmp-arrow{color:var(--ink-faint); font-family:var(--font-sans);}
+  html.lang-th .cmp-arrow{font-size:13px;}
   @media (max-width:600px){.cmp-row{grid-template-columns:1fr; text-align:left;}}
 
   .footer-card{
-    background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:22px 24px;
+    position:relative; transform:rotate(0.3deg);
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:22px 24px;
     box-shadow:var(--shadow); margin-top:8px;
+  }
+  .footer-card::before{
+    content:""; position:absolute; top:-7px; left:40px; width:14px; height:14px;
+    border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff, var(--accent) 62%);
+    box-shadow:0 2px 3px rgba(0,0,0,.35);
   }
   .footer-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:28px;}
   @media (max-width:760px){.footer-grid{grid-template-columns:1fr;}}
-  .footer-card h3{font-size:14px; margin-bottom:10px;}
+  .footer-card h3{font-family:var(--font-marker); font-size:16px; margin-bottom:10px;}
   .footer-card ul{margin:0; padding-left:18px; font-size:13.6px; line-height:1.6; color:var(--ink-soft);}
   .footer-card p{font-size:13.6px; line-height:1.6; color:var(--ink-soft); margin:0 0 10px;}
   .kbd{font-family:var(--font-mono); background:var(--surface-2); border-radius:4px; padding:1px 6px; font-size:12.3px; color:var(--ink);}
 </style>
 
+<div class="board-frame">
 <div class="wrap">
-
   <header class="masthead">
+    <button id="langToggle" class="lang-toggle" type="button" aria-pressed="false" aria-label="Switch language / สลับภาษา">
+      <span class="lt-en">EN</span><span class="lt-sep">/</span><span class="lt-th">TH</span>
+    </button>
     <div class="eyebrow">INT134 System Deployment · 2026</div>
-    <h1>Exam 1 Whiteboard — Weeks 1–5</h1>
-    <p>One VM, built up one class at a time: a shell you can drive, turned into a service that survives you, turned into a website, turned into an application, turned into one address. Exam 1 tests exactly this arc — practical and multiple choice, nothing supplied.</p>
+    <h1 data-th="ไวท์บอร์ดทวนสอบ 1 — สัปดาห์ 1–5">Exam 1 Whiteboard — Weeks 1–5</h1>
+    <p data-th="VM เครื่องเดียว ต่อยอดทีละคาบ: จาก shell ที่สั่งเองได้ กลายเป็น service ที่อยู่รอดแม้เราไม่อยู่ กลายเป็นเว็บไซต์ กลายเป็นแอปพลิเคชัน แล้วกลายเป็นที่อยู่เดียว ข้อสอบ 1 ทดสอบเส้นทางนี้ทั้งหมด — ทั้งภาคปฏิบัติและปรนัย โดยไม่มีอะไรเตรียมไว้ให้เลย">One VM, built up one class at a time: a shell you can drive, turned into a service that survives you, turned into a website, turned into an application, turned into one address. Exam 1 tests exactly this arc — practical and multiple choice, nothing supplied.</p>
     <div class="roadmap">
-      <span class="rchip on">W1 · Packages &amp; systemd</span><span class="rjoin"></span>
-      <span class="rchip on">W2 · Processes</span><span class="rjoin"></span>
-      <span class="rchip on">W3 · Static web</span><span class="rjoin"></span>
-      <span class="rchip on">W4 · Backend + DB</span><span class="rjoin"></span>
-      <span class="rchip on">W5 · Reverse proxy</span><span class="rjoin"></span>
+      <span class="rchip on" data-th="W1 · แพ็กเกจ &amp; systemd">W1 · Packages &amp; systemd</span><span class="rjoin"></span>
+      <span class="rchip on" data-th="W2 · โปรเซส">W2 · Processes</span><span class="rjoin"></span>
+      <span class="rchip on" data-th="W3 · เว็บ static">W3 · Static web</span><span class="rjoin"></span>
+      <span class="rchip on" data-th="W4 · Backend + ฐานข้อมูล">W4 · Backend + DB</span><span class="rjoin"></span>
+      <span class="rchip on" data-th="W5 · Reverse proxy">W5 · Reverse proxy</span><span class="rjoin"></span>
       <span class="rchip exam">EXAM 1</span><span class="rjoin"></span>
-      <span class="rchip faint">W6–10 · Containers</span><span class="rjoin"></span>
+      <span class="rchip faint" data-th="W6–10 · Container">W6–10 · Containers</span><span class="rjoin"></span>
       <span class="rchip faint">EXAM 2</span>
+    </div>
+    <div class="thread-legend">
+      <span class="lg-item"><i class="lg-dot" data-thread="sys"></i><span data-th="systemd — ต่อกันที่ W1 → W2 → W4">systemd — connects W1 → W2 → W4</span></span>
+      <span class="lg-item"><i class="lg-dot" data-thread="diag"></i><span data-th="journalctl — ต่อกันที่ W2 → W3 → W4">journalctl — connects W2 → W3 → W4</span></span>
+      <span class="lg-item"><i class="lg-dot" data-thread="fw"></i><span data-th="ประตู ufw — ต่อกันที่ W3 → W4 → W5">ufw doors — connects W3 → W4 → W5</span></span>
+      <span class="lg-item"><i class="lg-dot" data-thread="loop"></i><span data-th="loopback — ต่อกันที่ W4 → W5">loopback — connects W4 → W5</span></span>
+      <span class="lg-item"><i class="lg-dot" data-thread="cors"></i><span data-th="CORS — ต่อกันที่ W4 → W5">CORS — connects W4 → W5</span></span>
     </div>
   </header>
 
@@ -204,9 +308,9 @@
   <section class="band">
     <div class="band-head">
       <span class="wk-pill">W1</span>
-      <h2>Package Management &amp; Service Manager</h2>
+      <h2 data-th="การจัดการแพ็กเกจ &amp; Service Manager">Package Management &amp; Service Manager</h2>
       <span class="band-date">5 Aug 2026</span>
-      <span class="band-tag">A service has two independent switches: does it start at boot, and is it running right now.</span>
+      <span class="band-tag" data-th="service หนึ่งตัวมีสวิตช์อิสระสองอัน: จะเริ่มตอนบูตไหม กับตอนนี้มันทำงานอยู่รึเปล่า">A service has two independent switches: does it start at boot, and is it running right now.</span>
     </div>
 
     <figure class="diagram">
@@ -217,11 +321,11 @@
           </marker>
         </defs>
         <!-- column headers -->
-        <text x="220" y="42" text-anchor="middle" class="strong" font-size="13">DISABLED</text>
-        <text x="520" y="42" text-anchor="middle" class="strong" font-size="13">ENABLED</text>
+        <text x="220" y="42" text-anchor="middle" class="strong" font-size="13" data-th="ปิดใช้งาน">DISABLED</text>
+        <text x="520" y="42" text-anchor="middle" class="strong" font-size="13" data-th="เปิดใช้งาน">ENABLED</text>
         <!-- row headers -->
-        <text x="34" y="155" text-anchor="middle" class="strong" font-size="13" transform="rotate(-90 34 155)">ACTIVE</text>
-        <text x="34" y="365" text-anchor="middle" class="strong" font-size="13" transform="rotate(-90 34 365)">INACTIVE</text>
+        <text x="34" y="155" text-anchor="middle" class="strong" font-size="13" transform="rotate(-90 34 155)" data-th="ทำงานอยู่">ACTIVE</text>
+        <text x="34" y="365" text-anchor="middle" class="strong" font-size="13" transform="rotate(-90 34 365)" data-th="ไม่ทำงาน">INACTIVE</text>
 
         <!-- boxes -->
         <rect x="90" y="70" width="260" height="170" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
@@ -229,22 +333,22 @@
         <rect x="90" y="280" width="260" height="170" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
         <rect x="390" y="280" width="260" height="170" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
 
-        <text x="220" y="105" text-anchor="middle" class="mono strong" font-size="13">disabled · active</text>
-        <text x="220" y="128" text-anchor="middle" class="lbl">just disabled — still</text>
-        <text x="220" y="145" text-anchor="middle" class="lbl">running until stopped</text>
-        <text x="220" y="162" text-anchor="middle" class="lbl">or the box is rebooted</text>
+        <text x="220" y="105" text-anchor="middle" class="mono strong" font-size="13" data-th="ปิด · ทำงาน">disabled · active</text>
+        <text x="220" y="128" text-anchor="middle" class="lbl" data-th="เพิ่งสั่งปิด — แต่ยัง">just disabled — still</text>
+        <text x="220" y="145" text-anchor="middle" class="lbl" data-th="ทำงานอยู่จนกว่าจะหยุด">running until stopped</text>
+        <text x="220" y="162" text-anchor="middle" class="lbl" data-th="หรือเครื่อง reboot">or the box is rebooted</text>
 
-        <text x="520" y="105" text-anchor="middle" class="mono strong" font-size="13" fill="var(--green)">enabled · active</text>
-        <text x="520" y="128" text-anchor="middle" class="lbl">the normal running state</text>
+        <text x="520" y="105" text-anchor="middle" class="mono strong" font-size="13" fill="var(--green)" data-th="เปิด · ทำงาน">enabled · active</text>
+        <text x="520" y="128" text-anchor="middle" class="lbl" data-th="สถานะทำงานปกติ">the normal running state</text>
         <text x="520" y="145" text-anchor="middle" class="lbl">systemctl enable --now foo</text>
 
-        <text x="220" y="315" text-anchor="middle" class="mono strong" font-size="13">disabled · inactive</text>
-        <text x="220" y="338" text-anchor="middle" class="lbl">won't start at boot,</text>
-        <text x="220" y="355" text-anchor="middle" class="lbl">not running now</text>
+        <text x="220" y="315" text-anchor="middle" class="mono strong" font-size="13" data-th="ปิด · ไม่ทำงาน">disabled · inactive</text>
+        <text x="220" y="338" text-anchor="middle" class="lbl" data-th="ไม่เริ่มตอนบูต,">won't start at boot,</text>
+        <text x="220" y="355" text-anchor="middle" class="lbl" data-th="ตอนนี้ก็ไม่ทำงาน">not running now</text>
 
-        <text x="520" y="315" text-anchor="middle" class="mono strong" font-size="13">enabled · inactive</text>
-        <text x="520" y="338" text-anchor="middle" class="lbl">will start at next boot,</text>
-        <text x="520" y="355" text-anchor="middle" class="lbl">but hasn't started yet</text>
+        <text x="520" y="315" text-anchor="middle" class="mono strong" font-size="13" data-th="เปิด · ไม่ทำงาน">enabled · inactive</text>
+        <text x="520" y="338" text-anchor="middle" class="lbl" data-th="จะเริ่มตอนบูตครั้งหน้า,">will start at next boot,</text>
+        <text x="520" y="355" text-anchor="middle" class="lbl" data-th="แต่ยังไม่เริ่มตอนนี้">but hasn't started yet</text>
 
         <!-- horizontal: enable/disable -->
         <line x1="350" y1="140" x2="388" y2="140" stroke="currentColor" stroke-width="1.4" marker-end="url(#a1)"/>
@@ -273,34 +377,34 @@
         <line x1="600" y1="280" x2="600" y2="242" stroke="var(--amber)" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#a1)"/>
         <text x="600" y="264" text-anchor="middle" class="mono lbl" fill="var(--amber)">reboot</text>
       </svg>
-      <figcaption>Four states, and the exact command that crosses each edge. Disabling a running service does not stop it; a reboot only revives what is <strong>enabled</strong>.</figcaption>
+      <figcaption data-th="สี่สถานะ พร้อมคำสั่งที่ข้ามแต่ละเส้น การปิด (disable) service ที่กำลังทำงานอยู่ ไม่ได้หยุดมันทันที ส่วนการ reboot จะปลุกขึ้นมาเฉพาะตัวที่ <strong>enabled</strong> เท่านั้น">Four states, and the exact command that crosses each edge. Disabling a running service does not stop it; a reboot only revives what is <strong>enabled</strong>.</figcaption>
     </figure>
 
     <div class="cards">
       <div class="card">
-        <h3>Concepts</h3>
+        <h3 data-th="แนวคิด">Concepts</h3>
         <ul>
-          <li><code>systemd</code> is PID 1 — the init system that starts and supervises every other service.</li>
-          <li><code>apt</code> is for you (interactive); <code>apt-get</code>/<code>apt-cache</code> is for scripts.</li>
-          <li>Ubuntu repo components: <code>main</code> (Canonical), <code>universe</code> (community), <code>restricted</code>, <code>multiverse</code>.</li>
+          <li data-th="<code>systemd</code> คือ PID 1 — ตัว init system ที่เริ่มและดูแล service อื่นทั้งหมด"><code>systemd</code> is PID 1 — the init system that starts and supervises every other service.</li>
+          <li data-th="<code>apt</code> มีไว้ให้คนใช้เอง (interactive) ส่วน <code>apt-get</code>/<code>apt-cache</code> มีไว้ให้สคริปต์"><code>apt</code> is for you (interactive); <code>apt-get</code>/<code>apt-cache</code> is for scripts.</li>
+          <li data-th="องค์ประกอบ repo ของ Ubuntu: <code>main</code> (Canonical), <code>universe</code> (ชุมชน), <code>restricted</code>, <code>multiverse</code>">Ubuntu repo components: <code>main</code> (Canonical), <code>universe</code> (community), <code>restricted</code>, <code>multiverse</code>.</li>
         </ul>
       </div>
       <div class="card">
-        <h3>Commands</h3>
+        <h3 data-th="คำสั่ง">Commands</h3>
         <table class="cmdtable">
-          <tr><td>sudo -u user cmd</td><td>run one command as user, your own password</td></tr>
-          <tr><td>su user</td><td>open a shell as user, their password</td></tr>
-          <tr><td>apt update</td><td>refresh metadata only — installs nothing</td></tr>
-          <tr><td>apt install pkg=ver</td><td>pin an exact version</td></tr>
-          <tr><td>systemctl status/start/enable</td><td>runtime vs boot-time control</td></tr>
+          <tr><td>sudo -u user cmd</td><td data-th="รันคำสั่งเดียวในฐานะ user นั้น ด้วยรหัสผ่านของตัวเอง">run one command as user, your own password</td></tr>
+          <tr><td>su user</td><td data-th="เปิด shell ในฐานะ user นั้น ด้วยรหัสผ่านของเขา">open a shell as user, their password</td></tr>
+          <tr><td>apt update</td><td data-th="รีเฟรชแค่ metadata เท่านั้น — ไม่ได้ติดตั้งอะไรเลย">refresh metadata only — installs nothing</td></tr>
+          <tr><td>apt install pkg=ver</td><td data-th="ปักเวอร์ชันที่ต้องการแบบเป๊ะๆ">pin an exact version</td></tr>
+          <tr><td>systemctl status/start/enable</td><td data-th="ควบคุมตอนรัน เทียบกับควบคุมตอนบูต">runtime vs boot-time control</td></tr>
         </table>
       </div>
       <div class="card watch">
-        <h3>Watch out</h3>
+        <h3 data-th="ระวังไว้">Watch out</h3>
         <ul>
-          <li><code>apt update</code> ≠ <code>apt upgrade</code> — updating the list installs nothing.</li>
-          <li><code>id</code>, <code>whoami</code>, <code>who am i</code> answer three different questions, especially under <code>sudo</code>.</li>
-          <li>Enabled/disabled (boot) and active/inactive (now) are fully independent — see the matrix above.</li>
+          <li data-th="<code>apt update</code> ≠ <code>apt upgrade</code> — อัปเดตแค่ลิสต์ ไม่ได้ติดตั้งอะไรเลย"><code>apt update</code> ≠ <code>apt upgrade</code> — updating the list installs nothing.</li>
+          <li data-th="<code>id</code>, <code>whoami</code>, <code>who am i</code> ตอบคำถามคนละแบบกัน โดยเฉพาะตอนอยู่ใต้ <code>sudo</code>"><code>id</code>, <code>whoami</code>, <code>who am i</code> answer three different questions, especially under <code>sudo</code>.</li>
+          <li class="pinned"><span class="step-badge" data-thread="sys">STEP 1/3 · W1</span><span data-th="<strong>enable ไม่ใช่ start:</strong> enabled/disabled (ตอนบูต) กับ active/inactive (ตอนนี้) เป็นอิสระต่อกันโดยสมบูรณ์ — ดู matrix ด้านบน"><strong>enable ≠ start:</strong> enabled/disabled (boot) and active/inactive (now) are fully independent — see the matrix above.</span></li>
         </ul>
       </div>
     </div>
@@ -310,9 +414,9 @@
   <section class="band">
     <div class="band-head">
       <span class="wk-pill">W2</span>
-      <h2>Managing Processes</h2>
+      <h2 data-th="การจัดการโปรเซส">Managing Processes</h2>
       <span class="band-date">12 Aug 2026</span>
-      <span class="band-tag">"It's running" is not "it's deployed" — only a unit file survives everything.</span>
+      <span class="band-tag" data-th="“กำลังรันอยู่” ไม่เท่ากับ “deploy แล้ว” — มีแค่ unit file เท่านั้นที่รอดทุกสถานการณ์">"It's running" is not "it's deployed" — only a unit file survives everything.</span>
     </div>
 
     <figure class="diagram">
@@ -322,36 +426,36 @@
             <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
           </marker>
         </defs>
-        <text x="150" y="26" text-anchor="middle" class="lbl strong">you run</text>
-        <text x="430" y="26" text-anchor="middle" class="lbl strong">terminal closes</text>
-        <text x="700" y="26" text-anchor="middle" class="lbl strong">then: reboot</text>
-        <text x="910" y="26" text-anchor="middle" class="lbl strong">result</text>
+        <text x="150" y="26" text-anchor="middle" class="lbl strong" data-th="คุณรัน">you run</text>
+        <text x="430" y="26" text-anchor="middle" class="lbl strong" data-th="ปิด terminal">terminal closes</text>
+        <text x="700" y="26" text-anchor="middle" class="lbl strong" data-th="แล้ว: reboot">then: reboot</text>
+        <text x="910" y="26" text-anchor="middle" class="lbl strong" data-th="ผลลัพธ์">result</text>
 
         <!-- lane A -->
         <rect x="40" y="50" width="220" height="52" rx="8" fill="none" stroke="currentColor"/>
         <text x="150" y="81" text-anchor="middle" class="mono" font-size="12">./app &amp;</text>
         <line x1="260" y1="76" x2="358" y2="76" stroke="currentColor" marker-end="url(#a2)"/>
         <rect x="360" y="50" width="220" height="52" rx="8" fill="none" stroke="currentColor"/>
-        <text x="470" y="72" text-anchor="middle" font-size="11.5">SIGHUP — the terminal's</text>
-        <text x="470" y="88" text-anchor="middle" font-size="11.5">jobs die with it</text>
+        <text x="470" y="72" text-anchor="middle" font-size="11.5" data-th="SIGHUP — job ของ terminal">SIGHUP — the terminal's</text>
+        <text x="470" y="88" text-anchor="middle" font-size="11.5" data-th="ตายไปพร้อมมัน">jobs die with it</text>
         <line x1="580" y1="76" x2="848" y2="76" stroke="currentColor" marker-end="url(#a2)"/>
         <rect x="850" y="50" width="120" height="52" rx="8" fill="var(--red-soft)" stroke="var(--red)"/>
-        <text x="910" y="81" text-anchor="middle" fill="var(--red)" class="strong" font-size="13">✕ dies</text>
+        <text x="910" y="81" text-anchor="middle" fill="var(--red)" class="strong" font-size="13" data-th="✕ ตาย">✕ dies</text>
 
         <!-- lane B -->
         <rect x="40" y="160" width="220" height="52" rx="8" fill="none" stroke="currentColor"/>
         <text x="150" y="191" text-anchor="middle" class="mono" font-size="12">nohup ./app &amp;</text>
         <line x1="260" y1="186" x2="358" y2="186" stroke="currentColor" marker-end="url(#a2)"/>
         <rect x="360" y="160" width="220" height="52" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
-        <text x="470" y="182" text-anchor="middle" font-size="11.5">ignores SIGHUP —</text>
-        <text x="470" y="198" text-anchor="middle" font-size="11.5">keeps running</text>
+        <text x="470" y="182" text-anchor="middle" font-size="11.5" data-th="เมิน SIGHUP —">ignores SIGHUP —</text>
+        <text x="470" y="198" text-anchor="middle" font-size="11.5" data-th="ทำงานต่อไป">keeps running</text>
         <line x1="580" y1="186" x2="678" y2="186" stroke="currentColor" marker-end="url(#a2)"/>
         <rect x="680" y="160" width="150" height="52" rx="8" fill="none" stroke="currentColor"/>
-        <text x="755" y="191" text-anchor="middle" font-size="11.5">reboot — nothing</text>
+        <text x="755" y="191" text-anchor="middle" font-size="11.5" data-th="reboot — ไม่เหลือ">reboot — nothing</text>
         <line x1="830" y1="186" x2="848" y2="186" stroke="currentColor" marker-end="url(#a2)"/>
         <rect x="850" y="160" width="120" height="52" rx="8" fill="var(--red-soft)" stroke="var(--red)"/>
-        <text x="910" y="181" text-anchor="middle" fill="var(--red)" class="strong" font-size="13">✕ dies</text>
-        <text x="910" y="198" text-anchor="middle" fill="var(--red)" font-size="10.5">not persisted</text>
+        <text x="910" y="181" text-anchor="middle" fill="var(--red)" class="strong" font-size="13" data-th="✕ ตาย">✕ dies</text>
+        <text x="910" y="198" text-anchor="middle" fill="var(--red)" font-size="10.5" data-th="ไม่รอดข้าม reboot">not persisted</text>
 
         <!-- lane C -->
         <rect x="40" y="290" width="220" height="60" rx="8" fill="none" stroke="currentColor"/>
@@ -359,45 +463,45 @@
         <text x="150" y="332" text-anchor="middle" class="mono" font-size="11.5">enable --now</text>
         <line x1="260" y1="320" x2="358" y2="320" stroke="currentColor" marker-end="url(#a2)"/>
         <rect x="360" y="290" width="220" height="60" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
-        <text x="470" y="316" text-anchor="middle" font-size="11.5">survives — systemd</text>
-        <text x="470" y="332" text-anchor="middle" font-size="11.5">owns it now</text>
+        <text x="470" y="316" text-anchor="middle" font-size="11.5" data-th="รอด — systemd">survives — systemd</text>
+        <text x="470" y="332" text-anchor="middle" font-size="11.5" data-th="ดูแลมันเอง">owns it now</text>
         <line x1="580" y1="320" x2="678" y2="320" stroke="currentColor" marker-end="url(#a2)"/>
         <rect x="680" y="290" width="150" height="60" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
-        <text x="755" y="316" text-anchor="middle" font-size="11.5">restarted — it's</text>
-        <text x="755" y="332" text-anchor="middle" font-size="11.5">WantedBy= this target</text>
+        <text x="755" y="316" text-anchor="middle" font-size="11.5" data-th="ถูก restart — มัน">restarted — it's</text>
+        <text x="755" y="332" text-anchor="middle" font-size="11.5" data-th="WantedBy= target นี้">WantedBy= this target</text>
         <line x1="830" y1="320" x2="848" y2="320" stroke="currentColor" marker-end="url(#a2)"/>
         <rect x="850" y="285" width="120" height="70" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
-        <text x="910" y="311" text-anchor="middle" fill="var(--green)" class="strong" font-size="13">✓ survives</text>
+        <text x="910" y="311" text-anchor="middle" fill="var(--green)" class="strong" font-size="13" data-th="✓ รอด">✓ survives</text>
         <text x="910" y="328" text-anchor="middle" fill="var(--green)" font-size="10.5">+ crash →</text>
         <text x="910" y="342" text-anchor="middle" fill="var(--green)" font-size="10.5">Restart= (new PID)</text>
       </svg>
-      <figcaption>Same program, three launchers. Only a unit file survives a reboot and restarts itself after a crash — with a fresh PID, which is why "the service" and "the process" are not the same thing.</figcaption>
+      <figcaption data-th="โปรแกรมเดียวกัน สามวิธีรัน มีแค่ unit file เท่านั้นที่รอด reboot และ restart ตัวเองหลัง crash — ด้วย PID ใหม่ ซึ่งเป็นเหตุผลที่ “service” กับ “process” ไม่ใช่สิ่งเดียวกัน">Same program, three launchers. Only a unit file survives a reboot and restarts itself after a crash — with a fresh PID, which is why "the service" and "the process" are not the same thing.</figcaption>
     </figure>
 
     <div class="cards">
       <div class="card">
-        <h3>Concepts</h3>
+        <h3 data-th="แนวคิด">Concepts</h3>
         <ul>
-          <li>A bare <code>ps</code> shows almost nothing — use <code>ps aux</code>, <code>ps -ef</code>, or <code>-o</code> fields.</li>
-          <li>Every process has a PID and PPID and descends from PID 1 (<code>pstree -p</code>).</li>
-          <li>A job (<code>&amp;</code>) belongs to exactly one shell — invisible from any other terminal.</li>
+          <li data-th="<code>ps</code> เฉยๆ แทบไม่โชว์อะไรเลย — ใช้ <code>ps aux</code>, <code>ps -ef</code>, หรือฟิลด์ <code>-o</code>">A bare <code>ps</code> shows almost nothing — use <code>ps aux</code>, <code>ps -ef</code>, or <code>-o</code> fields.</li>
+          <li data-th="ทุกโปรเซสมี PID กับ PPID และสืบทอดมาจาก PID 1 (<code>pstree -p</code>)">Every process has a PID and PPID and descends from PID 1 (<code>pstree -p</code>).</li>
+          <li data-th="job (<code>&amp;</code>) เป็นของ shell เดียวเท่านั้น — terminal อื่นมองไม่เห็นเลย">A job (<code>&amp;</code>) belongs to exactly one shell — invisible from any other terminal.</li>
         </ul>
       </div>
       <div class="card">
-        <h3>Commands</h3>
+        <h3 data-th="คำสั่ง">Commands</h3>
         <table class="cmdtable">
-          <tr><td>pgrep -af name</td><td>match the full command line, not just the name</td></tr>
-          <tr><td>jobs / fg %N / bg %N</td><td>list, foreground, background a job</td></tr>
-          <tr><td>kill / kill -9</td><td>SIGTERM (ask nicely) / SIGKILL (cannot refuse)</td></tr>
-          <tr><td>journalctl -u name -f</td><td>follow a service's log live</td></tr>
+          <tr><td>pgrep -af name</td><td data-th="แมตช์ทั้งบรรทัดคำสั่ง ไม่ใช่แค่ชื่อโปรแกรม">match the full command line, not just the name</td></tr>
+          <tr><td>jobs / fg %N / bg %N</td><td data-th="ดูลิสต์ เอาขึ้นหน้า เอาลงพื้นหลัง">list, foreground, background a job</td></tr>
+          <tr><td>kill / kill -9</td><td data-th="SIGTERM (ขอดีๆ) / SIGKILL (ปฏิเสธไม่ได้)">SIGTERM (ask nicely) / SIGKILL (cannot refuse)</td></tr>
+          <tr><td>journalctl -u name -f</td><td class="pinned"><span class="step-badge" data-thread="diag">STEP 1/3 · W2</span><span data-th="ตามดู log ของ service แบบเรียลไทม์">follow a service's log live</span></td></tr>
         </table>
       </div>
       <div class="card watch">
-        <h3>Watch out</h3>
+        <h3 data-th="ระวังไว้">Watch out</h3>
         <ul>
-          <li>Of TERM/INT/HUP/KILL, only <code>SIGKILL</code> cannot be caught, blocked, or ignored.</li>
-          <li><code>ExecStart=</code> needs an <strong>absolute path</strong> — systemd runs no shell, so <code>~</code> and relative paths fail.</li>
-          <li>A stopped (T) process gets no CPU, so it cannot even process a kill signal — <code>fg</code> it first.</li>
+          <li data-th="ในบรรดา TERM/INT/HUP/KILL มีแค่ <code>SIGKILL</code> เท่านั้นที่ดัก บล็อก หรือเมินไม่ได้">Of TERM/INT/HUP/KILL, only <code>SIGKILL</code> cannot be caught, blocked, or ignored.</li>
+          <li class="pinned"><span class="step-badge" data-thread="sys">STEP 2/3 · W2</span><span data-th="<strong>unit ต้องใช้ path เต็ม:</strong> <code>ExecStart=</code> ต้องเป็น path เต็ม — systemd ไม่ผ่าน shell เลย ดังนั้น <code>~</code> กับ path แบบสัมพัทธ์ใช้ไม่ได้"><strong>unit needs an absolute path:</strong> <code>ExecStart=</code> needs an absolute path — systemd runs no shell, so <code>~</code> and relative paths fail.</span></li>
+          <li data-th="โปรเซสที่หยุด (T) ไม่ได้ CPU เลย เลยประมวลผล kill signal ไม่ได้ด้วยซ้ำ — <code>fg</code> มันขึ้นมาก่อน">A stopped (T) process gets no CPU, so it cannot even process a kill signal — <code>fg</code> it first.</li>
         </ul>
       </div>
     </div>
@@ -407,9 +511,9 @@
   <section class="band">
     <div class="band-head">
       <span class="wk-pill">W3</span>
-      <h2>Deploy Static Web</h2>
+      <h2 data-th="Deploy เว็บ Static">Deploy Static Web</h2>
       <span class="band-date">19 Aug 2026</span>
-      <span class="band-tag">Installed does not mean started, and reachable does not mean allowed through the firewall.</span>
+      <span class="band-tag" data-th="ติดตั้งแล้ว ไม่ได้แปลว่าเริ่มทำงาน และเข้าถึงได้ ก็ไม่ได้แปลว่า firewall อนุญาต">Installed does not mean started, and reachable does not mean allowed through the firewall.</span>
     </div>
 
     <figure class="diagram">
@@ -420,12 +524,12 @@
           </marker>
         </defs>
         <rect x="20" y="130" width="140" height="60" rx="8" fill="none" stroke="currentColor"/>
-        <text x="90" y="155" text-anchor="middle" font-size="12">Browser</text>
+        <text x="90" y="155" text-anchor="middle" font-size="12" data-th="เบราว์เซอร์">Browser</text>
         <text x="90" y="172" text-anchor="middle" class="mono lbl">GET / :80</text>
 
         <line x1="230" y1="15" x2="230" y2="325" stroke="var(--amber)" stroke-width="1.6" stroke-dasharray="5 4"/>
         <text x="230" y="12" text-anchor="middle" font-size="11.5" fill="var(--amber)" class="strong">UFW firewall</text>
-        <text x="230" y="336" text-anchor="middle" font-size="10.5" fill="var(--amber)">deny inbound by default</text>
+        <text x="230" y="336" text-anchor="middle" font-size="10.5" fill="var(--amber)" data-th="ปิดกั้น inbound เป็นค่าเริ่มต้น">deny inbound by default</text>
 
         <line x1="160" y1="160" x2="222" y2="160" stroke="currentColor" marker-end="url(#a3)"/>
 
@@ -452,36 +556,37 @@
 
         <rect x="630" y="90" width="180" height="50" rx="8" fill="none" stroke="currentColor"/>
         <text x="720" y="112" text-anchor="middle" font-size="12">sshd :22</text>
-        <text x="720" y="128" text-anchor="middle" font-size="10.5" fill="var(--red)">never delete this rule</text>
+        <text x="720" y="128" text-anchor="middle" font-size="10.5" fill="var(--red)" data-th="ห้ามลบ rule นี้เด็ดขาด">never delete this rule</text>
         <line x1="238" y1="100" x2="628" y2="105" stroke="currentColor" stroke-dasharray="2 3"/>
       </svg>
-      <figcaption>The worker (user <code>nginx</code>) must read the file along the whole path, or the site 404s even with a correct config. Test with <code>nginx -t</code>, then <code>reload</code> — never <code>restart</code> on a config you haven't tested.</figcaption>
+      <figcaption data-th="worker (user <code>nginx</code>) ต้องอ่านไฟล์ได้ตลอดทั้ง path ไม่งั้นเว็บ 404 ทั้งที่ config ถูก ทดสอบด้วย <code>nginx -t</code> ก่อน แล้วค่อย <code>reload</code> — ห้าม <code>restart</code> กับ config ที่ยังไม่ได้เทสต์">The worker (user <code>nginx</code>) must read the file along the whole path, or the site 404s even with a correct config. Test with <code>nginx -t</code>, then <code>reload</code> — never <code>restart</code> on a config you haven't tested.</figcaption>
     </figure>
 
     <div class="cards">
       <div class="card">
-        <h3>Concepts</h3>
+        <h3 data-th="แนวคิด">Concepts</h3>
         <ul>
-          <li>A URL path that names a directory falls back to <code>index.html</code>.</li>
-          <li>This course installs nginx from <strong>nginx.org</strong> (<code>conf.d/*.conf</code>), not Ubuntu's <code>sites-enabled</code>.</li>
-          <li>Block selection: port → <code>server_name</code> (exact → wildcard → regex) → <code>default_server</code> → first file alphabetically.</li>
+          <li data-th="URL ที่ชี้ไปที่ directory จะย้อนไปหา <code>index.html</code>">A URL path that names a directory falls back to <code>index.html</code>.</li>
+          <li data-th="วิชานี้ติดตั้ง nginx จาก <strong>nginx.org</strong> (<code>conf.d/*.conf</code>) ไม่ใช่ <code>sites-enabled</code> ของ Ubuntu">This course installs nginx from <strong>nginx.org</strong> (<code>conf.d/*.conf</code>), not Ubuntu's <code>sites-enabled</code>.</li>
+          <li data-th="ลำดับเลือก block: port → <code>server_name</code> (ตรงเป๊ะ → wildcard → regex) → <code>default_server</code> → ไฟล์แรกตามตัวอักษร">Block selection: port → <code>server_name</code> (exact → wildcard → regex) → <code>default_server</code> → first file alphabetically.</li>
         </ul>
       </div>
       <div class="card">
-        <h3>Commands</h3>
+        <h3 data-th="คำสั่ง">Commands</h3>
         <table class="cmdtable">
-          <tr><td>nginx -t</td><td>test config syntax before touching anything live</td></tr>
-          <tr><td>systemctl reload nginx</td><td>safe — keeps the old config if the new one fails</td></tr>
-          <tr><td>ufw allow 80/tcp</td><td>open inbound only for what you need</td></tr>
-          <tr><td>curl -H "Host: x" localhost</td><td>test a server block with no DNS</td></tr>
+          <tr><td>nginx -t</td><td data-th="เทสต์ syntax ของ config ก่อนแตะของจริง">test config syntax before touching anything live</td></tr>
+          <tr><td>systemctl reload nginx</td><td data-th="ปลอดภัย — ถ้า config ใหม่พังจะใช้ของเก่าต่อ">safe — keeps the old config if the new one fails</td></tr>
+          <tr><td>ufw allow 80/tcp</td><td class="pinned"><span class="step-badge" data-thread="fw">STEP 1/3 · W3</span><span data-th="เปิดประตูที่ 1 (frontend): เปิด inbound เท่าที่จำเป็นจริงๆ">open door #1 (frontend): open inbound only for what you need</span></td></tr>
+          <tr><td>curl -H "Host: x" localhost</td><td data-th="เทสต์ server block โดยไม่ต้องมี DNS">test a server block with no DNS</td></tr>
+          <tr><td>journalctl -u nginx</td><td class="pinned"><span class="step-badge" data-thread="diag">STEP 2/3 · W3</span><span data-th="อ่าน log ตอนมันไม่ยอมเริ่มทำงาน">read the log when it won't start</span></td></tr>
         </table>
       </div>
       <div class="card watch">
-        <h3>Watch out</h3>
+        <h3 data-th="ระวังไว้">Watch out</h3>
         <ul>
-          <li><code>reload</code> silently keeps serving the <strong>old</strong> config if the new one is broken — no downtime, no visible change either.</li>
-          <li><code>restart</code> stops everything first — a broken config takes the whole site down.</li>
-          <li>Never touch the port 22 rule; never <code>ufw disable</code>.</li>
+          <li data-th="<code>reload</code> จะแอบใช้ config <strong>เก่า</strong> ต่อถ้าของใหม่พัง — ไม่ล่ม แต่ก็ไม่เห็นการเปลี่ยนแปลงด้วย"><code>reload</code> silently keeps serving the <strong>old</strong> config if the new one is broken — no downtime, no visible change either.</li>
+          <li data-th="<code>restart</code> หยุดทุกอย่างก่อน — config พังทีเว็บล่มทั้งเว็บ"><code>restart</code> stops everything first — a broken config takes the whole site down.</li>
+          <li data-th="ห้ามแตะ rule พอร์ต 22 เด็ดขาด; ห้าม <code>ufw disable</code>">Never touch the port 22 rule; never <code>ufw disable</code>.</li>
         </ul>
       </div>
     </div>
@@ -491,9 +596,9 @@
   <section class="band">
     <div class="band-head">
       <span class="wk-pill">W4</span>
-      <h2>Deploy Backend and DBMS</h2>
+      <h2 data-th="Deploy Backend และ DBMS">Deploy Backend and DBMS</h2>
       <span class="band-date">26 Aug 2026</span>
-      <span class="band-tag">Three processes, three ports, three identities — and one port that must never leave the machine.</span>
+      <span class="band-tag" data-th="สามโปรเซส สามพอร์ต สามตัวตน — และพอร์ตหนึ่งที่ห้ามหลุดออกนอกเครื่องเด็ดขาด">Three processes, three ports, three identities — and one port that must never leave the machine.</span>
     </div>
 
     <figure class="diagram">
@@ -504,18 +609,18 @@
           </marker>
         </defs>
         <rect x="15" y="150" width="130" height="56" rx="8" fill="none" stroke="currentColor"/>
-        <text x="80" y="182" text-anchor="middle" font-size="12">Internet</text>
+        <text x="80" y="182" text-anchor="middle" font-size="12" data-th="อินเทอร์เน็ต">Internet</text>
 
         <line x1="195" y1="15" x2="195" y2="385" stroke="var(--amber)" stroke-width="1.6" stroke-dasharray="5 4"/>
-        <text x="195" y="12" text-anchor="middle" font-size="11" fill="var(--amber)" class="strong">UFW: allow 80, 3xxx</text>
+        <text x="195" y="12" text-anchor="middle" font-size="11" fill="var(--amber)" class="strong" data-th="UFW: เปิด 80, 3xxx">UFW: allow 80, 3xxx</text>
 
         <rect x="215" y="20" width="660" height="360" rx="12" fill="none" stroke="var(--line-strong)"/>
-        <text x="231" y="40" font-size="11" fill="var(--ink-faint)">VM — one machine</text>
+        <text x="231" y="40" font-size="11" fill="var(--ink-faint)" data-th="VM — เครื่องเดียว">VM — one machine</text>
 
         <line x1="145" y1="170" x2="253" y2="80" stroke="currentColor" marker-end="url(#a4)"/>
         <rect x="255" y="55" width="230" height="60" rx="8" fill="none" stroke="currentColor"/>
         <text x="370" y="80" text-anchor="middle" font-size="12">nginx :80</text>
-        <text x="370" y="98" text-anchor="middle" class="mono lbl">frontend files</text>
+        <text x="370" y="98" text-anchor="middle" class="mono lbl" data-th="ไฟล์ frontend">frontend files</text>
 
         <line x1="145" y1="185" x2="253" y2="190" stroke="currentColor" marker-end="url(#a4)"/>
         <rect x="255" y="160" width="230" height="60" rx="8" fill="none" stroke="currentColor"/>
@@ -523,45 +628,49 @@
         <text x="370" y="203" text-anchor="middle" class="mono lbl">systemd · User=sysadmin</text>
 
         <rect x="540" y="270" width="300" height="100" rx="10" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-dasharray="5 3"/>
-        <text x="556" y="288" font-size="10.5" fill="var(--red)" class="strong">loopback — never crosses UFW</text>
+        <text x="556" y="288" font-size="10.5" fill="var(--red)" class="strong" data-th="loopback — ไม่ผ่าน UFW เด็ดขาด">loopback — never crosses UFW</text>
         <rect x="565" y="300" width="250" height="56" rx="8" fill="none" stroke="currentColor"/>
         <text x="690" y="322" text-anchor="middle" font-size="12">mysql :3306</text>
         <text x="690" y="340" text-anchor="middle" class="mono lbl">bind 127.0.0.1 only</text>
 
         <line x1="485" y1="200" x2="620" y2="298" stroke="currentColor" marker-end="url(#a4)"/>
-        <text x="500" y="255" font-size="10.5" fill="var(--ink-soft)">local call only</text>
+        <text x="500" y="255" font-size="10.5" fill="var(--ink-soft)" data-th="เรียกจากในเครื่องเท่านั้น">local call only</text>
 
         <line x1="195" y1="355" x2="538" y2="325" stroke="var(--red)" stroke-dasharray="3 4"/>
-        <text x="330" y="365" text-anchor="middle" font-size="11" fill="var(--red)" class="strong">✕ never opened</text>
+        <text x="330" y="365" text-anchor="middle" font-size="11" fill="var(--red)" class="strong" data-th="✕ ไม่เปิดพอร์ตนี้เด็ดขาด">✕ never opened</text>
       </svg>
-      <figcaption><code>0.0.0.0</code> faces the world; <code>127.0.0.1</code> never touches a network card. MySQL binds loopback, so it needs no firewall rule at all — opening 3306 is one line away from losing every database on the box.</figcaption>
+      <figcaption data-th="<code>0.0.0.0</code> หันหน้าเข้าโลกภายนอก ส่วน <code>127.0.0.1</code> ไม่แตะการ์ดเครือข่ายเลย MySQL bind loopback เลยไม่ต้องมี firewall rule ใดๆ ทั้งนั้น — เปิด 3306 คือหายทั้งฐานข้อมูลในเครื่องแค่บรรทัดเดียว"><code>0.0.0.0</code> faces the world; <code>127.0.0.1</code> never touches a network card. MySQL binds loopback, so it needs no firewall rule at all — opening 3306 is one line away from losing every database on the box.</figcaption>
     </figure>
 
     <div class="cards">
       <div class="card">
-        <h3>Concepts</h3>
+        <h3 data-th="แนวคิด">Concepts</h3>
         <ul>
-          <li>A database is a separate <strong>server</strong> with its own users — the app is only a client.</li>
-          <li>Deploy order: database, then backend — the backend depends on the database, never the reverse.</li>
-          <li>One application = one database = one user (least privilege / blast radius).</li>
+          <li data-th="ฐานข้อมูลคือ server แยกต่างหาก มี user ของตัวเอง — แอปเป็นแค่ client">A database is a separate <strong>server</strong> with its own users — the app is only a client.</li>
+          <li data-th="ลำดับ deploy: ฐานข้อมูลก่อน แล้วค่อย backend — backend พึ่งพาฐานข้อมูล ไม่มีทางกลับกัน">Deploy order: database, then backend — the backend depends on the database, never the reverse.</li>
+          <li data-th="หนึ่งแอป = หนึ่งฐานข้อมูล = หนึ่ง user (least privilege / blast radius)">One application = one database = one user (least privilege / blast radius).</li>
+          <li class="pinned"><span class="step-badge" data-thread="sys">STEP 3/3 · W4</span><span data-th="<strong>สูตรเดิม แต่เป็นแอปจริง:</strong> สูตร systemd เดิมจากสัปดาห์ 2 เป๊ะ — แค่ตอนนี้เป็นแอปจริงแล้ว"><strong>same recipe, real app:</strong> same systemd recipe as week 2 — just a real app now.</span></li>
+          <li class="pinned"><span class="step-badge" data-thread="diag">STEP 3/3 · W4</span><span data-th="<strong>ลำดับ debug เดิมอีกครั้ง:</strong> <code>systemctl status</code> ก่อน แล้วค่อย <code>journalctl -u</code> ตามด้วยชื่อ service"><strong>same debug order again:</strong> <code>systemctl status</code>, then <code>journalctl -u</code> the service.</span></li>
         </ul>
       </div>
       <div class="card">
-        <h3>Commands</h3>
+        <h3 data-th="คำสั่ง">Commands</h3>
         <table class="cmdtable">
-          <tr><td>CREATE USER ... RANDOM PASSWORD</td><td>a 20-char password, shown once</td></tr>
-          <tr><td>GRANT ALL ON db.* TO 'x'@'localhost'</td><td>scope to one database, one host</td></tr>
-          <tr><td>install -m 600 /dev/null x.env</td><td>private file, before the secret goes in</td></tr>
-          <tr><td>npm ci &amp;&amp; npx prisma generate</td><td>exact versions, then build the client</td></tr>
-          <tr><td>migrate diff --exit-code</td><td>0 = agrees, 2 = drift — check before starting</td></tr>
+          <tr><td>CREATE USER ... RANDOM PASSWORD</td><td data-th="รหัสผ่าน 20 ตัวอักษร โชว์ครั้งเดียว">a 20-char password, shown once</td></tr>
+          <tr><td>GRANT ALL ON db.* TO 'x'@'localhost'</td><td data-th="จำกัดขอบเขตแค่ฐานข้อมูลเดียว host เดียว">scope to one database, one host</td></tr>
+          <tr><td>install -m 600 /dev/null x.env</td><td data-th="ไฟล์ private ก่อนที่ความลับจะเข้าไป">private file, before the secret goes in</td></tr>
+          <tr><td>npm ci &amp;&amp; npx prisma generate</td><td data-th="เวอร์ชันตรงเป๊ะ แล้วค่อย build client">exact versions, then build the client</td></tr>
+          <tr><td>migrate diff --exit-code</td><td data-th="0 = ตรงกัน, 2 = drift — เช็กก่อนเริ่มรัน">0 = agrees, 2 = drift — check before starting</td></tr>
+          <tr><td>sudo ufw allow 3xxx/tcp</td><td class="pinned"><span class="step-badge" data-thread="fw">STEP 2/3 · W4</span><span data-th="เปิดประตูที่ 2 (API): เปิดอีกประตูหนึ่ง คราวนี้ให้ API">open door #2 (API): one more door, this time for the API</span></td></tr>
         </table>
       </div>
       <div class="card watch">
-        <h3>Watch out</h3>
+        <h3 data-th="ระวังไว้">Watch out</h3>
         <ul>
-          <li><strong>Never open port 3306</strong> — reach MySQL over an SSH tunnel (Workbench), not the network.</li>
-          <li><code>migrate dev</code> failing on the shadow database is correct — don't widen the grant to silence it.</li>
-          <li>Write the password <strong>literally</strong> in <code>.env</code>, never <code>${VAR}</code> — systemd doesn't expand it.</li>
+          <li class="pinned"><span class="step-badge" data-thread="loop">STEP 1/2 · W4</span><span data-th="<strong>ห้ามเปิดฐานข้อมูลออกเน็ต:</strong> ห้ามเปิดพอร์ต 3306 เด็ดขาด — เข้าถึง MySQL ผ่าน SSH tunnel (Workbench) ไม่ใช่ผ่านเน็ตเวิร์ก"><strong>never expose the database:</strong> never open port 3306 — reach MySQL over an SSH tunnel (Workbench), not the network.</span></li>
+          <li data-th="<code>migrate dev</code> พังตรง shadow database คือถูกต้องแล้ว — อย่าขยาย grant เพื่อให้มันเงียบไป"><code>migrate dev</code> failing on the shadow database is correct — don't widen the grant to silence it.</li>
+          <li data-th="เขียนรหัสผ่าน <strong>ตรงตัว</strong> ใน <code>.env</code> ห้ามใช้ <code>${VAR}</code> — systemd ไม่ขยายให้">Write the password <strong>literally</strong> in <code>.env</code>, never <code>${VAR}</code> — systemd doesn't expand it.</li>
+          <li class="pinned"><span class="step-badge" data-thread="cors">STEP 1/2 · W4</span><span data-th="<strong>ตั้งค่าไว้ให้แล้ว:</strong> <code>.env</code> มีค่า CORS ให้แล้วตั้งแต่สัปดาห์นี้ — แค่ยังไม่ได้ใช้จนกว่าจะถึงสัปดาห์หน้า"><strong>the setting is already there:</strong> <code>.env</code> already carries a CORS setting this week — it just isn't used until next week.</span></li>
         </ul>
       </div>
     </div>
@@ -571,9 +680,9 @@
   <section class="band">
     <div class="band-head">
       <span class="wk-pill">W5</span>
-      <h2>Reverse Proxy and Integration</h2>
+      <h2 data-th="Reverse Proxy และการเชื่อมระบบ">Reverse Proxy and Integration</h2>
       <span class="band-date">2 Sep 2026</span>
-      <span class="band-tag">Close the doors week 4 opened — one address in front, nginx decides where a request actually goes.</span>
+      <span class="band-tag" data-th="ปิดประตูที่สัปดาห์ 4 เปิดไว้ — มีที่อยู่เดียวด้านหน้า nginx เป็นคนตัดสินว่า request จะไปไหนต่อ">Close the doors week 4 opened — one address in front, nginx decides where a request actually goes.</span>
     </div>
 
     <figure class="diagram">
@@ -585,13 +694,13 @@
         </defs>
 
         <!-- BEFORE panel -->
-        <text x="230" y="24" text-anchor="middle" class="strong" font-size="13" fill="var(--red)">BEFORE — two doors open</text>
+        <text x="230" y="24" text-anchor="middle" class="strong" font-size="13" fill="var(--red)" data-th="ก่อนหน้า — เปิดสองประตู">BEFORE — two doors open</text>
         <rect x="20" y="50" width="140" height="52" rx="8" fill="none" stroke="currentColor"/>
-        <text x="90" y="72" text-anchor="middle" font-size="11.5">browser</text>
+        <text x="90" y="72" text-anchor="middle" font-size="11.5" data-th="เบราว์เซอร์">browser</text>
         <text x="90" y="88" text-anchor="middle" class="mono lbl">origin :8173</text>
 
         <line x1="205" y1="35" x2="205" y2="235" stroke="var(--amber)" stroke-dasharray="4 3"/>
-        <text x="205" y="248" text-anchor="middle" font-size="9.5" fill="var(--amber)">UFW: 8173 + 3173 open</text>
+        <text x="205" y="248" text-anchor="middle" font-size="9.5" fill="var(--amber)" data-th="UFW: เปิด 8173 + 3173">UFW: 8173 + 3173 open</text>
 
         <line x1="160" y1="65" x2="223" y2="65" stroke="currentColor" marker-end="url(#a5)"/>
         <rect x="225" y="40" width="150" height="46" rx="7" fill="none" stroke="currentColor"/>
@@ -603,23 +712,23 @@
         <text x="300" y="146" text-anchor="middle" font-size="9.5" fill="var(--red)">fetch('/api/students')</text>
 
         <rect x="20" y="175" width="355" height="50" rx="7" fill="var(--red-soft)" stroke="var(--red)"/>
-        <text x="197" y="195" text-anchor="middle" fill="var(--red)" class="strong" font-size="12">✕ blocked by CORS</text>
+        <text x="197" y="195" text-anchor="middle" fill="var(--red)" class="strong" font-size="12" data-th="✕ ถูก CORS บล็อก">✕ blocked by CORS</text>
         <text x="197" y="211" text-anchor="middle" fill="var(--red)" class="mono" font-size="9.5">No 'Access-Control-Allow-Origin' header</text>
 
         <!-- divider -->
         <line x1="500" y1="10" x2="500" y2="390" stroke="var(--line-strong)"/>
 
         <!-- AFTER panel -->
-        <text x="760" y="24" text-anchor="middle" class="strong" font-size="13" fill="var(--green)">AFTER — one door, reverse proxy</text>
+        <text x="760" y="24" text-anchor="middle" class="strong" font-size="13" fill="var(--green)" data-th="หลังทำ — ประตูเดียว ผ่าน reverse proxy">AFTER — one door, reverse proxy</text>
         <rect x="530" y="140" width="150" height="52" rx="8" fill="none" stroke="currentColor"/>
-        <text x="605" y="162" text-anchor="middle" font-size="11.5">browser</text>
+        <text x="605" y="162" text-anchor="middle" font-size="11.5" data-th="เบราว์เซอร์">browser</text>
         <text x="605" y="178" text-anchor="middle" class="mono lbl">origin :80 only</text>
 
         <line x1="740" y1="55" x2="740" y2="345" stroke="var(--amber)" stroke-dasharray="4 3"/>
-        <text x="740" y="358" text-anchor="middle" font-size="9.5" fill="var(--amber)">UFW: 80 only</text>
+        <text x="740" y="358" text-anchor="middle" font-size="9.5" fill="var(--amber)" data-th="UFW: เปิดแค่ 80">UFW: 80 only</text>
 
         <line x1="680" y1="166" x2="748" y2="166" stroke="currentColor" marker-end="url(#a5)"/>
-        <text x="700" y="150" text-anchor="middle" font-size="9.5" fill="var(--green)" class="strong">same origin</text>
+        <text x="700" y="150" text-anchor="middle" font-size="9.5" fill="var(--green)" class="strong" data-th="origin เดียวกัน">same origin</text>
 
         <rect x="750" y="140" width="130" height="52" rx="8" fill="none" stroke="currentColor" stroke-width="1.6"/>
         <text x="815" y="162" text-anchor="middle" font-size="11.5">nginx :80</text>
@@ -640,47 +749,47 @@
         <text x="945" y="282" text-anchor="middle" font-size="10.5">mysql :3306</text>
 
         <rect x="530" y="205" width="350" height="40" rx="7" fill="var(--green-soft)" stroke="var(--green)"/>
-        <text x="705" y="230" text-anchor="middle" fill="var(--green)" class="strong" font-size="12">✓ same-origin — no CORS needed</text>
+        <text x="705" y="230" text-anchor="middle" fill="var(--green)" class="strong" font-size="12" data-th="✓ origin เดียวกัน — ไม่ต้องใช้ CORS">✓ same-origin — no CORS needed</text>
       </svg>
-      <figcaption>The reverse proxy doesn't configure CORS around two origins — it removes the second origin. Everything now arrives at <code>:80</code>; nginx decides internally, over loopback, which backend actually answers.</figcaption>
+      <figcaption data-th="reverse proxy ไม่ได้ตั้งค่า CORS ให้สอง origin คุยกันได้ — มันเอา origin ที่สองออกไปเลย ทุกอย่างมาที่ <code>:80</code> เดียว nginx เป็นคนตัดสินใจภายใน ผ่าน loopback ว่า backend ตัวไหนจะตอบ">The reverse proxy doesn't configure CORS around two origins — it removes the second origin. Everything now arrives at <code>:80</code>; nginx decides internally, over loopback, which backend actually answers.</figcaption>
     </figure>
 
     <div class="cmp-block">
       <div class="cmp-row bad">
         <span class="cmp-code">301</span>
-        <span>Client sends <span class="mono">POST /api/notice</span></span>
-        <span class="cmp-arrow">→ redirect → resent as <strong>GET</strong> — the body is silently dropped</span>
+        <span data-th="ไคลเอ็นต์ส่ง <span class='mono'>POST /api/notice</span>">Client sends <span class="mono">POST /api/notice</span></span>
+        <span class="cmp-arrow" data-th="→ redirect → ถูกส่งใหม่เป็น <strong>GET</strong> — body หายไปเงียบๆ">→ redirect → resent as <strong>GET</strong> — the body is silently dropped</span>
       </div>
       <div class="cmp-row good">
         <span class="cmp-code">308</span>
-        <span>Client sends <span class="mono">POST /api/notice</span></span>
-        <span class="cmp-arrow">→ redirect → resent as <strong>POST</strong> — method and body preserved</span>
+        <span data-th="ไคลเอ็นต์ส่ง <span class='mono'>POST /api/notice</span>">Client sends <span class="mono">POST /api/notice</span></span>
+        <span class="cmp-arrow" data-th="→ redirect → ถูกส่งใหม่เป็น <strong>POST</strong> — method และ body ยังอยู่ครบ">→ redirect → resent as <strong>POST</strong> — method and body preserved</span>
       </div>
     </div>
 
     <div class="cards" style="margin-top:16px;">
       <div class="card">
-        <h3>Concepts</h3>
+        <h3 data-th="แนวคิด">Concepts</h3>
         <ul>
-          <li>A reverse proxy sits in front of origin servers — clients never talk to them directly.</li>
-          <li>CORS is a <strong>browser</strong> rule, not a network wall — it blocks a script from reading a cross-origin response.</li>
-          <li>Nested-path routing lets one <code>server_name</code> serve both the frontend and the API.</li>
+          <li data-th="reverse proxy อยู่หน้า origin server เสมอ — client ไม่ได้คุยกับมันตรงๆ เลย">A reverse proxy sits in front of origin servers — clients never talk to them directly.</li>
+          <li class="pinned"><span class="step-badge" data-thread="cors">STEP 2/2 · W5</span><span data-th="<strong>ทางแก้จริง คือตัด origin ที่สองทิ้ง:</strong> CORS เป็นกฎของ <strong>เบราว์เซอร์</strong> ไม่ใช่กำแพงเครือข่าย — มันบล็อกสคริปต์ไม่ให้อ่าน response ข้าม origin"><strong>the real fix — remove the second origin:</strong> CORS is a <strong>browser</strong> rule, not a network wall — it blocks a script from reading a cross-origin response.</span></li>
+          <li data-th="nested-path routing ทำให้ <code>server_name</code> เดียวเสิร์ฟได้ทั้ง frontend และ API">Nested-path routing lets one <code>server_name</code> serve both the frontend and the API.</li>
         </ul>
       </div>
       <div class="card">
-        <h3>Commands</h3>
+        <h3 data-th="คำสั่ง">Commands</h3>
         <table class="cmdtable">
-          <tr><td>location /api/ { proxy_pass ...; }</td><td>forward matching paths to the backend</td></tr>
-          <tr><td>location / { root ...; }</td><td>everything else is served as static files</td></tr>
-          <tr><td>return 308 https://$host$uri;</td><td>redirect that preserves the HTTP method</td></tr>
+          <tr><td>location /api/ { proxy_pass ...; }</td><td class="pinned"><span class="step-badge" data-thread="loop">STEP 2/2 · W5</span><span data-th="proxy ก็อยู่บน loopback เหมือนกัน: ส่งต่อ path ที่ตรงกันไปยัง backend">proxy stays on loopback too: forward matching paths to the backend</span></td></tr>
+          <tr><td>location / { root ...; }</td><td data-th="ที่เหลือเสิร์ฟเป็นไฟล์ static ทั้งหมด">everything else is served as static files</td></tr>
+          <tr><td>return 308 https://$host$uri;</td><td data-th="redirect ที่ยังรักษา HTTP method ไว้">redirect that preserves the HTTP method</td></tr>
         </table>
       </div>
       <div class="card watch">
-        <h3>Watch out</h3>
+        <h3 data-th="ระวังไว้">Watch out</h3>
         <ul>
-          <li>Use <code>308</code>, not <code>301</code>, for any redirect that might carry a POST.</li>
-          <li>No sample config is given in the exam — you write the server block from scratch.</li>
-          <li>Once the proxy is the only caller, the backend's own port can close — only <code>80</code> needs a rule.</li>
+          <li data-th="ใช้ <code>308</code> ไม่ใช่ <code>301</code> กับ redirect ที่อาจมี POST ติดมาด้วย">Use <code>308</code>, not <code>301</code>, for any redirect that might carry a POST.</li>
+          <li data-th="ข้อสอบไม่มี config ตัวอย่างให้ — ต้องเขียน server block เองตั้งแต่ต้น">No sample config is given in the exam — you write the server block from scratch.</li>
+          <li class="pinned"><span class="step-badge" data-thread="fw">STEP 3/3 · W5</span><span data-th="<strong>ปิดประตูที่ 2 คืน:</strong> พอ proxy เป็นคนเรียกเพียงคนเดียว พอร์ตของ backend เองก็ปิดได้เลย — เหลือแค่ <code>80</code> ที่ต้องมี rule"><strong>close door #2 again:</strong> once the proxy is the only caller, the backend's own port can close — only <code>80</code> needs a rule.</span></li>
         </ul>
       </div>
     </div>
@@ -690,20 +799,68 @@
   <div class="footer-card">
     <div class="footer-grid">
       <div>
-        <h3>Exam 1 — how it's actually run</h3>
+        <h3 data-th="ข้อสอบ 1 — จัดสอบจริงยังไง">Exam 1 — how it's actually run</h3>
         <ul>
-          <li>Covers weeks 1–5, on a Wednesday, roughly <strong>9 Sep 2026</strong>. Multiple choice + a practical part.</li>
-          <li>Practical mirrors the labs at the same difficulty — but the lab sheet's commands are gone; you work from the expected output backwards.</li>
-          <li>English only, one paper dictionary allowed. Browser and AI closed; only the checker app and a terminal.</li>
-          <li>The checker reports how many steps passed, not a score — same as every <code>int134 check labNN</code> so far.</li>
+          <li data-th="ครอบคลุมสัปดาห์ 1–5 วันพุธ ประมาณ <strong>9 ก.ย. 2569</strong> ปรนัย + ภาคปฏิบัติ">Covers weeks 1–5, on a Wednesday, roughly <strong>9 Sep 2026</strong>. Multiple choice + a practical part.</li>
+          <li data-th="ภาคปฏิบัติเหมือน lab ระดับความยากเท่ากัน — แต่คำสั่งใน lab sheet หายไป ต้องดูผลลัพธ์ที่ต้องการแล้วไล่ย้อนกลับมาเป็นคำสั่งเอง">Practical mirrors the labs at the same difficulty — but the lab sheet's commands are gone; you work from the expected output backwards.</li>
+          <li data-th="ภาษาอังกฤษเท่านั้น ใช้ดิกกระดาษได้เล่มเดียว เบราว์เซอร์กับ AI ปิดหมด เหลือแค่แอป checker กับ terminal">English only, one paper dictionary allowed. Browser and AI closed; only the checker app and a terminal.</li>
+          <li data-th="checker รายงานว่าผ่านกี่ขั้นตอน ไม่ใช่คะแนน — เหมือน <code>int134 check labNN</code> ทุกครั้งที่ผ่านมา">The checker reports how many steps passed, not a score — same as every <code>int134 check labNN</code> so far.</li>
         </ul>
       </div>
       <div>
-        <h3>Before you sit it: the mock practice</h3>
-        <p>Run <span class="kbd">int134 practice --help</span> on the VM. Five tasks, <span class="kbd">lab01mock</span>…<span class="kbd">lab05mock</span>, meant to be done in order — each one's environment assumes the last one succeeded.</p>
-        <p><span class="kbd">LAB-SHEET.md</span> and <span class="kbd">answers.yaml</span> live in <span class="kbd">/home/public</span>, same as every other lab. No command summary this time — some tasks will be harder on purpose; the real exam supplies a little more.</p>
+        <h3 data-th="ก่อนเข้าสอบ: mock practice">Before you sit it: the mock practice</h3>
+        <p data-th="รัน <span class='kbd'>int134 practice --help</span> บน VM มีห้างาน <span class='kbd'>lab01mock</span>…<span class='kbd'>lab05mock</span> ตั้งใจให้ทำตามลำดับ — environment ของแต่ละงานตั้งสมมติฐานว่างานก่อนหน้าสำเร็จไปแล้ว">Run <span class="kbd">int134 practice --help</span> on the VM. Five tasks, <span class="kbd">lab01mock</span>…<span class="kbd">lab05mock</span>, meant to be done in order — each one's environment assumes the last one succeeded.</p>
+        <p data-th="<span class='kbd'>LAB-SHEET.md</span> กับ <span class='kbd'>answers.yaml</span> อยู่ที่ <span class='kbd'>/home/public</span> เหมือนทุก lab ที่ผ่านมา รอบนี้ไม่มีสรุปคำสั่งให้ — บางงานจะยากขึ้นโดยตั้งใจ ข้อสอบจริงจะมีให้มากกว่านี้อีกนิด"><span class="kbd">LAB-SHEET.md</span> and <span class="kbd">answers.yaml</span> live in <span class="kbd">/home/public</span>, same as every other lab. No command summary this time — some tasks will be harder on purpose; the real exam supplies a little more.</p>
       </div>
     </div>
   </div>
 
 </div>
+<div class="marker-tray">
+  <span class="cap" style="background:#2b2b2b"></span>
+  <span class="cap" style="background:var(--accent)"></span>
+  <span class="cap" style="background:var(--rose)"></span>
+  <span class="cap" style="background:var(--amber)"></span>
+  <span class="cap" style="background:var(--green)"></span>
+</div>
+</div>
+
+<script>
+(function(){
+  var KEY = 'int134wb-lang';
+  var btn = document.getElementById('langToggle');
+
+  function swapOne(el, lang){
+    var tag = el.tagName.toLowerCase();
+    var prop = (tag === 'text' || tag === 'tspan') ? 'textContent' : 'innerHTML';
+    if(el.dataset.enCache === undefined){ el.dataset.enCache = el[prop]; }
+    var th = el.dataset.th;
+    if(th === undefined){ return; }
+    el[prop] = (lang === 'th') ? th : el.dataset.enCache;
+  }
+
+  function apply(lang){
+    document.documentElement.setAttribute('lang', lang);
+    document.documentElement.classList.toggle('lang-th', lang === 'th');
+    var nodes = document.querySelectorAll('[data-th]');
+    for(var i=0;i<nodes.length;i++){ swapOne(nodes[i], lang); }
+    if(btn){
+      btn.setAttribute('aria-pressed', lang === 'th' ? 'true' : 'false');
+      btn.classList.toggle('is-th', lang === 'th');
+    }
+  }
+
+  if(btn){
+    btn.addEventListener('click', function(){
+      var cur = document.documentElement.classList.contains('lang-th') ? 'th' : 'en';
+      var next = cur === 'th' ? 'en' : 'th';
+      apply(next);
+      try{ localStorage.setItem(KEY, next); }catch(e){}
+    });
+  }
+
+  var saved = '';
+  try{ saved = localStorage.getItem(KEY) || ''; }catch(e){}
+  if(saved === 'th'){ apply('th'); }
+})();
+</script>
