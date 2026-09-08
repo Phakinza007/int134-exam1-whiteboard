@@ -605,11 +605,20 @@
     if(base === '.env'){
       return 'DATABASE_URL="mysql://school:REPLACE_WITH_YOUR_PASSWORD@127.0.0.1:3306/school"\nSTUDENT_ID="68xxxxxxxxx"\nPORT=3xxx\nHOST=0.0.0.0\nCORS_ORIGIN=""\n';
     }
+    if(path === '/var/www/noticeboard/config.js'){
+      return 'window.INT134 = {\n  studentId: "68xxxxxxxxx",\n  noticesUrl: "data/notices.json",\n};\n';
+    }
     if(base === 'config.js'){
       return 'window.INT134 = {\n  studentId: "68xxxxxxxxx",\n  studentsUrl: "/api/students",\n};\n';
     }
+    if(path === '/var/www/classsite/index.html'){
+      return '<html><body><h1>INT134 class site — 68xxxxxxxxx</h1></body></html>\n';
+    }
+    if(path === '/etc/nginx/conf.d/noticeboard.conf'){
+      return 'server {\n    listen       80;\n    server_name  your-vm.sit.kmutt.ac.th your-vm;\n\n    access_log   /var/log/nginx/noticeboard.access.log;\n    error_log    /var/log/nginx/noticeboard.error.log;\n\n    root         /var/www/noticeboard;\n    index        index.html;\n\n    location / {\n        try_files $uri $uri/ =404;\n    }\n}\n';
+    }
     if(/\/etc\/nginx\/conf\.d\/.*\.conf$/.test(path)){
-      return 'server {\n    listen       80;\n    server_name  class.int134;\n    root         /var/www/site;\n    index        index.html;\n\n    location / {\n    }\n}\n';
+      return 'server {\n    listen       80;\n    server_name  class.int134;\n    root         /var/www/classsite;\n    index        index.html;\n\n    location / {\n    }\n}\n';
     }
     if(/\/etc\/systemd\/system\/.*\.service$/.test(path)){
       return '[Unit]\nDescription=<...>\n\n[Service]\nExecStart=<...>\nUser=<...>\nRestart=<...>\n\n[Install]\nWantedBy=<...>\n';
@@ -1263,8 +1272,20 @@
       {label:'nginx is installed from nginx.org (1.30.x)', hint:'sudo apt update, then sudo apt install nginx -y — installing before "apt update" gets you Ubuntu\'s 1.24 instead', test:function(v){ return v.services.nginx.installed && /^1\.30/.test(v.services.nginx.version||''); }},
       {label:'nginx is enabled and active', hint:'sudo systemctl enable --now nginx', test:function(v){ return v.services.nginx.enabled && v.services.nginx.active; }},
       {label:'ufw allows 80/tcp', hint:'sudo ufw allow 80/tcp', test:function(v){ return v.ufw.rules[80]==='ALLOW'; }},
-      {label:'you wrote your own /etc/nginx/conf.d/site.conf', hint:'sudo micro /etc/nginx/conf.d/site.conf', test:function(v){ return !!v.fs['/etc/nginx/conf.d/site.conf']; }},
+      {label:'/var/www/classsite/index.html exists (a real page, not an empty file)', hint:"micro /var/www/classsite/index.html — put your student ID in it", test:function(v){ var f=v.fs['/var/www/classsite/index.html']; return !!(f && f.content && f.content.trim().length>0); }},
+      {label:"/etc/nginx/conf.d/site.conf names server_name class.int134 and a root", hint:'sudo micro /etc/nginx/conf.d/site.conf — needs server_name class.int134; and a root pointing at /var/www/classsite', test:function(v){
+        var f = v.fs['/etc/nginx/conf.d/site.conf'];
+        return !!(f && /server_name\s+class\.int134/.test(f.content||'') && /root\s+\S/.test(f.content||''));
+      }},
       {label:'the config on disk currently passes "nginx -t"', hint:'nginx -t — read the line number it complains about, then sudo micro the file again', test:function(v){ return v.nginxConfigValid; }},
+      {label:'/etc/nginx/conf.d/noticeboard.conf has its own named access_log and error_log', hint:'sudo micro /etc/nginx/conf.d/noticeboard.conf — add access_log /var/log/nginx/noticeboard.access.log; and error_log /var/log/nginx/noticeboard.error.log; so it never gets confused with site.conf', test:function(v){
+        var f = v.fs['/etc/nginx/conf.d/noticeboard.conf'];
+        return !!(f && /access_log\s+\S*noticeboard\.access\.log/.test(f.content||'') && /error_log\s+\S*noticeboard\.error\.log/.test(f.content||''));
+      }},
+      {label:'/var/www/noticeboard/config.js carries your real student ID', hint:'micro /var/www/noticeboard/config.js — set studentId (leave noticesUrl alone, the backend comes in week 4)', test:function(v){
+        var f = v.fs['/var/www/noticeboard/config.js'];
+        return !!(f && /studentId\s*:\s*"\d{5,}"/.test(f.content||''));
+      }},
       PORT22_CHECK
     ],
     W4: [
@@ -1339,8 +1360,11 @@
     W3:{ label:'W3 · Static web', tips:[
       'sudo apt update', 'sudo apt install nginx -y', 'sudo systemctl enable --now nginx',
       'sudo ufw allow 80/tcp', 'curl -H "Host: x" localhost', 'nginx -t',
-      'sudo micro /etc/nginx/conf.d/site.conf', 'nginx -t', 'sudo systemctl reload nginx'
-    ], mission:'Install nginx (try it before "apt update" too, to see the 1.24-vs-1.30 trap). Then edit /etc/nginx/conf.d/site.conf yourself — delete a semicolon and watch "nginx -t" catch it, then compare reload vs restart.'},
+      'micro /var/www/classsite/index.html',
+      'sudo micro /etc/nginx/conf.d/site.conf', 'nginx -t', 'sudo systemctl reload nginx',
+      'micro /var/www/noticeboard/config.js',
+      'sudo micro /etc/nginx/conf.d/noticeboard.conf', 'nginx -t', 'sudo systemctl reload nginx'
+    ], mission:'Install nginx (try it before "apt update" too, to see the 1.24-vs-1.30 trap). Write the class site page and its site.conf (server_name class.int134), then a second real site: noticeboard.conf with its own named access/error logs, and config.js with your real student ID. Break a semicolon and watch "nginx -t" catch it, then compare reload vs restart.'},
     W4:{ label:'W4 · Backend + DB', tips:[
       'sudo apt install mysql-server -y', 'systemctl status mysql', 'mysql -e "SELECT 1;"', 'sudo mysql',
       "CREATE DATABASE school;", "CREATE USER 'school'@'localhost' IDENTIFIED BY RANDOM PASSWORD;",
