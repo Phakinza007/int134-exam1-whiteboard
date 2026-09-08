@@ -81,6 +81,11 @@
     border-radius:6px; padding:6px 9px; cursor:pointer; color:var(--ink); word-break:break-all;
   }
   .trychip:hover{border-color:var(--accent);}
+  .modetoggle{display:flex; gap:6px; margin-bottom:10px;}
+  .modebtn{flex:1; font-family:var(--font-mono); font-size:10.5px; font-weight:700; padding:6px 6px; border-radius:6px; border:1.5px solid var(--line-strong); background:var(--surface-2); color:var(--ink-soft); cursor:pointer;}
+  .modebtn.active{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
+  .goalitem{font-family:var(--font-mono); font-size:11.5px; line-height:1.5; padding:6px 9px; border:1px dashed var(--line-strong); border-radius:6px; margin-bottom:5px; color:var(--ink-soft);}
+  .modehint{font-size:11.5px; color:var(--ink-faint); margin-top:8px; font-style:italic;}
 
   table.state{width:100%; border-collapse:collapse; font-size:11.5px; font-family:var(--font-mono);}
   table.state td{padding:4px 2px; border-top:1px solid var(--line); vertical-align:middle;}
@@ -124,9 +129,19 @@
   <div class="sidebar">
     <div class="panel">
       <h3>Try this</h3>
+      <div class="modetoggle">
+        <button class="modebtn active" id="modeGuided" type="button">🖐 Guided — show commands</button>
+        <button class="modebtn" id="modePractice" type="button">🧠 Practice — goals only</button>
+      </div>
       <div class="weektabs" id="weektabs"></div>
       <div class="mission" id="mission"></div>
       <div class="trylist" id="trylist"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Checker</h3>
+      <button class="btn" id="checkBtn" type="button" style="width:100%; text-align:center;">✅ Check my VM against <span id="checkWeekLabel">W1</span></button>
+      <div class="modehint">Same idea as the real course's <code style="font-family:var(--font-mono)">int134 check labNN</code> — reports how many steps passed, not a score. Try typing <code style="font-family:var(--font-mono)">check</code> in the terminal too.</div>
     </div>
 
     <div class="panel">
@@ -388,6 +403,7 @@
         pr('', 'DB:       sudo mysql | mysql -e "..." | MYSQL_PWD=x mysql -u <user> <db> -e "..."');
         pr('', 'Backend:  npm ci | npx prisma generate | npx prisma migrate dev --name x | npx prisma migrate diff --exit-code');
         pr('', 'Misc:     echo "text" > file | echo $? | sudo reboot | Ctrl+L clear | Ctrl+C cancel line');
+        pr('', 'Check:    check | check w3 | int134 check lab03   (grades your current VM state against that week\'s goals)');
         return;
       case 'clear': termEl.innerHTML=''; return;
       case 'pwd': pr('', vm.cwd); return;
@@ -550,6 +566,19 @@
       case 'npm': return cmdNpm(tokens);
       case 'npx': return cmdNpx(tokens);
       case 'reboot': return requireSudo(effRoot) && cmdReboot();
+      case 'check': {
+        var wk = tokens[1] ? tokens[1].toUpperCase() : currentWeek;
+        runCheck(checklists[wk] ? wk : currentWeek);
+        return;
+      }
+      case 'int134': {
+        if(tokens[1] === 'check' && tokens[2]){
+          var lm = tokens[2].match(/lab0?(\d)/i);
+          if(lm && checklists['W'+lm[1]]){ runCheck('W'+lm[1]); return; }
+        }
+        if(tokens[1] === 'practice'){ pr('dim','This sandbox has its own Guided/Practice toggle in the sidebar instead of separate lab0Nmock tasks — flip it there.'); return; }
+        pr('err', 'int134: this sandbox only simulates "int134 check labNN"'); return;
+      }
       case 'man': pr('dim', 'No manual entry for ' + (tokens[1]||'') + ' in this sandbox — try "help".'); return;
       default:
         if(line.match(/&\s*$/)){ return cmdBg(tokens.slice(0, -1), false); }
@@ -1174,6 +1203,64 @@
     jobsBox.innerHTML = vm.jobs.length ? vm.jobs.map(function(j,i){ return '<div style="font-family:var(--font-mono);font-size:11.5px;margin-bottom:4px;">['+(i+1)+'] '+j.pid+' '+j.cmd+(j.nohup?' <span class="tag" style="background:var(--accent-soft);color:var(--accent)">nohup</span>':'')+'</div>'; }).join('') : '<div class="empty">none</div>';
   }
 
+  // ================= checker =================
+  var checklists = {
+    W1: [
+      {label:'unzip is installed', test:function(v){ return v.packages.unzip.installed; }},
+      {label:'you have run apt update at least once', test:function(v){ return v.aptUpdated; }},
+      {label:'cron is currently disabled', test:function(v){ return v.services.cron.installed && !v.services.cron.enabled; }},
+      {label:'~/int134/lab01 exists', test:function(v){ return !!v.fs['/home/sysadmin/int134/lab01']; }},
+      {label:'the port 22 (ssh) firewall rule is still there', test:function(v){ return v.ufw.rules[22]==='ALLOW'; }}
+    ],
+    W2: [
+      {label:'a script file (e.g. heartbeat.sh) exists somewhere', test:function(v){ return Object.keys(v.fs).some(function(p){ return p.slice(-3)==='.sh' && v.fs[p].type==='file'; }); }},
+      {label:'int134-heartbeat is a real systemd unit and enabled', test:function(v){ var s=v.services['int134-heartbeat']; return !!(s && s.installed && s.enabled); }},
+      {label:'int134-heartbeat is currently active', test:function(v){ var s=v.services['int134-heartbeat']; return !!(s && s.active); }},
+      {label:'the port 22 (ssh) firewall rule is still there', test:function(v){ return v.ufw.rules[22]==='ALLOW'; }}
+    ],
+    W3: [
+      {label:'nginx is installed from nginx.org (1.30.x)', test:function(v){ return v.services.nginx.installed && /^1\.30/.test(v.services.nginx.version||''); }},
+      {label:'nginx is enabled and active', test:function(v){ return v.services.nginx.enabled && v.services.nginx.active; }},
+      {label:'ufw allows 80/tcp', test:function(v){ return v.ufw.rules[80]==='ALLOW'; }},
+      {label:'you wrote your own /etc/nginx/conf.d/site.conf', test:function(v){ return !!v.fs['/etc/nginx/conf.d/site.conf']; }},
+      {label:'the config on disk currently passes "nginx -t"', test:function(v){ return v.nginxConfigValid; }},
+      {label:'the port 22 (ssh) firewall rule is still there', test:function(v){ return v.ufw.rules[22]==='ALLOW'; }}
+    ],
+    W4: [
+      {label:'mysql-server is installed and active', test:function(v){ return v.services.mysql.installed && v.services.mysql.active; }},
+      {label:"a 'school' database exists", test:function(v){ return !!v.mysqlDbs.school; }},
+      {label:"a 'school' mysql user is scoped to the school database", test:function(v){ return !!(v.mysqlUsers.school && v.mysqlUsers.school.scope==='school'); }},
+      {label:'you wrote a school-api systemd unit', test:function(v){ return !!v.fs['/etc/systemd/system/school-api.service']; }},
+      {label:'school-api is enabled and active', test:function(v){ var s=v.services['school-api']; return !!(s && s.enabled && s.active); }},
+      {label:'port 3306 is NOT open on the firewall', test:function(v){ return !v.ufw.rules[3306]; }}
+    ],
+    W5: [
+      {label:'the nginx config proxies /api/ to the backend', test:function(v){
+        return v.reverseProxyConfigured || Object.keys(v.fs).some(function(p){
+          return /conf\.d\/.*\.conf$/.test(p) && /proxy_pass/i.test(v.fs[p].content||'') && /\/api\//.test(v.fs[p].content||'');
+        });
+      }},
+      {label:'you successfully posted a record to /api/students', test:function(v){ return v.apiRecords.length>0; }},
+      {label:'school-api is currently active (survives a restart)', test:function(v){ var s=v.services['school-api']; return !!(s && s.active); }},
+      {label:'port 3306 is still not open', test:function(v){ return !v.ufw.rules[3306]; }},
+      {label:'the port 22 (ssh) firewall rule is still there', test:function(v){ return v.ufw.rules[22]==='ALLOW'; }}
+    ]
+  };
+  function runCheck(weekKey){
+    var list = checklists[weekKey];
+    if(!list){ pr('err', 'check: unknown week "' + weekKey + '"'); return; }
+    pr('dim', 'Checking ' + weekKey.toLowerCase() + ' against your sandbox VM ...');
+    var passed = 0;
+    list.forEach(function(item){
+      var ok = false;
+      try{ ok = !!item.test(vm); }catch(e){ ok = false; }
+      if(ok) passed++;
+      pr(ok ? 'ok' : 'err', (ok ? '[PASS] ' : '[FAIL] ') + item.label);
+    });
+    pr('', '');
+    pr(passed===list.length ? 'ok' : 'warn', passed + ' / ' + list.length + ' steps passed.');
+  }
+
   // ================= weeks / try-this =================
   var weeks = {
     W1:{ label:'W1 · Packages & systemd', tips:[
@@ -1203,18 +1290,39 @@
     ], mission:'Toggle "reverse proxy configured" in Scenarios, then post a record and restart the API — the record survives even though the process gets a new PID.'}
   };
   var currentWeek = 'W1';
+  var mode = 'guided';
   function renderWeeks(){
     var tabs = document.getElementById('weektabs');
     tabs.innerHTML = Object.keys(weeks).map(function(k){ return '<button class="weektab'+(k===currentWeek?' active':'')+'" data-w="'+k+'">'+k+'</button>'; }).join('');
     Array.prototype.forEach.call(tabs.querySelectorAll('.weektab'), function(btn){
       btn.addEventListener('click', function(){ currentWeek = btn.getAttribute('data-w'); renderWeeks(); });
     });
+    document.getElementById('checkWeekLabel').textContent = currentWeek;
     document.getElementById('mission').textContent = weeks[currentWeek].mission;
-    document.getElementById('trylist').innerHTML = weeks[currentWeek].tips.map(function(t){ return '<button class="trychip">'+t.replace(/</g,'&lt;')+'</button>'; }).join('');
-    Array.prototype.forEach.call(document.querySelectorAll('.trychip'), function(chip, i){
-      chip.addEventListener('click', function(){ input.value = weeks[currentWeek].tips[i]; input.focus(); });
-    });
+    var listEl = document.getElementById('trylist');
+    if(mode === 'practice'){
+      listEl.innerHTML = checklists[currentWeek].map(function(item){ return '<div class="goalitem">🎯 ' + item.label + '</div>'; }).join('')
+        + '<div class="modehint">No commands given — work it out yourself, then click "Check my VM" (or type <code style="font-family:var(--font-mono)">check</code>) to see how many steps pass.</div>';
+    } else {
+      listEl.innerHTML = weeks[currentWeek].tips.map(function(t){ return '<button class="trychip">'+t.replace(/</g,'&lt;')+'</button>'; }).join('');
+      Array.prototype.forEach.call(listEl.querySelectorAll('.trychip'), function(chip, i){
+        chip.addEventListener('click', function(){ input.value = weeks[currentWeek].tips[i]; input.focus(); });
+      });
+    }
   }
+  document.getElementById('modeGuided').addEventListener('click', function(){
+    mode = 'guided';
+    document.getElementById('modeGuided').classList.add('active');
+    document.getElementById('modePractice').classList.remove('active');
+    renderWeeks();
+  });
+  document.getElementById('modePractice').addEventListener('click', function(){
+    mode = 'practice';
+    document.getElementById('modePractice').classList.add('active');
+    document.getElementById('modeGuided').classList.remove('active');
+    renderWeeks();
+  });
+  document.getElementById('checkBtn').addEventListener('click', function(){ runCheck(currentWeek); });
   renderWeeks();
 
   // ================= scenarios =================
