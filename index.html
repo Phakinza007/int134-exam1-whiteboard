@@ -258,6 +258,17 @@
   html.lang-th .cmp-arrow{font-size:13px;}
   @media (max-width:600px){.cmp-row{grid-template-columns:1fr; text-align:left;}}
 
+  .glossary{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:20px 22px;
+    box-shadow:var(--shadow); margin-bottom:44px;
+  }
+  .glossary h3{font-family:var(--font-marker); font-size:17px; margin-bottom:4px;}
+  .glossary > p{font-size:13px; color:var(--ink-soft); margin:0 0 16px;}
+  .gl-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px 20px;}
+  .gl-term{font-size:13.2px; line-height:1.5;}
+  .gl-term dt{font-family:var(--font-mono); font-weight:700; color:var(--accent); margin:0 0 2px;}
+  .gl-term dd{margin:0; color:var(--ink-soft);}
+
   .footer-card{
     position:relative; transform:rotate(0.3deg);
     background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:22px 24px;
@@ -303,6 +314,27 @@
       <span class="lg-item"><i class="lg-dot" data-thread="cors"></i><span data-th="CORS — ต่อกันที่ W4 → W5">CORS — connects W4 → W5</span></span>
     </div>
   </header>
+
+  <div class="glossary">
+    <h3 data-th="ใหม่กับเรื่องนี้? อภิธานศัพท์แบบเร็ว">New here? Quick glossary</h3>
+    <p data-th="คำที่โผล่ซ้ำๆ ทั้งบอร์ด อ่านตรงนี้ก่อนสักรอบ แล้วค่อยไล่อ่าน W1–W5">Terms that repeat across the whole board — read this once before diving into W1–W5.</p>
+    <dl class="gl-grid">
+      <div class="gl-term"><dt>PID</dt><dd data-th="เลขที่ระบบตั้งให้โปรแกรมที่กำลังรันอยู่ ใช้ติดตามและควบคุมมัน">the number the OS gives a running program, used to track and control it.</dd></div>
+      <div class="gl-term"><dt>PPID</dt><dd data-th="PID ของโปรเซสที่เป็นคนสร้างโปรเซสนี้ขึ้นมา (parent)">the PID of whichever process started this one (its parent).</dd></div>
+      <div class="gl-term"><dt>systemd</dt><dd data-th="โปรแกรมที่เริ่มและดูแล service อื่นๆ ทุกตัวบนเครื่อง">the program that starts and looks after every other service on the machine.</dd></div>
+      <div class="gl-term"><dt data-th="unit file">unit file</dt><dd data-th="ไฟล์ข้อความสั้นๆ บอก systemd ว่าจะรัน service นี้ยังไง: คำสั่งอะไร ใครรัน restart ไหม">a short text file telling systemd how to run one service: which command, which user, restart or not.</dd></div>
+      <div class="gl-term"><dt data-th="signal">signal (SIGTERM/SIGKILL)</dt><dd data-th="ข้อความสั้นๆ ที่ส่งไปบอกโปรแกรมให้หยุด SIGTERM = ขอให้หยุดดีๆ, SIGKILL = หยุดเดี๋ยวนี้ ห้ามขัดขืน">a short message asking a program to stop. SIGTERM = please stop; SIGKILL = stop now, no choice.</dd></div>
+      <div class="gl-term"><dt data-th="firewall / ufw">firewall / ufw</dt><dd data-th="โปรแกรมที่ปิดกั้นทราฟฟิกเครือข่ายเป็นค่าเริ่มต้น แล้วเปิดเฉพาะพอร์ตที่เราอนุญาตเองเท่านั้น">software that blocks network traffic by default and only lets through the ports you explicitly allow.</dd></div>
+      <div class="gl-term"><dt data-th="port">port</dt><dd data-th="เลขที่โปรแกรมใช้ดักฟัง request เพื่อให้เครือข่ายรู้ว่า request นี้เป็นของโปรแกรมไหน (เช่น :80 คือเว็บ)">a number a program listens on, so the network knows which program a request is for (e.g. :80 for a website).</dd></div>
+      <div class="gl-term"><dt>0.0.0.0 vs 127.0.0.1</dt><dd data-th="0.0.0.0 = เข้าถึงได้จากทุกที่ในเครือข่าย, 127.0.0.1 = เข้าถึงได้แค่จากเครื่องเดียวกันเอง (loopback)">0.0.0.0 = reachable from anywhere on the network. 127.0.0.1 = reachable only from this same machine (loopback).</dd></div>
+      <div class="gl-term"><dt data-th="DBMS / database server">DBMS / database server</dt><dd data-th="โปรแกรมแยกต่างหากที่เก็บและจัดการข้อมูล แอปของเราเป็นแค่ client ตัวหนึ่ง ไม่ได้ถือข้อมูลเอง">a separate program that stores and manages data — your app is just one client, not the data itself.</dd></div>
+      <div class="gl-term"><dt data-th="least privilege">least privilege</dt><dd data-th="ให้สิทธิ์แค่เท่าที่จำเป็นจริงๆ เพื่อถ้าข้อมูลหลุด (“blast radius”) ความเสียหายจะเล็กที่สุด">give an account only the access it truly needs, so a leak (its "blast radius") does the least possible damage.</dd></div>
+      <div class="gl-term"><dt data-th="origin">origin</dt><dd data-th="ชุด scheme + โดเมน + พอร์ต ที่หน้าเว็บถูกโหลดมา ต่างกันแม้แค่พอร์ตเดียวก็ถือเป็นคนละ origin">the scheme + domain + port a page was loaded from. Differ in even the port, and it's a different origin.</dd></div>
+      <div class="gl-term"><dt>CORS</dt><dd data-th="กฎของเบราว์เซอร์ที่บล็อกสคริปต์ในหน้าเว็บไม่ให้อ่าน response จาก origin อื่น เว้นแต่ origin นั้นอนุญาต">a browser rule blocking a page's script from reading a response from a different origin, unless that origin allows it.</dd></div>
+      <div class="gl-term"><dt data-th="reverse proxy">reverse proxy</dt><dd data-th="server ที่อยู่หน้า server อื่นๆ คอยส่งต่อ request ไปให้ตัวที่ถูกต้อง คนนอกเห็นแค่ที่อยู่เดียว">a server in front of other servers that forwards requests to the right one — the outside world sees only one address.</dd></div>
+      <div class="gl-term"><dt data-th="shadow database">shadow database</dt><dd data-th="ฐานข้อมูลสำเนาทิ้งขว้างที่ Prisma สร้างลองก่อน เพื่อทดสอบการเปลี่ยน schema อย่างปลอดภัยก่อนแตะของจริง">a disposable copy of the database Prisma builds to test a schema change safely before touching the real one.</dd></div>
+    </dl>
+  </div>
 
   <!-- ================= WEEK 1 ================= -->
   <section class="band">
@@ -660,7 +692,7 @@
           <tr><td>GRANT ALL ON db.* TO 'x'@'localhost'</td><td data-th="จำกัดขอบเขตแค่ฐานข้อมูลเดียว host เดียว">scope to one database, one host</td></tr>
           <tr><td>install -m 600 /dev/null x.env</td><td data-th="ไฟล์ private ก่อนที่ความลับจะเข้าไป">private file, before the secret goes in</td></tr>
           <tr><td>npm ci &amp;&amp; npx prisma generate</td><td data-th="เวอร์ชันตรงเป๊ะ แล้วค่อย build client">exact versions, then build the client</td></tr>
-          <tr><td>migrate diff --exit-code</td><td data-th="0 = ตรงกัน, 2 = drift — เช็กก่อนเริ่มรัน">0 = agrees, 2 = drift — check before starting</td></tr>
+          <tr><td>migrate diff --exit-code</td><td data-th="0 = ฐานข้อมูลตรงกับโค้ด, 2 = สองอย่างเพี้ยนไปคนละทาง — เช็กก่อนเริ่มรัน">0 = the database matches the code, 2 = they've drifted apart — check before starting</td></tr>
           <tr><td>sudo ufw allow 3xxx/tcp</td><td class="pinned"><span class="step-badge" data-thread="fw">STEP 2/3 · W4</span><span data-th="เปิดประตูที่ 2 (API): เปิดอีกประตูหนึ่ง คราวนี้ให้ API">open door #2 (API): one more door, this time for the API</span></td></tr>
         </table>
       </div>
@@ -668,7 +700,7 @@
         <h3 data-th="ระวังไว้">Watch out</h3>
         <ul>
           <li class="pinned"><span class="step-badge" data-thread="loop">STEP 1/2 · W4</span><span data-th="<strong>ห้ามเปิดฐานข้อมูลออกเน็ต:</strong> ห้ามเปิดพอร์ต 3306 เด็ดขาด — เข้าถึง MySQL ผ่าน SSH tunnel (Workbench) ไม่ใช่ผ่านเน็ตเวิร์ก"><strong>never expose the database:</strong> never open port 3306 — reach MySQL over an SSH tunnel (Workbench), not the network.</span></li>
-          <li data-th="<code>migrate dev</code> พังตรง shadow database คือถูกต้องแล้ว — อย่าขยาย grant เพื่อให้มันเงียบไป"><code>migrate dev</code> failing on the shadow database is correct — don't widen the grant to silence it.</li>
+          <li data-th="<code>migrate dev</code> พังตรง shadow database (ดูอภิธานศัพท์) คือถูกต้องแล้ว — อย่าไปขยาย grant (สิทธิ์ของ user) เพื่อให้มันเงียบไป"><code>migrate dev</code> failing on the shadow database (see glossary) is correct — don't widen the grant (the user's permissions) to silence it.</li>
           <li data-th="เขียนรหัสผ่าน <strong>ตรงตัว</strong> ใน <code>.env</code> ห้ามใช้ <code>${VAR}</code> — systemd ไม่ขยายให้">Write the password <strong>literally</strong> in <code>.env</code>, never <code>${VAR}</code> — systemd doesn't expand it.</li>
           <li class="pinned"><span class="step-badge" data-thread="cors">STEP 1/2 · W4</span><span data-th="<strong>ตั้งค่าไว้ให้แล้ว:</strong> <code>.env</code> มีค่า CORS ให้แล้วตั้งแต่สัปดาห์นี้ — แค่ยังไม่ได้ใช้จนกว่าจะถึงสัปดาห์หน้า"><strong>the setting is already there:</strong> <code>.env</code> already carries a CORS setting this week — it just isn't used until next week.</span></li>
         </ul>
