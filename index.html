@@ -1,0 +1,709 @@
+<title>INT134 Exam 1 Whiteboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#eef1ef;
+    --grid-line:#dbe3df;
+    --surface:#ffffff;
+    --surface-2:#e6ece9;
+    --ink:#132025;
+    --ink-soft:#4d5d61;
+    --ink-faint:#7c8d8d;
+    --line:#cdd7d2;
+    --line-strong:#a9bab3;
+    --accent:#0e7a72;
+    --accent-ink:#ffffff;
+    --accent-soft:#dcefec;
+    --amber:#a8721f;
+    --amber-soft:#f3e7cd;
+    --red:#ad4430;
+    --red-soft:#f7e0da;
+    --green:#3c7a49;
+    --green-soft:#dcefe0;
+    --shadow:0 1px 2px rgba(19,32,37,.06), 0 8px 24px rgba(19,32,37,.06);
+    --font-sans:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+    --font-mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0e1517;
+      --grid-line:#182123;
+      --surface:#151f21;
+      --surface-2:#1b2628;
+      --ink:#e9efed;
+      --ink-soft:#a3b6b4;
+      --ink-faint:#71857f;
+      --line:#293735;
+      --line-strong:#3c4d49;
+      --accent:#54d3c2;
+      --accent-ink:#08201d;
+      --accent-soft:#173733;
+      --amber:#e2ac53;
+      --amber-soft:#3c3018;
+      --red:#e28870;
+      --red-soft:#3d241d;
+      --green:#82c891;
+      --green-soft:#1d3526;
+      --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e1517;
+    --grid-line:#182123;
+    --surface:#151f21;
+    --surface-2:#1b2628;
+    --ink:#e9efed;
+    --ink-soft:#a3b6b4;
+    --ink-faint:#71857f;
+    --line:#293735;
+    --line-strong:#3c4d49;
+    --accent:#54d3c2;
+    --accent-ink:#08201d;
+    --accent-soft:#173733;
+    --amber:#e2ac53;
+    --amber-soft:#3c3018;
+    --red:#e28870;
+    --red-soft:#3d241d;
+    --green:#82c891;
+    --green-soft:#1d3526;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.4);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0/100% 28px,
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0/28px 100%,
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--font-sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{text-wrap:balance; margin:0;}
+  .wrap{max-width:1100px; margin:0 auto; padding:40px 24px 80px;}
+
+  /* ---------- masthead ---------- */
+  .masthead{padding:12px 0 32px; border-bottom:2px solid var(--line-strong); margin-bottom:36px;}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin-bottom:10px;
+  }
+  .masthead h1{font-size:clamp(28px,4vw,40px); font-weight:700; line-height:1.15;}
+  .masthead p{margin:12px 0 0; max-width:62ch; color:var(--ink-soft); font-size:15.5px; line-height:1.55;}
+
+  .roadmap{display:flex; flex-wrap:wrap; align-items:center; gap:0; margin-top:28px;}
+  .rchip{
+    font-family:var(--font-mono); font-size:12px; font-weight:600; padding:7px 12px;
+    border:1.5px solid var(--line-strong); border-radius:7px; background:var(--surface);
+    color:var(--ink-soft); white-space:nowrap;
+  }
+  .rchip.on{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
+  .rchip.exam{background:var(--amber-soft); border-color:var(--amber); color:var(--amber);}
+  .rchip.faint{opacity:.55; font-weight:500;}
+  .rjoin{width:20px; height:1.5px; background:var(--line-strong); flex:0 0 20px;}
+
+  /* ---------- band (per-week section) ---------- */
+  .band{margin-bottom:56px;}
+  .band-head{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:18px;}
+  .wk-pill{
+    font-family:var(--font-mono); font-weight:700; font-size:14px;
+    background:var(--ink); color:var(--bg); border-radius:6px; padding:4px 10px; flex:0 0 auto;
+  }
+  .band-head h2{font-size:22px; font-weight:700;}
+  .band-date{font-family:var(--font-mono); font-size:12.5px; color:var(--ink-faint); margin-left:auto;}
+  .band-tag{
+    font-size:13px; color:var(--ink-soft); background:var(--surface-2); border:1px solid var(--line);
+    border-radius:999px; padding:3px 12px; width:100%; margin-top:2px;
+  }
+
+  figure.diagram{
+    margin:20px 0 22px; background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:18px 18px 14px; box-shadow:var(--shadow); overflow-x:auto;
+  }
+  figure.diagram svg{display:block; width:100%; height:auto; min-width:560px;}
+  figure.diagram figcaption{
+    font-size:13px; color:var(--ink-soft); margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);
+  }
+  svg text{font-family:var(--font-sans); fill:currentColor;}
+  svg .mono{font-family:var(--font-mono);}
+  svg .lbl{font-size:11.5px; fill:var(--ink-soft);}
+  svg .strong{font-weight:600;}
+
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  @media (max-width:820px){.cards{grid-template-columns:1fr;}}
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px;
+    box-shadow:var(--shadow);
+  }
+  .card h3{
+    font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint);
+    font-weight:600; margin-bottom:12px;
+  }
+  .card ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:9px;}
+  .card li{font-size:13.6px; line-height:1.5; padding-left:15px; position:relative;}
+  .card li::before{content:"–"; position:absolute; left:0; color:var(--ink-faint);}
+  .card code{
+    font-family:var(--font-mono); font-size:12.3px; background:var(--surface-2); border-radius:4px;
+    padding:1px 5px;
+  }
+  .cmdtable{width:100%; border-collapse:collapse; font-size:12.3px;}
+  .cmdtable td{padding:6px 0; border-top:1px solid var(--line); vertical-align:top;}
+  .cmdtable tr:first-child td{border-top:none;}
+  .cmdtable td:first-child{font-family:var(--font-mono); white-space:nowrap; padding-right:12px; color:var(--ink);}
+  .cmdtable td:last-child{color:var(--ink-soft);}
+
+  .watch li::before{content:"!"; color:var(--red); font-weight:700; font-family:var(--font-mono);}
+  .watch{background:var(--red-soft);}
+  .watch h3{color:var(--red);}
+
+  .cmp-block{margin-top:16px;}
+  .cmp-row{
+    display:grid; grid-template-columns:64px 1fr 1fr; gap:10px; align-items:center;
+    padding:10px 12px; border-radius:8px; margin-bottom:8px; font-family:var(--font-mono); font-size:12.5px;
+  }
+  .cmp-row.bad{background:var(--red-soft);}
+  .cmp-row.good{background:var(--green-soft);}
+  .cmp-code{font-weight:700;}
+  .cmp-row.bad .cmp-code{color:var(--red);}
+  .cmp-row.good .cmp-code{color:var(--green);}
+  .cmp-arrow{color:var(--ink-faint);}
+  @media (max-width:600px){.cmp-row{grid-template-columns:1fr; text-align:left;}}
+
+  .footer-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:22px 24px;
+    box-shadow:var(--shadow); margin-top:8px;
+  }
+  .footer-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:28px;}
+  @media (max-width:760px){.footer-grid{grid-template-columns:1fr;}}
+  .footer-card h3{font-size:14px; margin-bottom:10px;}
+  .footer-card ul{margin:0; padding-left:18px; font-size:13.6px; line-height:1.6; color:var(--ink-soft);}
+  .footer-card p{font-size:13.6px; line-height:1.6; color:var(--ink-soft); margin:0 0 10px;}
+  .kbd{font-family:var(--font-mono); background:var(--surface-2); border-radius:4px; padding:1px 6px; font-size:12.3px; color:var(--ink);}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">INT134 System Deployment · 2026</div>
+    <h1>Exam 1 Whiteboard — Weeks 1–5</h1>
+    <p>One VM, built up one class at a time: a shell you can drive, turned into a service that survives you, turned into a website, turned into an application, turned into one address. Exam 1 tests exactly this arc — practical and multiple choice, nothing supplied.</p>
+    <div class="roadmap">
+      <span class="rchip on">W1 · Packages &amp; systemd</span><span class="rjoin"></span>
+      <span class="rchip on">W2 · Processes</span><span class="rjoin"></span>
+      <span class="rchip on">W3 · Static web</span><span class="rjoin"></span>
+      <span class="rchip on">W4 · Backend + DB</span><span class="rjoin"></span>
+      <span class="rchip on">W5 · Reverse proxy</span><span class="rjoin"></span>
+      <span class="rchip exam">EXAM 1</span><span class="rjoin"></span>
+      <span class="rchip faint">W6–10 · Containers</span><span class="rjoin"></span>
+      <span class="rchip faint">EXAM 2</span>
+    </div>
+  </header>
+
+  <!-- ================= WEEK 1 ================= -->
+  <section class="band">
+    <div class="band-head">
+      <span class="wk-pill">W1</span>
+      <h2>Package Management &amp; Service Manager</h2>
+      <span class="band-date">5 Aug 2026</span>
+      <span class="band-tag">A service has two independent switches: does it start at boot, and is it running right now.</span>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 680 480" role="img" aria-label="A 2 by 2 matrix of enabled/disabled crossed with active/inactive, with the systemctl commands that move a service between the four states">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <!-- column headers -->
+        <text x="220" y="42" text-anchor="middle" class="strong" font-size="13">DISABLED</text>
+        <text x="520" y="42" text-anchor="middle" class="strong" font-size="13">ENABLED</text>
+        <!-- row headers -->
+        <text x="34" y="155" text-anchor="middle" class="strong" font-size="13" transform="rotate(-90 34 155)">ACTIVE</text>
+        <text x="34" y="365" text-anchor="middle" class="strong" font-size="13" transform="rotate(-90 34 365)">INACTIVE</text>
+
+        <!-- boxes -->
+        <rect x="90" y="70" width="260" height="170" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="390" y="70" width="260" height="170" rx="10" fill="none" stroke="var(--green)" stroke-width="2"/>
+        <rect x="90" y="280" width="260" height="170" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <rect x="390" y="280" width="260" height="170" rx="10" fill="none" stroke="currentColor" stroke-width="1.4"/>
+
+        <text x="220" y="105" text-anchor="middle" class="mono strong" font-size="13">disabled · active</text>
+        <text x="220" y="128" text-anchor="middle" class="lbl">just disabled — still</text>
+        <text x="220" y="145" text-anchor="middle" class="lbl">running until stopped</text>
+        <text x="220" y="162" text-anchor="middle" class="lbl">or the box is rebooted</text>
+
+        <text x="520" y="105" text-anchor="middle" class="mono strong" font-size="13" fill="var(--green)">enabled · active</text>
+        <text x="520" y="128" text-anchor="middle" class="lbl">the normal running state</text>
+        <text x="520" y="145" text-anchor="middle" class="lbl">systemctl enable --now foo</text>
+
+        <text x="220" y="315" text-anchor="middle" class="mono strong" font-size="13">disabled · inactive</text>
+        <text x="220" y="338" text-anchor="middle" class="lbl">won't start at boot,</text>
+        <text x="220" y="355" text-anchor="middle" class="lbl">not running now</text>
+
+        <text x="520" y="315" text-anchor="middle" class="mono strong" font-size="13">enabled · inactive</text>
+        <text x="520" y="338" text-anchor="middle" class="lbl">will start at next boot,</text>
+        <text x="520" y="355" text-anchor="middle" class="lbl">but hasn't started yet</text>
+
+        <!-- horizontal: enable/disable -->
+        <line x1="350" y1="140" x2="388" y2="140" stroke="currentColor" stroke-width="1.4" marker-end="url(#a1)"/>
+        <line x1="388" y1="165" x2="350" y2="165" stroke="currentColor" stroke-width="1.4" marker-end="url(#a1)"/>
+        <text x="369" y="120" text-anchor="middle" class="mono lbl">enable</text>
+        <text x="369" y="188" text-anchor="middle" class="mono lbl">disable</text>
+
+        <line x1="350" y1="350" x2="388" y2="350" stroke="currentColor" stroke-width="1.4" marker-end="url(#a1)"/>
+        <line x1="388" y1="375" x2="350" y2="375" stroke="currentColor" stroke-width="1.4" marker-end="url(#a1)"/>
+        <text x="369" y="330" text-anchor="middle" class="mono lbl">enable</text>
+        <text x="369" y="398" text-anchor="middle" class="mono lbl">disable</text>
+
+        <!-- vertical: start/stop col1 -->
+        <line x1="200" y1="280" x2="200" y2="242" stroke="currentColor" stroke-width="1.4" marker-end="url(#a1)"/>
+        <line x1="225" y1="242" x2="225" y2="280" stroke="currentColor" stroke-width="1.4" marker-end="url(#a1)"/>
+        <text x="150" y="264" text-anchor="middle" class="mono lbl">start</text>
+        <text x="270" y="264" text-anchor="middle" class="mono lbl">stop</text>
+
+        <!-- vertical: start/stop col2 -->
+        <line x1="500" y1="280" x2="500" y2="242" stroke="currentColor" stroke-width="1.4" marker-end="url(#a1)"/>
+        <line x1="525" y1="242" x2="525" y2="280" stroke="currentColor" stroke-width="1.4" marker-end="url(#a1)"/>
+        <text x="450" y="264" text-anchor="middle" class="mono lbl">start</text>
+        <text x="570" y="264" text-anchor="middle" class="mono lbl">stop</text>
+
+        <!-- reboot: BR -> TR -->
+        <line x1="600" y1="280" x2="600" y2="242" stroke="var(--amber)" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#a1)"/>
+        <text x="600" y="264" text-anchor="middle" class="mono lbl" fill="var(--amber)">reboot</text>
+      </svg>
+      <figcaption>Four states, and the exact command that crosses each edge. Disabling a running service does not stop it; a reboot only revives what is <strong>enabled</strong>.</figcaption>
+    </figure>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Concepts</h3>
+        <ul>
+          <li><code>systemd</code> is PID 1 — the init system that starts and supervises every other service.</li>
+          <li><code>apt</code> is for you (interactive); <code>apt-get</code>/<code>apt-cache</code> is for scripts.</li>
+          <li>Ubuntu repo components: <code>main</code> (Canonical), <code>universe</code> (community), <code>restricted</code>, <code>multiverse</code>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Commands</h3>
+        <table class="cmdtable">
+          <tr><td>sudo -u user cmd</td><td>run one command as user, your own password</td></tr>
+          <tr><td>su user</td><td>open a shell as user, their password</td></tr>
+          <tr><td>apt update</td><td>refresh metadata only — installs nothing</td></tr>
+          <tr><td>apt install pkg=ver</td><td>pin an exact version</td></tr>
+          <tr><td>systemctl status/start/enable</td><td>runtime vs boot-time control</td></tr>
+        </table>
+      </div>
+      <div class="card watch">
+        <h3>Watch out</h3>
+        <ul>
+          <li><code>apt update</code> ≠ <code>apt upgrade</code> — updating the list installs nothing.</li>
+          <li><code>id</code>, <code>whoami</code>, <code>who am i</code> answer three different questions, especially under <code>sudo</code>.</li>
+          <li>Enabled/disabled (boot) and active/inactive (now) are fully independent — see the matrix above.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WEEK 2 ================= -->
+  <section class="band">
+    <div class="band-head">
+      <span class="wk-pill">W2</span>
+      <h2>Managing Processes</h2>
+      <span class="band-date">12 Aug 2026</span>
+      <span class="band-tag">"It's running" is not "it's deployed" — only a unit file survives everything.</span>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 980 400" role="img" aria-label="Three ways of starting a program compared across a terminal close and a reboot: plain background job dies at logout, nohup survives logout but not reboot, a systemd unit survives both and restarts itself on crash">
+        <defs>
+          <marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <text x="150" y="26" text-anchor="middle" class="lbl strong">you run</text>
+        <text x="430" y="26" text-anchor="middle" class="lbl strong">terminal closes</text>
+        <text x="700" y="26" text-anchor="middle" class="lbl strong">then: reboot</text>
+        <text x="910" y="26" text-anchor="middle" class="lbl strong">result</text>
+
+        <!-- lane A -->
+        <rect x="40" y="50" width="220" height="52" rx="8" fill="none" stroke="currentColor"/>
+        <text x="150" y="81" text-anchor="middle" class="mono" font-size="12">./app &amp;</text>
+        <line x1="260" y1="76" x2="358" y2="76" stroke="currentColor" marker-end="url(#a2)"/>
+        <rect x="360" y="50" width="220" height="52" rx="8" fill="none" stroke="currentColor"/>
+        <text x="470" y="72" text-anchor="middle" font-size="11.5">SIGHUP — the terminal's</text>
+        <text x="470" y="88" text-anchor="middle" font-size="11.5">jobs die with it</text>
+        <line x1="580" y1="76" x2="848" y2="76" stroke="currentColor" marker-end="url(#a2)"/>
+        <rect x="850" y="50" width="120" height="52" rx="8" fill="var(--red-soft)" stroke="var(--red)"/>
+        <text x="910" y="81" text-anchor="middle" fill="var(--red)" class="strong" font-size="13">✕ dies</text>
+
+        <!-- lane B -->
+        <rect x="40" y="160" width="220" height="52" rx="8" fill="none" stroke="currentColor"/>
+        <text x="150" y="191" text-anchor="middle" class="mono" font-size="12">nohup ./app &amp;</text>
+        <line x1="260" y1="186" x2="358" y2="186" stroke="currentColor" marker-end="url(#a2)"/>
+        <rect x="360" y="160" width="220" height="52" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
+        <text x="470" y="182" text-anchor="middle" font-size="11.5">ignores SIGHUP —</text>
+        <text x="470" y="198" text-anchor="middle" font-size="11.5">keeps running</text>
+        <line x1="580" y1="186" x2="678" y2="186" stroke="currentColor" marker-end="url(#a2)"/>
+        <rect x="680" y="160" width="150" height="52" rx="8" fill="none" stroke="currentColor"/>
+        <text x="755" y="191" text-anchor="middle" font-size="11.5">reboot — nothing</text>
+        <line x1="830" y1="186" x2="848" y2="186" stroke="currentColor" marker-end="url(#a2)"/>
+        <rect x="850" y="160" width="120" height="52" rx="8" fill="var(--red-soft)" stroke="var(--red)"/>
+        <text x="910" y="181" text-anchor="middle" fill="var(--red)" class="strong" font-size="13">✕ dies</text>
+        <text x="910" y="198" text-anchor="middle" fill="var(--red)" font-size="10.5">not persisted</text>
+
+        <!-- lane C -->
+        <rect x="40" y="290" width="220" height="60" rx="8" fill="none" stroke="currentColor"/>
+        <text x="150" y="316" text-anchor="middle" class="mono" font-size="11.5">unit file +</text>
+        <text x="150" y="332" text-anchor="middle" class="mono" font-size="11.5">enable --now</text>
+        <line x1="260" y1="320" x2="358" y2="320" stroke="currentColor" marker-end="url(#a2)"/>
+        <rect x="360" y="290" width="220" height="60" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
+        <text x="470" y="316" text-anchor="middle" font-size="11.5">survives — systemd</text>
+        <text x="470" y="332" text-anchor="middle" font-size="11.5">owns it now</text>
+        <line x1="580" y1="320" x2="678" y2="320" stroke="currentColor" marker-end="url(#a2)"/>
+        <rect x="680" y="290" width="150" height="60" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
+        <text x="755" y="316" text-anchor="middle" font-size="11.5">restarted — it's</text>
+        <text x="755" y="332" text-anchor="middle" font-size="11.5">WantedBy= this target</text>
+        <line x1="830" y1="320" x2="848" y2="320" stroke="currentColor" marker-end="url(#a2)"/>
+        <rect x="850" y="285" width="120" height="70" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
+        <text x="910" y="311" text-anchor="middle" fill="var(--green)" class="strong" font-size="13">✓ survives</text>
+        <text x="910" y="328" text-anchor="middle" fill="var(--green)" font-size="10.5">+ crash →</text>
+        <text x="910" y="342" text-anchor="middle" fill="var(--green)" font-size="10.5">Restart= (new PID)</text>
+      </svg>
+      <figcaption>Same program, three launchers. Only a unit file survives a reboot and restarts itself after a crash — with a fresh PID, which is why "the service" and "the process" are not the same thing.</figcaption>
+    </figure>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Concepts</h3>
+        <ul>
+          <li>A bare <code>ps</code> shows almost nothing — use <code>ps aux</code>, <code>ps -ef</code>, or <code>-o</code> fields.</li>
+          <li>Every process has a PID and PPID and descends from PID 1 (<code>pstree -p</code>).</li>
+          <li>A job (<code>&amp;</code>) belongs to exactly one shell — invisible from any other terminal.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Commands</h3>
+        <table class="cmdtable">
+          <tr><td>pgrep -af name</td><td>match the full command line, not just the name</td></tr>
+          <tr><td>jobs / fg %N / bg %N</td><td>list, foreground, background a job</td></tr>
+          <tr><td>kill / kill -9</td><td>SIGTERM (ask nicely) / SIGKILL (cannot refuse)</td></tr>
+          <tr><td>journalctl -u name -f</td><td>follow a service's log live</td></tr>
+        </table>
+      </div>
+      <div class="card watch">
+        <h3>Watch out</h3>
+        <ul>
+          <li>Of TERM/INT/HUP/KILL, only <code>SIGKILL</code> cannot be caught, blocked, or ignored.</li>
+          <li><code>ExecStart=</code> needs an <strong>absolute path</strong> — systemd runs no shell, so <code>~</code> and relative paths fail.</li>
+          <li>A stopped (T) process gets no CPU, so it cannot even process a kill signal — <code>fg</code> it first.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WEEK 3 ================= -->
+  <section class="band">
+    <div class="band-head">
+      <span class="wk-pill">W3</span>
+      <h2>Deploy Static Web</h2>
+      <span class="band-date">19 Aug 2026</span>
+      <span class="band-tag">Installed does not mean started, and reachable does not mean allowed through the firewall.</span>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 900 340" role="img" aria-label="A browser request crosses the UFW firewall boundary into the VM, where nginx's root master process listens on port 80 and hands the request to a worker process that reads the file from disk">
+        <defs>
+          <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <rect x="20" y="130" width="140" height="60" rx="8" fill="none" stroke="currentColor"/>
+        <text x="90" y="155" text-anchor="middle" font-size="12">Browser</text>
+        <text x="90" y="172" text-anchor="middle" class="mono lbl">GET / :80</text>
+
+        <line x1="230" y1="15" x2="230" y2="325" stroke="var(--amber)" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <text x="230" y="12" text-anchor="middle" font-size="11.5" fill="var(--amber)" class="strong">UFW firewall</text>
+        <text x="230" y="336" text-anchor="middle" font-size="10.5" fill="var(--amber)">deny inbound by default</text>
+
+        <line x1="160" y1="160" x2="222" y2="160" stroke="currentColor" marker-end="url(#a3)"/>
+
+        <rect x="250" y="20" width="620" height="300" rx="12" fill="none" stroke="var(--line-strong)"/>
+        <text x="266" y="40" font-size="11" fill="var(--ink-faint)">VM</text>
+
+        <line x1="238" y1="118" x2="298" y2="118" stroke="currentColor" marker-end="url(#a3)"/>
+        <rect x="300" y="90" width="230" height="56" rx="8" fill="none" stroke="currentColor"/>
+        <text x="415" y="112" text-anchor="middle" font-size="12">nginx master</text>
+        <text x="415" y="130" text-anchor="middle" class="mono lbl">root · binds :80</text>
+
+        <line x1="415" y1="146" x2="415" y2="178" stroke="currentColor" marker-end="url(#a3)"/>
+        <rect x="300" y="180" width="230" height="56" rx="8" fill="none" stroke="currentColor"/>
+        <text x="415" y="202" text-anchor="middle" font-size="12">nginx worker</text>
+        <text x="415" y="220" text-anchor="middle" class="mono lbl">user: nginx</text>
+
+        <line x1="415" y1="236" x2="415" y2="268" stroke="currentColor" marker-end="url(#a3)"/>
+        <rect x="300" y="270" width="230" height="56" rx="8" fill="none" stroke="currentColor"/>
+        <text x="415" y="292" text-anchor="middle" font-size="12">root /var/www/site</text>
+        <text x="415" y="310" text-anchor="middle" class="mono lbl">→ index.html</text>
+
+        <path d="M300,298 C120,298 60,230 60,190" fill="none" stroke="var(--green)" stroke-dasharray="4 3" marker-end="url(#a3)"/>
+        <text x="130" y="255" font-size="11" fill="var(--green)" class="strong">200 OK</text>
+
+        <rect x="630" y="90" width="180" height="50" rx="8" fill="none" stroke="currentColor"/>
+        <text x="720" y="112" text-anchor="middle" font-size="12">sshd :22</text>
+        <text x="720" y="128" text-anchor="middle" font-size="10.5" fill="var(--red)">never delete this rule</text>
+        <line x1="238" y1="100" x2="628" y2="105" stroke="currentColor" stroke-dasharray="2 3"/>
+      </svg>
+      <figcaption>The worker (user <code>nginx</code>) must read the file along the whole path, or the site 404s even with a correct config. Test with <code>nginx -t</code>, then <code>reload</code> — never <code>restart</code> on a config you haven't tested.</figcaption>
+    </figure>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Concepts</h3>
+        <ul>
+          <li>A URL path that names a directory falls back to <code>index.html</code>.</li>
+          <li>This course installs nginx from <strong>nginx.org</strong> (<code>conf.d/*.conf</code>), not Ubuntu's <code>sites-enabled</code>.</li>
+          <li>Block selection: port → <code>server_name</code> (exact → wildcard → regex) → <code>default_server</code> → first file alphabetically.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Commands</h3>
+        <table class="cmdtable">
+          <tr><td>nginx -t</td><td>test config syntax before touching anything live</td></tr>
+          <tr><td>systemctl reload nginx</td><td>safe — keeps the old config if the new one fails</td></tr>
+          <tr><td>ufw allow 80/tcp</td><td>open inbound only for what you need</td></tr>
+          <tr><td>curl -H "Host: x" localhost</td><td>test a server block with no DNS</td></tr>
+        </table>
+      </div>
+      <div class="card watch">
+        <h3>Watch out</h3>
+        <ul>
+          <li><code>reload</code> silently keeps serving the <strong>old</strong> config if the new one is broken — no downtime, no visible change either.</li>
+          <li><code>restart</code> stops everything first — a broken config takes the whole site down.</li>
+          <li>Never touch the port 22 rule; never <code>ufw disable</code>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WEEK 4 ================= -->
+  <section class="band">
+    <div class="band-head">
+      <span class="wk-pill">W4</span>
+      <h2>Deploy Backend and DBMS</h2>
+      <span class="band-date">26 Aug 2026</span>
+      <span class="band-tag">Three processes, three ports, three identities — and one port that must never leave the machine.</span>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 900 400" role="img" aria-label="Three tier architecture on one VM: nginx on port 80 and a node API on a personal port both cross the UFW firewall, while MySQL on port 3306 is bound to loopback and the firewall is never opened for it">
+        <defs>
+          <marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+        <rect x="15" y="150" width="130" height="56" rx="8" fill="none" stroke="currentColor"/>
+        <text x="80" y="182" text-anchor="middle" font-size="12">Internet</text>
+
+        <line x1="195" y1="15" x2="195" y2="385" stroke="var(--amber)" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <text x="195" y="12" text-anchor="middle" font-size="11" fill="var(--amber)" class="strong">UFW: allow 80, 3xxx</text>
+
+        <rect x="215" y="20" width="660" height="360" rx="12" fill="none" stroke="var(--line-strong)"/>
+        <text x="231" y="40" font-size="11" fill="var(--ink-faint)">VM — one machine</text>
+
+        <line x1="145" y1="170" x2="253" y2="80" stroke="currentColor" marker-end="url(#a4)"/>
+        <rect x="255" y="55" width="230" height="60" rx="8" fill="none" stroke="currentColor"/>
+        <text x="370" y="80" text-anchor="middle" font-size="12">nginx :80</text>
+        <text x="370" y="98" text-anchor="middle" class="mono lbl">frontend files</text>
+
+        <line x1="145" y1="185" x2="253" y2="190" stroke="currentColor" marker-end="url(#a4)"/>
+        <rect x="255" y="160" width="230" height="60" rx="8" fill="none" stroke="currentColor"/>
+        <text x="370" y="185" text-anchor="middle" font-size="12">node api :3xxx</text>
+        <text x="370" y="203" text-anchor="middle" class="mono lbl">systemd · User=sysadmin</text>
+
+        <rect x="540" y="270" width="300" height="100" rx="10" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <text x="556" y="288" font-size="10.5" fill="var(--red)" class="strong">loopback — never crosses UFW</text>
+        <rect x="565" y="300" width="250" height="56" rx="8" fill="none" stroke="currentColor"/>
+        <text x="690" y="322" text-anchor="middle" font-size="12">mysql :3306</text>
+        <text x="690" y="340" text-anchor="middle" class="mono lbl">bind 127.0.0.1 only</text>
+
+        <line x1="485" y1="200" x2="620" y2="298" stroke="currentColor" marker-end="url(#a4)"/>
+        <text x="500" y="255" font-size="10.5" fill="var(--ink-soft)">local call only</text>
+
+        <line x1="195" y1="355" x2="538" y2="325" stroke="var(--red)" stroke-dasharray="3 4"/>
+        <text x="330" y="365" text-anchor="middle" font-size="11" fill="var(--red)" class="strong">✕ never opened</text>
+      </svg>
+      <figcaption><code>0.0.0.0</code> faces the world; <code>127.0.0.1</code> never touches a network card. MySQL binds loopback, so it needs no firewall rule at all — opening 3306 is one line away from losing every database on the box.</figcaption>
+    </figure>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Concepts</h3>
+        <ul>
+          <li>A database is a separate <strong>server</strong> with its own users — the app is only a client.</li>
+          <li>Deploy order: database, then backend — the backend depends on the database, never the reverse.</li>
+          <li>One application = one database = one user (least privilege / blast radius).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Commands</h3>
+        <table class="cmdtable">
+          <tr><td>CREATE USER ... RANDOM PASSWORD</td><td>a 20-char password, shown once</td></tr>
+          <tr><td>GRANT ALL ON db.* TO 'x'@'localhost'</td><td>scope to one database, one host</td></tr>
+          <tr><td>install -m 600 /dev/null x.env</td><td>private file, before the secret goes in</td></tr>
+          <tr><td>npm ci &amp;&amp; npx prisma generate</td><td>exact versions, then build the client</td></tr>
+          <tr><td>migrate diff --exit-code</td><td>0 = agrees, 2 = drift — check before starting</td></tr>
+        </table>
+      </div>
+      <div class="card watch">
+        <h3>Watch out</h3>
+        <ul>
+          <li><strong>Never open port 3306</strong> — reach MySQL over an SSH tunnel (Workbench), not the network.</li>
+          <li><code>migrate dev</code> failing on the shadow database is correct — don't widen the grant to silence it.</li>
+          <li>Write the password <strong>literally</strong> in <code>.env</code>, never <code>${VAR}</code> — systemd doesn't expand it.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WEEK 5 ================= -->
+  <section class="band">
+    <div class="band-head">
+      <span class="wk-pill">W5</span>
+      <h2>Reverse Proxy and Integration</h2>
+      <span class="band-date">2 Sep 2026</span>
+      <span class="band-tag">Close the doors week 4 opened — one address in front, nginx decides where a request actually goes.</span>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 1000 400" role="img" aria-label="Before and after comparison: without a reverse proxy the browser calls two different origins and the backend request is blocked by CORS; with a reverse proxy the browser calls a single origin and nginx routes internally to the frontend and backend, with no CORS and only one firewall rule">
+        <defs>
+          <marker id="a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <!-- BEFORE panel -->
+        <text x="230" y="24" text-anchor="middle" class="strong" font-size="13" fill="var(--red)">BEFORE — two doors open</text>
+        <rect x="20" y="50" width="140" height="52" rx="8" fill="none" stroke="currentColor"/>
+        <text x="90" y="72" text-anchor="middle" font-size="11.5">browser</text>
+        <text x="90" y="88" text-anchor="middle" class="mono lbl">origin :8173</text>
+
+        <line x1="205" y1="35" x2="205" y2="235" stroke="var(--amber)" stroke-dasharray="4 3"/>
+        <text x="205" y="248" text-anchor="middle" font-size="9.5" fill="var(--amber)">UFW: 8173 + 3173 open</text>
+
+        <line x1="160" y1="65" x2="223" y2="65" stroke="currentColor" marker-end="url(#a5)"/>
+        <rect x="225" y="40" width="150" height="46" rx="7" fill="none" stroke="currentColor"/>
+        <text x="300" y="68" text-anchor="middle" font-size="11.5">nginx :8173</text>
+
+        <line x1="160" y1="90" x2="223" y2="130" stroke="var(--red)" marker-end="url(#a5)"/>
+        <rect x="225" y="110" width="150" height="46" rx="7" fill="none" stroke="currentColor"/>
+        <text x="300" y="132" text-anchor="middle" font-size="11.5">node api :3173</text>
+        <text x="300" y="146" text-anchor="middle" font-size="9.5" fill="var(--red)">fetch('/api/students')</text>
+
+        <rect x="20" y="175" width="355" height="50" rx="7" fill="var(--red-soft)" stroke="var(--red)"/>
+        <text x="197" y="195" text-anchor="middle" fill="var(--red)" class="strong" font-size="12">✕ blocked by CORS</text>
+        <text x="197" y="211" text-anchor="middle" fill="var(--red)" class="mono" font-size="9.5">No 'Access-Control-Allow-Origin' header</text>
+
+        <!-- divider -->
+        <line x1="500" y1="10" x2="500" y2="390" stroke="var(--line-strong)"/>
+
+        <!-- AFTER panel -->
+        <text x="760" y="24" text-anchor="middle" class="strong" font-size="13" fill="var(--green)">AFTER — one door, reverse proxy</text>
+        <rect x="530" y="140" width="150" height="52" rx="8" fill="none" stroke="currentColor"/>
+        <text x="605" y="162" text-anchor="middle" font-size="11.5">browser</text>
+        <text x="605" y="178" text-anchor="middle" class="mono lbl">origin :80 only</text>
+
+        <line x1="740" y1="55" x2="740" y2="345" stroke="var(--amber)" stroke-dasharray="4 3"/>
+        <text x="740" y="358" text-anchor="middle" font-size="9.5" fill="var(--amber)">UFW: 80 only</text>
+
+        <line x1="680" y1="166" x2="748" y2="166" stroke="currentColor" marker-end="url(#a5)"/>
+        <text x="700" y="150" text-anchor="middle" font-size="9.5" fill="var(--green)" class="strong">same origin</text>
+
+        <rect x="750" y="140" width="130" height="52" rx="8" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <text x="815" y="162" text-anchor="middle" font-size="11.5">nginx :80</text>
+        <text x="815" y="178" text-anchor="middle" font-size="9.5">reverse proxy</text>
+
+        <line x1="880" y1="150" x2="928" y2="90" stroke="currentColor" marker-end="url(#a5)"/>
+        <text x="922" y="78" text-anchor="middle" font-size="9.5" class="mono">/</text>
+        <rect x="895" y="55" width="100" height="42" rx="7" fill="none" stroke="currentColor"/>
+        <text x="945" y="80" text-anchor="middle" font-size="10.5">frontend</text>
+
+        <line x1="880" y1="166" x2="928" y2="166" stroke="currentColor" marker-end="url(#a5)"/>
+        <text x="922" y="156" text-anchor="middle" font-size="9.5" class="mono">/api/</text>
+        <rect x="895" y="175" width="100" height="42" rx="7" fill="none" stroke="currentColor"/>
+        <text x="945" y="200" text-anchor="middle" font-size="10.5">node api</text>
+
+        <line x1="945" y1="217" x2="945" y2="255" stroke="currentColor" stroke-dasharray="3 3" marker-end="url(#a5)"/>
+        <rect x="880" y="257" width="130" height="42" rx="7" fill="none" stroke="var(--red)" stroke-dasharray="4 3"/>
+        <text x="945" y="282" text-anchor="middle" font-size="10.5">mysql :3306</text>
+
+        <rect x="530" y="205" width="350" height="40" rx="7" fill="var(--green-soft)" stroke="var(--green)"/>
+        <text x="705" y="230" text-anchor="middle" fill="var(--green)" class="strong" font-size="12">✓ same-origin — no CORS needed</text>
+      </svg>
+      <figcaption>The reverse proxy doesn't configure CORS around two origins — it removes the second origin. Everything now arrives at <code>:80</code>; nginx decides internally, over loopback, which backend actually answers.</figcaption>
+    </figure>
+
+    <div class="cmp-block">
+      <div class="cmp-row bad">
+        <span class="cmp-code">301</span>
+        <span>Client sends <span class="mono">POST /api/notice</span></span>
+        <span class="cmp-arrow">→ redirect → resent as <strong>GET</strong> — the body is silently dropped</span>
+      </div>
+      <div class="cmp-row good">
+        <span class="cmp-code">308</span>
+        <span>Client sends <span class="mono">POST /api/notice</span></span>
+        <span class="cmp-arrow">→ redirect → resent as <strong>POST</strong> — method and body preserved</span>
+      </div>
+    </div>
+
+    <div class="cards" style="margin-top:16px;">
+      <div class="card">
+        <h3>Concepts</h3>
+        <ul>
+          <li>A reverse proxy sits in front of origin servers — clients never talk to them directly.</li>
+          <li>CORS is a <strong>browser</strong> rule, not a network wall — it blocks a script from reading a cross-origin response.</li>
+          <li>Nested-path routing lets one <code>server_name</code> serve both the frontend and the API.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Commands</h3>
+        <table class="cmdtable">
+          <tr><td>location /api/ { proxy_pass ...; }</td><td>forward matching paths to the backend</td></tr>
+          <tr><td>location / { root ...; }</td><td>everything else is served as static files</td></tr>
+          <tr><td>return 308 https://$host$uri;</td><td>redirect that preserves the HTTP method</td></tr>
+        </table>
+      </div>
+      <div class="card watch">
+        <h3>Watch out</h3>
+        <ul>
+          <li>Use <code>308</code>, not <code>301</code>, for any redirect that might carry a POST.</li>
+          <li>No sample config is given in the exam — you write the server block from scratch.</li>
+          <li>Once the proxy is the only caller, the backend's own port can close — only <code>80</code> needs a rule.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <div class="footer-card">
+    <div class="footer-grid">
+      <div>
+        <h3>Exam 1 — how it's actually run</h3>
+        <ul>
+          <li>Covers weeks 1–5, on a Wednesday, roughly <strong>9 Sep 2026</strong>. Multiple choice + a practical part.</li>
+          <li>Practical mirrors the labs at the same difficulty — but the lab sheet's commands are gone; you work from the expected output backwards.</li>
+          <li>English only, one paper dictionary allowed. Browser and AI closed; only the checker app and a terminal.</li>
+          <li>The checker reports how many steps passed, not a score — same as every <code>int134 check labNN</code> so far.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Before you sit it: the mock practice</h3>
+        <p>Run <span class="kbd">int134 practice --help</span> on the VM. Five tasks, <span class="kbd">lab01mock</span>…<span class="kbd">lab05mock</span>, meant to be done in order — each one's environment assumes the last one succeeded.</p>
+        <p><span class="kbd">LAB-SHEET.md</span> and <span class="kbd">answers.yaml</span> live in <span class="kbd">/home/public</span>, same as every other lab. No command summary this time — some tasks will be harder on purpose; the real exam supplies a little more.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
