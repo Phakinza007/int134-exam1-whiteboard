@@ -43,7 +43,6 @@
     background:var(--amber-soft); color:var(--amber); border-bottom:1px solid var(--line); padding:8px 20px;
     font-size:12.5px; text-align:center;
   }
-  .disclaimer a{color:inherit;}
 
   .layout{display:grid; grid-template-columns:1fr 340px; gap:0; height:calc(100vh - 92px); min-height:520px;}
   @media (max-width:920px){ .layout{grid-template-columns:1fr; height:auto;} .term-wrap{height:60vh;} }
@@ -94,6 +93,14 @@
   .scenario-btns{display:flex; flex-direction:column; gap:7px;}
   .scenario-btns .btn{width:100%; text-align:left;}
   .empty{color:var(--ink-faint); font-size:11.5px; font-style:italic;}
+
+  .editor-overlay{position:fixed; inset:0; background:rgba(4,8,7,.66); display:flex; align-items:center; justify-content:center; z-index:50;}
+  .editor-overlay[hidden]{display:none;}
+  .editor-box{width:min(760px,92vw); height:min(560px,86vh); background:var(--term-bg); border-radius:10px; box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden;}
+  .editor-head{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 14px; background:var(--surface-2); font-family:var(--font-mono); font-size:12px; color:var(--ink-soft);}
+  .editor-hint{color:var(--ink-faint); white-space:nowrap;}
+  #editorArea{flex:1; resize:none; border:none; outline:none; background:var(--term-bg); color:var(--term-fg); font-family:var(--font-mono); font-size:13px; line-height:1.5; padding:14px 16px;}
+  .editor-actions{display:flex; gap:10px; padding:10px 14px; background:var(--surface-2);}
 </style>
 
 <div class="topbar">
@@ -109,7 +116,7 @@
   <div class="term-wrap">
     <div class="term" id="term" tabindex="-1"></div>
     <div class="inputrow">
-      <span class="ps" id="ps">sysadmin@lvm-sandbox:~$&nbsp;</span>
+      <span class="ps" id="ps">Student ID (last 5 digits):&nbsp;</span>
       <input id="cmdInput" autocomplete="off" spellcheck="false" autofocus />
     </div>
   </div>
@@ -138,7 +145,7 @@
     </div>
 
     <div class="panel">
-      <h3>Scenarios</h3>
+      <h3>Scenarios (shortcuts)</h3>
       <div class="scenario-btns">
         <button class="btn" id="scnClose" type="button">🔌 Close this terminal (SSH disconnect)</button>
         <button class="btn" id="scnBreak" type="button">💥 Break the nginx config</button>
@@ -149,19 +156,53 @@
   </div>
 </div>
 
+<div class="editor-overlay" id="editorOverlay" hidden>
+  <div class="editor-box">
+    <div class="editor-head">
+      <span id="editorPath">micro</span>
+      <span class="editor-hint">Ctrl+S save &amp; exit · Ctrl+Q quit without saving</span>
+    </div>
+    <textarea id="editorArea" spellcheck="false"></textarea>
+    <div class="editor-actions">
+      <button class="btn" id="editorSave" type="button">💾 Save (Ctrl+S)</button>
+      <button class="btn" id="editorQuit" type="button">✕ Quit without saving (Ctrl+Q)</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function(){
   var termEl = document.getElementById('term');
   var input = document.getElementById('cmdInput');
   var psEl = document.getElementById('ps');
+  var editorOverlay = document.getElementById('editorOverlay');
+  var editorArea = document.getElementById('editorArea');
+  var editorPathEl = document.getElementById('editorPath');
   var history = [];
   var histPos = 0;
   var pid = 900;
+  var editorCtx = null;
+
+  function freshFS(){
+    return {
+      '/home/sysadmin': {type:'dir'},
+      '/etc': {type:'dir'},
+      '/etc/nginx': {type:'dir'},
+      '/etc/nginx/conf.d': {type:'dir'},
+      '/etc/systemd': {type:'dir'},
+      '/etc/systemd/system': {type:'dir'},
+      '/var': {type:'dir'},
+      '/var/www': {type:'dir'},
+      '/srv': {type:'dir'}
+    };
+  }
 
   function freshState(){
     return {
       user:'sysadmin', loginUser:'sysadmin', suStack:[],
-      aptUpdated:false, mysqlSecured:false, reverseProxyConfigured:false,
+      hostname:null, loginStage:'askId', sudoCached:false, sudoPending:null,
+      cwd:'/home/sysadmin', fs:freshFS(),
+      aptUpdated:false, reverseProxyConfigured:false,
       lastExitCode:0,
       packages:{ unzip:{installed:false, version:null} },
       services:{
@@ -197,28 +238,65 @@
     termEl.appendChild(d);
   }
   function echoCmd(raw){
-    prHtml('', '<span class="prompt">' + currentPrompt(true) + '</span>' + escapeHtml(raw));
+    prHtml('', '<span class="prompt">' + escapeHtml(currentPrompt()) + '</span>' + escapeHtml(raw));
   }
-  function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function scrollBottom(){ termEl.scrollTop = termEl.scrollHeight; }
   function newPid(){ pid += 1; return pid; }
 
-  function currentPrompt(forEcho){
-    if(vm.mysqlMode) return 'mysql> ';
-    var host = 'lvm-sandbox';
-    return vm.user + '@' + host + ':~' + (vm.user === 'sysadmin' ? '$ ' : '# ');
+  // ---------------- path / filesystem helpers ----------------
+  function resolvePath(p){
+    if(p === undefined || p === '') p = '.';
+    if(p === '~') p = '/home/sysadmin';
+    else if(p[0] === '~') p = '/home/sysadmin' + p.slice(1);
+    else if(p[0] !== '/') p = vm.cwd + '/' + p;
+    var parts = p.split('/'); var out = [];
+    parts.forEach(function(seg){
+      if(seg === '' || seg === '.') return;
+      if(seg === '..') out.pop();
+      else out.push(seg);
+    });
+    return '/' + out.join('/');
   }
-  function refreshPrompt(){ psEl.textContent = currentPrompt(); }
+  function dirname(p){ var i = p.lastIndexOf('/'); return i<=0 ? '/' : p.slice(0,i); }
+  function shortCwd(){
+    if(vm.cwd === '/home/sysadmin') return '~';
+    if(vm.cwd.indexOf('/home/sysadmin/') === 0) return '~' + vm.cwd.slice('/home/sysadmin'.length);
+    return vm.cwd;
+  }
 
-  // ---------- boot text ----------
-  pr('dim', 'Connected to lvm-sandbox.int134.local (simulated Ubuntu 24.04 LTS).');
-  pr('dim', 'Type "help" to see what this sandbox understands. Try the "Try this" panel on the right.');
+  function currentPrompt(){
+    if(vm.loginStage === 'askId') return 'Student ID (last 5 digits): ';
+    if(vm.loginStage === 'fingerprint') return 'Continue connecting (yes/no)? ';
+    if(vm.loginStage === 'password') return "sysadmin@" + vm.hostname + ".sit.kmutt.ac.th's password: ";
+    if(vm.sudoPending) return '[sudo] password for sysadmin: ';
+    if(vm.mysqlMode) return 'mysql> ';
+    return vm.user + '@' + (vm.hostname||'lvm-sandbox') + ':' + shortCwd() + (vm.user === 'sysadmin' ? '$ ' : '# ');
+  }
+  function refreshPrompt(){
+    psEl.textContent = currentPrompt();
+    var masked = (vm.loginStage === 'password') || !!vm.sudoPending;
+    input.type = masked ? 'password' : 'text';
+  }
+
+  pr('dim', 'This terminal starts disconnected — connect like you would to the real VM.');
+  pr('dim', 'Type your student ID (e.g. 68173) and press Enter to "ssh" in.');
   pr('', '');
 
   // ================= dispatcher =================
   function run(raw){
     var line = raw.trim();
+
+    if(vm.loginStage !== 'done'){ handleLogin(raw); render(); return; }
     if(line === ''){ return; }
+
+    if(vm.sudoPending){
+      prHtml('', '<span class="prompt">' + escapeHtml(currentPrompt()) + '</span>');
+      var pend = vm.sudoPending; vm.sudoPending = null; vm.sudoCached = true;
+      dispatch(pend.tokens[0], pend.tokens, pend.line, pend.asRoot);
+      render(); return;
+    }
+
     echoCmd(raw);
 
     if(vm.pendingConfirm){
@@ -241,6 +319,45 @@
     render();
   }
 
+  function handleLogin(raw){
+    if(vm.loginStage === 'askId'){
+      prHtml('', '<span class="prompt">' + escapeHtml(currentPrompt()) + '</span>' + escapeHtml(raw));
+      var digits = raw.replace(/\D/g,'').slice(-5);
+      vm.hostname = 'lvm' + (digits || '68173');
+      pr('dim', 'ssh sysadmin@' + vm.hostname + '.sit.kmutt.ac.th');
+      pr('dim', "The authenticity of host '" + vm.hostname + ".sit.kmutt.ac.th (10.10.4.21)' can't be established.");
+      pr('dim', 'ED25519 key fingerprint is SHA256:6nQ2x9k3Jw8f+simulated+fingerprint==.');
+      vm.loginStage = 'fingerprint';
+      return;
+    }
+    if(vm.loginStage === 'fingerprint'){
+      prHtml('', '<span class="prompt">' + escapeHtml(currentPrompt()) + '</span>' + escapeHtml(raw));
+      if(/^y/i.test(raw.trim())){
+        pr('dim', "Warning: Permanently added '" + vm.hostname + ".sit.kmutt.ac.th' (ED25519) to the list of known hosts.");
+        vm.loginStage = 'password';
+      } else {
+        pr('err', 'Host key verification failed.');
+        pr('dim', 'Type your student ID again to retry:');
+        vm.loginStage = 'askId';
+      }
+      return;
+    }
+    if(vm.loginStage === 'password'){
+      prHtml('', '<span class="prompt">' + escapeHtml(currentPrompt()) + '</span>');
+      pr('dim', 'Welcome to Ubuntu 24.04.1 LTS (GNU/Linux 6.8.0-51-generic x86_64)');
+      pr('dim', '');
+      pr('dim', ' * Documentation:  https://help.ubuntu.com');
+      pr('dim', ' * Management:     https://landscape.canonical.com');
+      pr('dim', ' * Support:        https://ubuntu.com/pro');
+      pr('dim', '');
+      pr('dim', 'Last login: ' + new Date().toDateString() + ' from 10.10.' + (10+Math.floor(Math.random()*200)) + '.' + (10+Math.floor(Math.random()*200)));
+      pr('', '');
+      pr('dim', '(type "help" any time, or use the "Try this" panel on the right →)');
+      vm.loginStage = 'done';
+      return;
+    }
+  }
+
   function requireSudo(effectiveRoot, msg){
     if(!effectiveRoot){
       pr('err', msg || 'Permission denied (are you root?) — try again with sudo.');
@@ -260,22 +377,128 @@
 
     switch(cmd){
       case 'help':
-        pr('', 'Core: whoami | who am i | id | sudo <cmd> | sudo -u <user> <cmd> | su <user> | exit | clear');
+        pr('', 'Core:     whoami | who am i | id | sudo <cmd> | su <user> | exit | clear');
+        pr('', 'Files:    pwd | cd <dir> | ls [-la] | mkdir [-p] <dir> | touch <f> | cat <f> | rm [-r] <f>');
+        pr('', 'Editing:  micro <file>  or  nano <file>   (opens a real editor — Ctrl+S to save)');
         pr('', 'Packages: apt update | apt install <pkg> [-y] | apt list --installed | apt show <pkg>');
-        pr('', 'Services: systemctl status|start|stop|restart|reload|enable|disable|is-enabled|is-active <svc> [--now]');
+        pr('', 'Services: systemctl status|start|stop|restart|reload|enable|disable|daemon-reload <svc> [--now]');
         pr('', 'Process:  ps [aux|-ef] | pstree -p | pgrep -af <name> | jobs | kill [-9] <%N|pid> | <cmd> & | nohup <cmd> &');
         pr('', 'Network:  ufw status|allow <port>[/tcp]|delete <n>|enable|disable | curl [flags] <url> | nginx -t');
         pr('', 'Logs:     journalctl -u <svc> [-f|-n N]');
         pr('', 'DB:       sudo mysql | mysql -e "..." | MYSQL_PWD=x mysql -u <user> <db> -e "..."');
         pr('', 'Backend:  npm ci | npx prisma generate | npx prisma migrate dev --name x | npx prisma migrate diff --exit-code');
-        pr('', 'Misc:     echo $? | sudo reboot | pwd');
+        pr('', 'Misc:     echo "text" > file | echo $? | sudo reboot | Ctrl+L clear | Ctrl+C cancel line');
         return;
       case 'clear': termEl.innerHTML=''; return;
-      case 'pwd': pr('', '/home/'+vm.loginUser); return;
+      case 'pwd': pr('', vm.cwd); return;
       case 'whoami': pr('', vm.user); return;
-      case 'echo':
+
+      case 'cd': {
+        var cdTarget = resolvePath(tokens[1] || '~');
+        var cdNode = vm.fs[cdTarget];
+        if(!cdNode){ pr('err', 'bash: cd: ' + (tokens[1]||'~') + ': No such file or directory'); vm.lastExitCode=1; return; }
+        if(cdNode.type !== 'dir'){ pr('err', 'bash: cd: ' + (tokens[1]||'~') + ': Not a directory'); vm.lastExitCode=1; return; }
+        vm.cwd = cdTarget; return;
+      }
+      case 'ls': {
+        var showAll = tokens.indexOf('-la')!==-1 || tokens.indexOf('-al')!==-1 || tokens.indexOf('-l')!==-1;
+        var lsArg = null;
+        for(var i=1;i<tokens.length;i++){ if(tokens[i][0] !== '-'){ lsArg = tokens[i]; break; } }
+        var lsTarget = resolvePath(lsArg || '.');
+        var lsNode = vm.fs[lsTarget];
+        if(!lsNode){ pr('err', 'ls: cannot access \'' + (lsArg||'.') + '\': No such file or directory'); return; }
+        if(lsNode.type !== 'dir'){ pr('', lsArg); return; }
+        var prefix = lsTarget === '/' ? '/' : lsTarget + '/';
+        var names = Object.keys(vm.fs).filter(function(p){
+          if(p === lsTarget) return false;
+          if(p.indexOf(prefix) !== 0) return false;
+          return p.slice(prefix.length).indexOf('/') === -1;
+        }).map(function(p){ return p.slice(prefix.length); }).sort();
+        if(names.length === 0){ return; }
+        if(showAll){
+          names.forEach(function(n){
+            var node = vm.fs[prefix+n];
+            var size = node.type==='file' ? (node.content||'').length : 4096;
+            pr('', (node.type==='dir'?'d':'-') + 'rwxr-xr-x  sysadmin sysadmin  ' + String(size).padStart(5,' ') + '  ' + n + (node.type==='dir'?'/':''));
+          });
+        } else {
+          pr('', names.map(function(n){ return vm.fs[prefix+n].type==='dir' ? n+'/' : n; }).join('  '));
+        }
+        return;
+      }
+      case 'mkdir': {
+        var hasP = tokens.indexOf('-p') !== -1;
+        var mkPaths = tokens.slice(1).filter(function(t){ return t !== '-p'; });
+        if(mkPaths.length===0){ pr('err','usage: mkdir [-p] <dir>'); return; }
+        mkPaths.forEach(function(p){
+          var target = resolvePath(p);
+          if(target.indexOf('/etc/')===0 && !effRoot){ pr('err','mkdir: cannot create directory \''+p+'\': Permission denied'); return; }
+          if(hasP){
+            var segs = target.split('/').filter(Boolean); var cur='';
+            segs.forEach(function(s){ cur += '/'+s; if(!vm.fs[cur]) vm.fs[cur] = {type:'dir'}; });
+          } else {
+            if(vm.fs[target]){ pr('err','mkdir: cannot create directory \''+p+'\': File exists'); return; }
+            if(!vm.fs[dirname(target)]){ pr('err','mkdir: cannot create directory \''+p+'\': No such file or directory'); return; }
+            vm.fs[target] = {type:'dir'};
+          }
+        });
+        return;
+      }
+      case 'touch': {
+        var tp = tokens[1]; if(!tp){ pr('err','usage: touch <file>'); return; }
+        var tt = resolvePath(tp);
+        if(tt.indexOf('/etc/')===0 && !effRoot){ pr('err', tp+': Permission denied'); return; }
+        if(!vm.fs[tt]) vm.fs[tt] = {type:'file', content:''};
+        return;
+      }
+      case 'cat': {
+        var cp = tokens[1]; if(!cp){ pr('err','usage: cat <file>'); return; }
+        var ct = resolvePath(cp);
+        var cn = vm.fs[ct];
+        if(!cn){ pr('err', 'cat: ' + cp + ': No such file or directory'); return; }
+        if(cn.type === 'dir'){ pr('err', 'cat: ' + cp + ': Is a directory'); return; }
+        (cn.content || '').split('\n').forEach(function(l){ pr('', l); });
+        return;
+      }
+      case 'rm': {
+        var hasR = tokens.indexOf('-r')!==-1 || tokens.indexOf('-rf')!==-1 || tokens.indexOf('-fr')!==-1;
+        var rmArg = tokens[tokens.length-1];
+        var rt = resolvePath(rmArg);
+        if(!vm.fs[rt]){ pr('err', 'rm: cannot remove \'' + rmArg + '\': No such file or directory'); return; }
+        if(rt.indexOf('/etc/')===0 && !effRoot){ pr('err', rmArg+': Permission denied'); return; }
+        if(vm.fs[rt].type==='dir' && !hasR){ pr('err', 'rm: cannot remove \'' + rmArg + '\': Is a directory'); return; }
+        Object.keys(vm.fs).forEach(function(p){ if(p===rt || (hasR && p.indexOf(rt+'/')===0)) delete vm.fs[p]; });
+        return;
+      }
+      case 'micro': case 'nano': {
+        var epArg = tokens[1];
+        if(!epArg){ pr('err','usage: ' + cmd + ' <file>'); return; }
+        var et = resolvePath(epArg);
+        var existing = vm.fs[et];
+        if(existing && existing.type==='dir'){ pr('err', epArg + ': is a directory'); return; }
+        var needsRoot = et.indexOf('/etc/') === 0;
+        var canWrite = !needsRoot || effRoot;
+        var econtent = existing ? existing.content : templateFor(et);
+        openEditor(et, econtent, epArg, canWrite);
+        return;
+      }
+
+      case 'echo': {
+        var redir = line.match(/^echo\s+(.*?)\s*(>>|>)\s*(\S+)\s*$/);
+        if(redir){
+          var textPart = redir[1].replace(/^["']|["']$/g,'');
+          var append = redir[2] === '>>';
+          var target2 = resolvePath(redir[3]);
+          if(target2.indexOf('/etc/')===0 && !effRoot){ pr('err', redir[3]+': Permission denied'); return; }
+          var prev = (append && vm.fs[target2] && vm.fs[target2].type==='file') ? vm.fs[target2].content : '';
+          vm.fs[target2] = { type:'file', content: prev + (append && prev ? '\n' : '') + textPart };
+          afterFileSaved(target2);
+          return;
+        }
         if(line === 'echo $?'){ pr('', String(vm.lastExitCode)); return; }
         pr('', line.slice(5)); return;
+      }
+
       case 'id':
         var who = tokens[1] || vm.user;
         if(who === 'root') pr('', 'uid=0(root) gid=0(root) groups=0(root)');
@@ -285,16 +508,15 @@
 
       case 'sudo': {
         var rest = tokens.slice(1);
-        if(rest[0] === '-u'){
-          var asUser = rest[1];
-          var innerLine = rest.slice(2).join(' ');
-          var innerTokens = rest.slice(2);
-          dispatch(innerTokens[0], innerTokens, innerLine, false);
+        var asRoot = true, restTokens = rest;
+        if(rest[0] === '-u'){ asRoot = false; restTokens = rest.slice(2); }
+        if(restTokens.length === 0){ pr('err','usage: sudo <command>'); return; }
+        var restLine = restTokens.join(' ');
+        if(!vm.sudoCached){
+          vm.sudoPending = { tokens: restTokens, line: restLine, asRoot: asRoot };
           return;
         }
-        if(rest.length === 0){ pr('err','usage: sudo <command>'); return; }
-        var innerLine2 = rest.join(' ');
-        dispatch(rest[0], rest, innerLine2, true);
+        dispatch(restTokens[0], restTokens, restLine, asRoot);
         return;
       }
       case 'su': {
@@ -335,6 +557,60 @@
     }
   }
 
+  // ---------------- editor ----------------
+  function templateFor(path){
+    if(/\/etc\/nginx\/conf\.d\/.*\.conf$/.test(path)){
+      return 'server {\n    listen       80;\n    server_name  class.int134;\n    root         /var/www/site;\n    index        index.html;\n\n    location / {\n    }\n}\n';
+    }
+    if(/\/etc\/systemd\/system\/.*\.service$/.test(path)){
+      var name = path.split('/').pop().replace('.service','');
+      return '[Unit]\nDescription=' + name + '\n\n[Service]\nExecStart=/usr/bin/node /srv/' + name + '/server.js\nUser=sysadmin\nRestart=always\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target\n';
+    }
+    return '';
+  }
+  function openEditor(path, content, displayPath, canWrite){
+    editorCtx = { path:path, displayPath:displayPath, canWrite:canWrite };
+    editorPathEl.textContent = (canWrite ? '' : '[read-only — reopen with sudo] ') + displayPath + '  —  micro';
+    editorArea.value = content;
+    editorOverlay.hidden = false;
+    setTimeout(function(){ editorArea.focus(); }, 0);
+  }
+  function closeEditor(save){
+    if(save && editorCtx){
+      if(!editorCtx.canWrite){
+        pr('err', editorCtx.displayPath + ': Permission denied — reopen with: sudo micro ' + editorCtx.displayPath);
+      } else {
+        var parent = dirname(editorCtx.path);
+        if(!vm.fs[parent]){
+          var segs = parent.split('/').filter(Boolean); var cur='';
+          segs.forEach(function(s){ cur += '/'+s; if(!vm.fs[cur]) vm.fs[cur] = {type:'dir'}; });
+        }
+        vm.fs[editorCtx.path] = { type:'file', content: editorArea.value };
+        pr('ok', 'Wrote ' + editorArea.value.split('\n').length + ' lines to ' + editorCtx.displayPath);
+        afterFileSaved(editorCtx.path);
+      }
+    }
+    editorOverlay.hidden = true; editorCtx = null;
+    render(); input.focus();
+  }
+  function afterFileSaved(path){
+    if(/^\/etc\/nginx\/(conf\.d\/.*\.conf|nginx\.conf)$/.test(path)){
+      vm.nginxConfigValid = validateNginxLike(vm.fs[path].content);
+      pr(vm.nginxConfigValid ? 'ok' : 'warn', vm.nginxConfigValid ? '(that parses fine — try "nginx -t")' : '(this will fail "nginx -t" — looks like a missing ; or brace somewhere)');
+    }
+  }
+  function validateNginxLike(content){
+    var lines = content.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l && l[0] !== '#'; });
+    if(lines.length === 0) return false;
+    return lines.every(function(l){ return /[;{}]\s*$/.test(l); });
+  }
+  document.getElementById('editorSave').addEventListener('click', function(){ closeEditor(true); });
+  document.getElementById('editorQuit').addEventListener('click', function(){ closeEditor(false); });
+  editorArea.addEventListener('keydown', function(e){
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); closeEditor(true); }
+    else if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='q'){ e.preventDefault(); closeEditor(false); }
+  });
+
   // ---------------- apt ----------------
   function cmdApt(tokens, effRoot){
     var sub = tokens[1];
@@ -354,7 +630,7 @@
     }
     if(sub === 'list' && tokens[2] === '--installed'){
       Object.keys(vm.packages).forEach(function(p){ if(vm.packages[p].installed) pr('', p+'/noble,now '+vm.packages[p].version+' amd64 [installed]'); });
-      Object.keys(vm.services).forEach(function(s){ if(vm.services[s].installed && vm.services[s].kind!=='api') pr('', s+'/noble,now installed'); });
+      Object.keys(vm.services).forEach(function(s){ if(vm.services[s].installed && vm.services[s].kind!=='api' && vm.services[s].kind!=='custom') pr('', s+'/noble,now installed'); });
       return;
     }
     if(sub === 'show'){
@@ -402,6 +678,10 @@
       s.installed = true;
       s.version = vm.aptUpdated ? '1.30.4-1~noble' : '1.24.0-2ubuntu7';
       pr('', 'Setting up nginx (' + s.version + ') ...');
+      if(!vm.fs['/etc/nginx/conf.d/default.conf']){
+        vm.fs['/etc/nginx/conf.d/default.conf'] = { type:'file', content: 'server {\n    listen       80 default_server;\n    server_name  _;\n    root         /usr/share/nginx/html;\n    index        index.html index.htm;\n\n    location / {\n    }\n}\n' };
+        vm.fs['/etc/nginx/nginx.conf'] = { type:'file', content: '# main nginx config — do NOT edit this one.\n# per-site configs go in /etc/nginx/conf.d/*.conf\nuser nginx;\nevents {\n    worker_connections 1024;\n}\nhttp {\n    include /etc/nginx/conf.d/*.conf;\n}\n' };
+      }
       if(s.version.startsWith('1.24')){
         pr('warn', 'Note: this is Ubuntu\'s own nginx (1.24, sites-enabled layout). The course wants nginx.org\'s 1.30.x with conf.d — run "apt update" after adding the nginx.org repo first, then reinstall.');
       } else {
@@ -427,20 +707,54 @@
 
   // ---------------- systemctl ----------------
   function findService(name){ return vm.services[name]; }
+  function scanSystemdUnits(){
+    var seen = [];
+    Object.keys(vm.fs).forEach(function(p){
+      var m = p.match(/^\/etc\/systemd\/system\/([\w.-]+)\.service$/);
+      if(!m || vm.fs[p].type !== 'file') return;
+      var name = m[1];
+      seen.push(name);
+      var content = vm.fs[p].content || '';
+      var hasRestart = /Restart\s*=\s*always/i.test(content);
+      if(!vm.services[name]){
+        vm.services[name] = {label:name, installed:true, enabled:false, active:false, pid:null, restart:hasRestart, kind:'custom'};
+      } else {
+        vm.services[name].installed = true;
+        vm.services[name].restart = hasRestart || vm.services[name].restart;
+      }
+    });
+    return seen;
+  }
   function cmdSystemctl(tokens, effRoot){
     var sub = tokens[1];
+    if(sub === 'daemon-reload'){
+      if(!requireSudo(effRoot)) return;
+      var found = scanSystemdUnits();
+      pr('dim', '(re-read every unit under /etc/systemd/system/' + (found.length ? ' — found: ' + found.join(', ') : ' — nothing new found'));
+      return;
+    }
     var rest = tokens.slice(2).filter(function(t){ return t !== '--now'; });
     var hasNow = tokens.indexOf('--now') !== -1;
     var name = rest[0];
-    if(!sub){ pr('err','usage: systemctl <status|start|stop|restart|reload|enable|disable|is-enabled|is-active> <service>'); return; }
+    if(!sub){ pr('err','usage: systemctl <status|start|stop|restart|reload|enable|disable|daemon-reload> <service>'); return; }
     var svc = findService(name);
 
     if(sub === 'status'){
       if(!svc || !svc.installed){ pr('err', 'Unit ' + name + '.service could not be found.'); return; }
       pr('', '● ' + name + '.service - ' + labelFor(name));
-      pr('', '     Loaded: loaded (/etc/systemd/system/' + name + '.service; ' + (svc.enabled?'enabled':'disabled') + ')');
+      pr('', '     Loaded: loaded (/etc/systemd/system/' + name + '.service; ' + (svc.enabled?'enabled':'disabled') + '; preset: enabled)');
       if(svc.active){
-        pr('ok', '     Active: active (running) — Main PID: ' + svc.pid);
+        pr('ok', '     Active: active (running) since ' + new Date().toTimeString().slice(0,8) + '; 2min ago');
+        pr('', '   Main PID: ' + svc.pid + ' (' + (svc.kind==='nginx'?'nginx':name) + ')');
+        pr('', '      Tasks: ' + (svc.kind==='nginx' ? 3 : 1) + ' (limit: 4662)');
+        pr('', '     Memory: ' + (svc.kind==='mysql' ? '312.4M' : (2 + Math.random()*8).toFixed(1) + 'M'));
+        pr('', '     CGroup: /system.slice/' + name + '.service');
+        if(svc.kind==='nginx'){
+          pr('', '             ├─' + svc.pid + ' "nginx: master process"');
+          pr('', '             └─' + (svc.pid+1) + ' "nginx: worker process"');
+        } else {
+          pr('', '             └─' + svc.pid + ' ' + (svc.kind==='mysql'?'mysqld':name));
+        }
       } else {
         pr('err', '     Active: inactive (dead)');
       }
@@ -451,7 +765,7 @@
 
     if(sub === 'enable'){
       if(!requireSudo(effRoot)) return;
-      if(!svc||!svc.installed){ pr('err','Failed to enable unit: Unit file '+name+'.service does not exist.'); return; }
+      if(!svc||!svc.installed){ pr('err','Failed to enable unit: Unit file '+name+'.service does not exist. Write it with micro, then run "systemctl daemon-reload" first.'); return; }
       svc.enabled = true;
       pr('', 'Created symlink /etc/systemd/system/multi-user.target.wants/' + name + '.service.');
       if(hasNow){ startService(svc, name); }
@@ -467,7 +781,7 @@
     }
     if(sub === 'start'){
       if(!requireSudo(effRoot, 'Failed to start '+name+'.service: Interactive authentication required.')) return;
-      if(!svc||!svc.installed){ pr('err','Unit '+name+'.service not found.'); return; }
+      if(!svc||!svc.installed){ pr('err','Unit '+name+'.service not found. Write it with micro at /etc/systemd/system/'+name+'.service, then "systemctl daemon-reload".'); return; }
       startService(svc, name);
       return;
     }
@@ -512,7 +826,7 @@
   function labelFor(name){
     return {nginx:'A high performance web server', mysql:'MySQL Community Server', ssh:'OpenBSD Secure Shell server',
       cron:'Regular background program processing daemon', 'school-api':'INT134 school API (Node/Express)',
-      'int134-heartbeat':'INT134 heartbeat demo'}[name] || name;
+      'int134-heartbeat':'INT134 heartbeat demo'}[name] || ('user-defined service (' + name + '.service)');
   }
   function startService(svc, name){
     svc.active = true; svc.pid = newPid();
@@ -537,6 +851,7 @@
       pr('ok', 'systemd[1]: Started ' + name + '.service.');
       if(svc.kind==='nginx') pr('', name + '['+svc.pid+']: nginx worker process started, listening on 0.0.0.0:80');
       if(svc.kind==='api') pr('', name + '['+svc.pid+']: listening on 0.0.0.0:3xxx');
+      if(svc.kind==='custom') pr('', name + '['+svc.pid+']: service started');
     }
   }
 
@@ -579,8 +894,17 @@
     vm.jobs.forEach(function(j,i){ pr('', '[' + (i+1) + ']+  Running                 ' + j.cmd + (j.nohup?' (nohup)':'') + ' &'); });
   }
   function cmdBg(tokens, isNohup){
-    var cmd = tokens.join(' ') || './app';
-    var job = { pid:newPid(), cmd:cmd.replace(/&\s*$/,'').trim(), nohup:isNohup };
+    var raw = tokens.join(' ');
+    var cmdName = tokens[0] || './app';
+    if(cmdName.indexOf('./') === 0){
+      var scriptPath = resolvePath(cmdName.slice(2));
+      var node = vm.fs[scriptPath];
+      if(!node || node.type !== 'file'){
+        pr('err', 'bash: ' + cmdName + ': No such file or directory — create it first (try: micro ' + cmdName.slice(2) + ')');
+        return;
+      }
+    }
+    var job = { pid:newPid(), cmd:raw.replace(/&\s*$/,'').trim() || cmdName, nohup:isNohup };
     vm.jobs.push(job);
     pr('', '[' + vm.jobs.length + '] ' + job.pid);
     if(isNohup) pr('dim', 'nohup: ignoring input and appending output to \'nohup.out\'');
@@ -602,8 +926,9 @@
       var svcName = Object.keys(vm.services).find(function(k){ return vm.services[k].pid===byPid; });
       if(svcName){
         var s = vm.services[svcName];
+        var oldPid = s.pid;
         if(s.restart && s.active){
-          var oldPid = s.pid; s.pid = newPid();
+          s.pid = newPid();
           pr('warn', 'PID ' + oldPid + ' killed — but systemd (Restart=always) already brought it back as PID ' + s.pid + '. The service is not the process.');
         } else if(!isKill9){
           pr('dim', '(SIGTERM sent — it may trap this and stay running; try -9 to be sure)');
@@ -684,7 +1009,7 @@
     var port = portMatch ? parseInt(portMatch[1],10) : 80;
 
     if(url.indexOf('/api/') !== -1){
-      var apiUp = vm.services['school-api'].active;
+      var apiUp = vm.services['school-api'] && vm.services['school-api'].active;
       if(!apiUp){ pr('err', 'curl: (7) Failed to connect to ' + url.replace(/^https?:\/\//,'').split('/')[0] + ': Connection refused'); return; }
       if(url.indexOf('/api/health') !== -1){ pr('ok', '{"status":"ok","studentId":"68xxx","time":"'+new Date().toISOString()+'"}'); return; }
       if(isPost){
@@ -819,6 +1144,7 @@
       if(s.installed){ s.active = s.enabled; s.pid = s.active ? newPid() : null; }
     });
     vm.jobs = vm.jobs.filter(function(j){ return false; });
+    vm.sudoCached = false;
     pr('ok', '...back up. Every ENABLED service is active again with a fresh PID; nothing merely "active" (but disabled) came back; every background job that was not a systemd unit is gone.');
   }
 
@@ -851,22 +1177,26 @@
   // ================= weeks / try-this =================
   var weeks = {
     W1:{ label:'W1 · Packages & systemd', tips:[
+      'pwd', 'mkdir -p ~/int134/lab01', 'cd ~/int134/lab01', 'ls -la',
       'sudo apt update', 'sudo apt install unzip -y', 'apt list --installed',
       'systemctl status cron', 'sudo systemctl disable cron', 'sudo reboot', 'systemctl status cron'
     ], mission:'Watch cron\'s status flip through disable → reboot. Enabled/disabled and active/inactive move independently — that\'s the W1 matrix.'},
     W2:{ label:'W2 · Processes', tips:[
-      './heartbeat.sh &', 'jobs', 'ps aux', 'nohup ./watcher.sh &', 'kill %1', 'kill -9 <pid from ps>'
-    ], mission:'Start a couple of background jobs, then use the "Close this terminal" scenario below and see which ones survive.'},
+      'micro heartbeat.sh', './heartbeat.sh &', 'jobs', 'ps aux',
+      'micro nohup-demo.sh', 'nohup ./nohup-demo.sh &', 'kill %1', 'kill -9 <pid from ps>'
+    ], mission:'Create a script with micro, background it, then use "Close this terminal" and see which jobs survive. Write a real unit file at /etc/systemd/system/int134-heartbeat.service, then daemon-reload + enable --now it — that one survives everything.'},
     W3:{ label:'W3 · Static web', tips:[
       'sudo apt update', 'sudo apt install nginx -y', 'sudo systemctl enable --now nginx',
-      'sudo ufw allow 80/tcp', 'curl -H "Host: x" localhost', 'nginx -t', 'sudo systemctl reload nginx'
-    ], mission:'Install nginx (try it before "apt update" too, to see the 1.24-vs-1.30 trap), open it up, then break the config from the Scenarios panel and compare reload vs restart.'},
+      'sudo ufw allow 80/tcp', 'curl -H "Host: x" localhost', 'nginx -t',
+      'sudo micro /etc/nginx/conf.d/site.conf', 'nginx -t', 'sudo systemctl reload nginx'
+    ], mission:'Install nginx (try it before "apt update" too, to see the 1.24-vs-1.30 trap). Then edit /etc/nginx/conf.d/site.conf yourself — delete a semicolon and watch "nginx -t" catch it, then compare reload vs restart.'},
     W4:{ label:'W4 · Backend + DB', tips:[
       'sudo apt install mysql-server -y', 'systemctl status mysql', 'mysql -e "SELECT 1;"', 'sudo mysql',
       "CREATE DATABASE school;", "CREATE USER 'school'@'localhost' IDENTIFIED BY RANDOM PASSWORD;",
       "GRANT ALL PRIVILEGES ON school.* TO 'school'@'localhost';", 'exit',
-      'sudo ufw allow 3xxx/tcp', 'npm ci', 'npx prisma migrate dev --name init'
-    ], mission:'Notice MySQL is already enabled+active right after install. Try mysql without sudo first (ERROR 1045), then with sudo mysql.'},
+      'sudo micro /etc/systemd/system/school-api.service', 'sudo systemctl daemon-reload',
+      'sudo systemctl enable --now school-api', 'sudo ufw allow 3xxx/tcp', 'npm ci', 'npx prisma migrate dev --name init'
+    ], mission:'Notice MySQL is already enabled+active right after install. Try mysql without sudo first (ERROR 1045). Then write the school-api unit file for real and bring it up with daemon-reload + enable --now.'},
     W5:{ label:'W5 · Reverse proxy', tips:[
       'curl http://localhost/api/health', 'curl -X POST -H "Content-Type: application/json" -d \'{"studentId":"68001","firstName":"A"}\' http://localhost/api/students',
       'sudo systemctl restart school-api', 'curl http://localhost/api/health'
@@ -887,9 +1217,6 @@
   }
   renderWeeks();
 
-  // enable school-api once its dependencies exist, and simulate its own install via a dedicated bootstrap
-  vm.services['school-api'].installed = true; // present but not enabled/active until student starts it via commands below
-
   // ================= scenarios =================
   document.getElementById('scnClose').addEventListener('click', function(){
     var before = vm.jobs.length;
@@ -903,7 +1230,7 @@
   document.getElementById('scnCors').addEventListener('click', function(){
     vm.reverseProxyConfigured = !vm.reverseProxyConfigured;
     if(vm.reverseProxyConfigured){
-      vm.services['school-api'].enabled = true; vm.services['school-api'].active = true; vm.services['school-api'].pid = newPid();
+      vm.services['school-api'].installed = true; vm.services['school-api'].enabled = true; vm.services['school-api'].active = true; vm.services['school-api'].pid = newPid();
       pr('ok', '[scenario] reverse proxy configured: /api/ now proxies to the backend over loopback — same origin, no CORS, and school-api is running.');
     } else {
       pr('warn', '[scenario] reverse proxy removed: the frontend and /api/ are two different origins again — a browser fetch would be blocked by CORS.');
@@ -911,9 +1238,10 @@
     render();
   });
   document.getElementById('resetBtn').addEventListener('click', function(){
-    vm = freshState(); vm.services['school-api'].installed = true;
+    vm = freshState();
     termEl.innerHTML = '';
-    pr('dim', 'Sandbox reset.'); render();
+    pr('dim', 'Sandbox reset — disconnected. Type your student ID to "ssh" back in.');
+    render();
   });
   document.getElementById('linkBoard').addEventListener('click', function(){
     window.open('https://phakinza007.github.io/int134-exam1-whiteboard/', '_blank');
@@ -921,10 +1249,18 @@
 
   // ================= input handling =================
   input.addEventListener('keydown', function(e){
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'l'){
+      e.preventDefault(); termEl.innerHTML=''; return;
+    }
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c'){
+      e.preventDefault();
+      prHtml('', '<span class="prompt">' + escapeHtml(currentPrompt()) + '</span>' + escapeHtml(input.value) + '^C');
+      input.value=''; vm.pendingConfirm=null; vm.sudoPending=null; render(); return;
+    }
     if(e.key === 'Enter'){
       var v = input.value;
       input.value = '';
-      history.push(v); histPos = history.length;
+      if(vm.loginStage === 'done' && !vm.sudoPending){ history.push(v); histPos = history.length; }
       run(v);
     } else if(e.key === 'ArrowUp'){
       if(histPos>0){ histPos--; input.value = history[histPos]||''; }
