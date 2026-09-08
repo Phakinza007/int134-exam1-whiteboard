@@ -1,0 +1,941 @@
+<title>INT134 Sandbox</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#eef1ef; --surface:#ffffff; --surface-2:#e6ece9; --ink:#132025; --ink-soft:#4d5d61; --ink-faint:#7c8d8d;
+    --line:#cdd7d2; --line-strong:#a9bab3; --accent:#0e7a72; --accent-ink:#ffffff; --accent-soft:#dcefec;
+    --amber:#a8721f; --amber-soft:#f3e7cd; --red:#ad4430; --red-soft:#f7e0da; --green:#3c7a49; --green-soft:#dcefe0;
+    --term-bg:#0d1210; --term-fg:#d8e6df; --term-dim:#6d8177; --term-prompt:#5fd6c4; --term-err:#ff8f75; --term-ok:#8fe0a0; --term-warn:#f2c572;
+    --shadow:0 1px 2px rgba(19,32,37,.06), 0 8px 24px rgba(19,32,37,.06);
+    --font-sans:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+    --font-mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0e1517; --surface:#151f21; --surface-2:#1b2628; --ink:#e9efed; --ink-soft:#a3b6b4; --ink-faint:#71857f;
+      --line:#293735; --line-strong:#3c4d49; --accent:#54d3c2; --accent-ink:#08201d; --accent-soft:#173733;
+      --amber:#e2ac53; --amber-soft:#3c3018; --red:#e28870; --red-soft:#3d241d; --green:#82c891; --green-soft:#1d3526;
+      --term-bg:#080b0a; --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e1517; --surface:#151f21; --surface-2:#1b2628; --ink:#e9efed; --ink-soft:#a3b6b4; --ink-faint:#71857f;
+    --line:#293735; --line-strong:#3c4d49; --accent:#54d3c2; --accent-ink:#08201d; --accent-soft:#173733;
+    --amber:#e2ac53; --amber-soft:#3c3018; --red:#e28870; --red-soft:#3d241d; --green:#82c891; --green-soft:#1d3526;
+    --term-bg:#080b0a; --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-sans); -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{margin:0;}
+
+  .topbar{display:flex; align-items:center; gap:14px; padding:14px 20px; border-bottom:1px solid var(--line); flex-wrap:wrap;}
+  .topbar .title{font-weight:700; font-size:16px;}
+  .topbar .sub{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint);}
+  .topbar .spacer{flex:1;}
+  .btn{
+    font-family:var(--font-mono); font-size:12px; font-weight:600; padding:7px 12px; border-radius:7px;
+    border:1.5px solid var(--line-strong); background:var(--surface); color:var(--ink-soft); cursor:pointer;
+  }
+  .btn:hover{border-color:var(--accent); color:var(--accent);}
+  .btn.danger:hover{border-color:var(--red); color:var(--red);}
+
+  .disclaimer{
+    background:var(--amber-soft); color:var(--amber); border-bottom:1px solid var(--line); padding:8px 20px;
+    font-size:12.5px; text-align:center;
+  }
+  .disclaimer a{color:inherit;}
+
+  .layout{display:grid; grid-template-columns:1fr 340px; gap:0; height:calc(100vh - 92px); min-height:520px;}
+  @media (max-width:920px){ .layout{grid-template-columns:1fr; height:auto;} .term-wrap{height:60vh;} }
+
+  .term-wrap{padding:16px; display:flex; flex-direction:column; min-height:0;}
+  .term{
+    flex:1; background:var(--term-bg); border-radius:10px; box-shadow:var(--shadow); padding:14px 16px;
+    font-family:var(--font-mono); font-size:13px; line-height:1.55; color:var(--term-fg); overflow-y:auto; min-height:0;
+  }
+  .term .line{white-space:pre-wrap; word-break:break-word;}
+  .term .prompt{color:var(--term-prompt); font-weight:600;}
+  .term .err{color:var(--term-err);}
+  .term .ok{color:var(--term-ok);}
+  .term .warn{color:var(--term-warn);}
+  .term .dim{color:var(--term-dim);}
+  .inputrow{display:flex; align-items:center; margin-top:6px;}
+  .inputrow .ps{color:var(--term-prompt); font-weight:600; white-space:pre;}
+  .inputrow input{
+    flex:1; background:transparent; border:none; outline:none; color:var(--term-fg); font-family:var(--font-mono);
+    font-size:13px; padding:2px 6px;
+  }
+
+  .sidebar{border-left:1px solid var(--line); overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:18px;}
+  .panel{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 15px; box-shadow:var(--shadow);}
+  .panel h3{font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-faint); font-weight:700; margin-bottom:10px;}
+  .weektabs{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
+  .weektab{
+    font-family:var(--font-mono); font-size:11px; font-weight:700; padding:5px 9px; border-radius:6px;
+    border:1.5px solid var(--line-strong); background:var(--surface-2); color:var(--ink-soft); cursor:pointer;
+  }
+  .weektab.active{background:var(--accent); border-color:var(--accent); color:var(--accent-ink);}
+  .mission{font-size:12px; color:var(--ink-soft); margin-bottom:8px; line-height:1.5;}
+  .trylist{display:flex; flex-direction:column; gap:5px;}
+  .trychip{
+    font-family:var(--font-mono); font-size:11.5px; text-align:left; background:var(--surface-2); border:1px solid var(--line);
+    border-radius:6px; padding:6px 9px; cursor:pointer; color:var(--ink); word-break:break-all;
+  }
+  .trychip:hover{border-color:var(--accent);}
+
+  table.state{width:100%; border-collapse:collapse; font-size:11.5px; font-family:var(--font-mono);}
+  table.state td{padding:4px 2px; border-top:1px solid var(--line); vertical-align:middle;}
+  table.state tr:first-child td{border-top:none;}
+  .dot{display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; vertical-align:middle;}
+  .dot.on{background:var(--green);} .dot.off{background:var(--ink-faint);}
+  .tag{display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:999px;}
+  .tag.warn{background:var(--red-soft); color:var(--red);}
+
+  .scenario-btns{display:flex; flex-direction:column; gap:7px;}
+  .scenario-btns .btn{width:100%; text-align:left;}
+  .empty{color:var(--ink-faint); font-size:11.5px; font-style:italic;}
+</style>
+
+<div class="topbar">
+  <span class="title">🖥️ INT134 Sandbox</span>
+  <span class="sub">a practice shell, not your real VM</span>
+  <span class="spacer"></span>
+  <button class="btn" id="linkBoard" type="button">↗ Open the Exam 1 Whiteboard</button>
+  <button class="btn danger" id="resetBtn" type="button">↺ Reset sandbox</button>
+</div>
+<div class="disclaimer">This is a simulated terminal for practicing command syntax and reasoning. It is not connected to your real course VM and does not affect any grade or checker.</div>
+
+<div class="layout">
+  <div class="term-wrap">
+    <div class="term" id="term" tabindex="-1"></div>
+    <div class="inputrow">
+      <span class="ps" id="ps">sysadmin@lvm-sandbox:~$&nbsp;</span>
+      <input id="cmdInput" autocomplete="off" spellcheck="false" autofocus />
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="panel">
+      <h3>Try this</h3>
+      <div class="weektabs" id="weektabs"></div>
+      <div class="mission" id="mission"></div>
+      <div class="trylist" id="trylist"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Services (systemd)</h3>
+      <table class="state" id="svcTable"></table>
+    </div>
+
+    <div class="panel">
+      <h3>Firewall (ufw)</h3>
+      <table class="state" id="ufwTable"></table>
+    </div>
+
+    <div class="panel">
+      <h3>Background jobs</h3>
+      <div id="jobsBox"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Scenarios</h3>
+      <div class="scenario-btns">
+        <button class="btn" id="scnClose" type="button">🔌 Close this terminal (SSH disconnect)</button>
+        <button class="btn" id="scnBreak" type="button">💥 Break the nginx config</button>
+        <button class="btn" id="scnFix" type="button">🔧 Fix the nginx config</button>
+        <button class="btn" id="scnCors" type="button">🌐 Toggle: reverse proxy configured</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var termEl = document.getElementById('term');
+  var input = document.getElementById('cmdInput');
+  var psEl = document.getElementById('ps');
+  var history = [];
+  var histPos = 0;
+  var pid = 900;
+
+  function freshState(){
+    return {
+      user:'sysadmin', loginUser:'sysadmin', suStack:[],
+      aptUpdated:false, mysqlSecured:false, reverseProxyConfigured:false,
+      lastExitCode:0,
+      packages:{ unzip:{installed:false, version:null} },
+      services:{
+        ssh:      {label:'ssh',      installed:true,  enabled:true,  active:true,  pid:812, restart:false, kind:'system'},
+        cron:     {label:'cron',     installed:true,  enabled:true,  active:true,  pid:640, restart:false, kind:'system'},
+        nginx:    {label:'nginx',    installed:false, enabled:false, active:false, pid:null, restart:true, kind:'nginx'},
+        mysql:    {label:'mysql',    installed:false, enabled:false, active:false, pid:null, restart:false, kind:'mysql'},
+        'school-api': {label:'school-api', installed:false, enabled:false, active:false, pid:null, restart:true, kind:'api'},
+        'int134-heartbeat': {label:'int134-heartbeat', installed:false, enabled:false, active:false, pid:null, restart:true, kind:'heartbeat'}
+      },
+      nginxConfigValid:true,
+      ufw:{ enabled:true, rules:{22:'ALLOW'} },
+      pendingConfirm:null,
+      mysqlUsers:{ root:{scope:'*'} },
+      mysqlDbs:{},
+      mysqlMode:false,
+      jobs:[],
+      apiRecords:[]
+    };
+  }
+  var vm = freshState();
+
+  function pr(cls, text){
+    var d = document.createElement('div');
+    d.className = 'line' + (cls ? ' '+cls : '');
+    d.textContent = text;
+    termEl.appendChild(d);
+  }
+  function prHtml(cls, html){
+    var d = document.createElement('div');
+    d.className = 'line' + (cls ? ' '+cls : '');
+    d.innerHTML = html;
+    termEl.appendChild(d);
+  }
+  function echoCmd(raw){
+    prHtml('', '<span class="prompt">' + currentPrompt(true) + '</span>' + escapeHtml(raw));
+  }
+  function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function scrollBottom(){ termEl.scrollTop = termEl.scrollHeight; }
+  function newPid(){ pid += 1; return pid; }
+
+  function currentPrompt(forEcho){
+    if(vm.mysqlMode) return 'mysql> ';
+    var host = 'lvm-sandbox';
+    return vm.user + '@' + host + ':~' + (vm.user === 'sysadmin' ? '$ ' : '# ');
+  }
+  function refreshPrompt(){ psEl.textContent = currentPrompt(); }
+
+  // ---------- boot text ----------
+  pr('dim', 'Connected to lvm-sandbox.int134.local (simulated Ubuntu 24.04 LTS).');
+  pr('dim', 'Type "help" to see what this sandbox understands. Try the "Try this" panel on the right.');
+  pr('', '');
+
+  // ================= dispatcher =================
+  function run(raw){
+    var line = raw.trim();
+    if(line === ''){ return; }
+    echoCmd(raw);
+
+    if(vm.pendingConfirm){
+      var yn = line.toLowerCase();
+      var pc = vm.pendingConfirm; vm.pendingConfirm = null;
+      if(yn === 'y' || yn === 'yes'){ pc.yes(); } else { pr('dim','Operation aborted!'); }
+      render(); return;
+    }
+
+    if(vm.mysqlMode){ runMysql(line); render(); return; }
+
+    var tokens = line.split(/\s+/);
+    var cmd = tokens[0];
+
+    try{
+      dispatch(cmd, tokens, line);
+    }catch(e){
+      pr('err', 'sandbox: internal error — ' + e.message);
+    }
+    render();
+  }
+
+  function requireSudo(effectiveRoot, msg){
+    if(!effectiveRoot){
+      pr('err', msg || 'Permission denied (are you root?) — try again with sudo.');
+      vm.lastExitCode = 1;
+      return false;
+    }
+    return true;
+  }
+
+  function dispatch(cmd, tokens, line, effRootOverride){
+    var effRoot = effRootOverride || (vm.user === 'root');
+
+    if(line === 'who am i' || line === 'who -m'){
+      pr('', vm.loginUser + '   pts/0        ' + new Date().toDateString());
+      return;
+    }
+
+    switch(cmd){
+      case 'help':
+        pr('', 'Core: whoami | who am i | id | sudo <cmd> | sudo -u <user> <cmd> | su <user> | exit | clear');
+        pr('', 'Packages: apt update | apt install <pkg> [-y] | apt list --installed | apt show <pkg>');
+        pr('', 'Services: systemctl status|start|stop|restart|reload|enable|disable|is-enabled|is-active <svc> [--now]');
+        pr('', 'Process:  ps [aux|-ef] | pstree -p | pgrep -af <name> | jobs | kill [-9] <%N|pid> | <cmd> & | nohup <cmd> &');
+        pr('', 'Network:  ufw status|allow <port>[/tcp]|delete <n>|enable|disable | curl [flags] <url> | nginx -t');
+        pr('', 'Logs:     journalctl -u <svc> [-f|-n N]');
+        pr('', 'DB:       sudo mysql | mysql -e "..." | MYSQL_PWD=x mysql -u <user> <db> -e "..."');
+        pr('', 'Backend:  npm ci | npx prisma generate | npx prisma migrate dev --name x | npx prisma migrate diff --exit-code');
+        pr('', 'Misc:     echo $? | sudo reboot | pwd');
+        return;
+      case 'clear': termEl.innerHTML=''; return;
+      case 'pwd': pr('', '/home/'+vm.loginUser); return;
+      case 'whoami': pr('', vm.user); return;
+      case 'echo':
+        if(line === 'echo $?'){ pr('', String(vm.lastExitCode)); return; }
+        pr('', line.slice(5)); return;
+      case 'id':
+        var who = tokens[1] || vm.user;
+        if(who === 'root') pr('', 'uid=0(root) gid=0(root) groups=0(root)');
+        else if(who === 'test') pr('', 'uid=1001(test) gid=1001(test) groups=1001(test),1000(sysadmin)');
+        else pr('', 'uid=1000(sysadmin) gid=1000(sysadmin) groups=1000(sysadmin),27(sudo)');
+        return;
+
+      case 'sudo': {
+        var rest = tokens.slice(1);
+        if(rest[0] === '-u'){
+          var asUser = rest[1];
+          var innerLine = rest.slice(2).join(' ');
+          var innerTokens = rest.slice(2);
+          dispatch(innerTokens[0], innerTokens, innerLine, false);
+          return;
+        }
+        if(rest.length === 0){ pr('err','usage: sudo <command>'); return; }
+        var innerLine2 = rest.join(' ');
+        dispatch(rest[0], rest, innerLine2, true);
+        return;
+      }
+      case 'su': {
+        var target = tokens[1] || 'root';
+        vm.suStack.push(vm.user);
+        vm.user = target;
+        pr('dim', 'Password: ');
+        pr('', '');
+        return;
+      }
+      case 'exit':
+        if(vm.suStack.length){ vm.user = vm.suStack.pop(); }
+        else { pr('dim','logout'); }
+        return;
+
+      case 'apt': return cmdApt(tokens, effRoot);
+      case 'apt-cache': return cmdAptCache(tokens);
+      case 'systemctl': return cmdSystemctl(tokens, effRoot);
+      case 'journalctl': return cmdJournalctl(tokens);
+      case 'ps': return cmdPs(tokens);
+      case 'pstree': return cmdPstree(tokens);
+      case 'pgrep': return cmdPgrep(tokens);
+      case 'jobs': return cmdJobs();
+      case 'kill': return cmdKill(tokens);
+      case 'fg': case 'bg': pr('dim','[job control is simplified in this sandbox — use "jobs" and "kill" to manage background jobs]'); return;
+      case 'nohup': return cmdBg(tokens.slice(1), true);
+      case 'ufw': return cmdUfw(tokens, effRoot);
+      case 'nginx': return cmdNginx(tokens);
+      case 'curl': return cmdCurl(tokens, line);
+      case 'mysql': return cmdMysqlEntry(tokens, effRoot, line);
+      case 'npm': return cmdNpm(tokens);
+      case 'npx': return cmdNpx(tokens);
+      case 'reboot': return requireSudo(effRoot) && cmdReboot();
+      case 'man': pr('dim', 'No manual entry for ' + (tokens[1]||'') + ' in this sandbox — try "help".'); return;
+      default:
+        if(line.match(/&\s*$/)){ return cmdBg(tokens.slice(0, -1), false); }
+        pr('err', 'bash: ' + cmd + ': command not found'); vm.lastExitCode=127; return;
+    }
+  }
+
+  // ---------------- apt ----------------
+  function cmdApt(tokens, effRoot){
+    var sub = tokens[1];
+    if(sub === 'update'){
+      if(!requireSudo(effRoot)) return;
+      vm.aptUpdated = true;
+      pr('', 'Hit:1 http://th.archive.ubuntu.com/ubuntu noble InRelease');
+      pr('', 'Hit:2 http://security.ubuntu.com/ubuntu noble-security InRelease');
+      pr('', 'Reading package lists... Done');
+      return;
+    }
+    if(sub === 'upgrade'){
+      if(!requireSudo(effRoot)) return;
+      pr('', 'Reading package lists... Done');
+      pr('', vm.aptUpdated ? 'Calculating upgrade... Done\n0 upgraded, 0 newly installed.' : 'Calculating upgrade... Done');
+      return;
+    }
+    if(sub === 'list' && tokens[2] === '--installed'){
+      Object.keys(vm.packages).forEach(function(p){ if(vm.packages[p].installed) pr('', p+'/noble,now '+vm.packages[p].version+' amd64 [installed]'); });
+      Object.keys(vm.services).forEach(function(s){ if(vm.services[s].installed && vm.services[s].kind!=='api') pr('', s+'/noble,now installed'); });
+      return;
+    }
+    if(sub === 'show'){
+      var pkg = tokens[2];
+      pr('', 'Package: ' + pkg);
+      pr('', 'Version: ' + (vm.packages[pkg] && vm.packages[pkg].version || (pkg==='nginx' ? '1.24.0-1' : pkg==='mysql-server' ? '8.0.46' : '1.0.0')));
+      return;
+    }
+    if(sub === 'install'){
+      if(!requireSudo(effRoot)) return;
+      var pkg2 = tokens[2];
+      if(!pkg2){ pr('err','E: You must give at least one package name'); return; }
+      installPackage(pkg2);
+      return;
+    }
+    pr('err', 'apt: unrecognised subcommand "' + sub + '" (this sandbox supports update/upgrade/list/show/install)');
+  }
+  function cmdAptCache(tokens){
+    if(tokens[1] === 'policy'){
+      var pkg = tokens[2];
+      if(pkg === 'nginx'){
+        pr('', 'nginx:');
+        pr('', '  Installed: ' + (vm.services.nginx.installed ? vm.services.nginx.version : '(none)'));
+        pr('', '  Candidate: 1.30.4-1~noble  (from nginx.org, once the repo is added)');
+        pr('', '  Version table:');
+        pr('', '     1.30.4-1~noble 500   [nginx.org]');
+        pr('', '     1.24.0-2ubuntu7 500  [ubuntu noble/main]');
+        return;
+      }
+      if(pkg === 'mysql-server'){
+        pr('', 'mysql-server:');
+        pr('', '  Installed: ' + (vm.services.mysql.installed ? '8.0.46-0ubuntu0.24.04.1' : '(none)'));
+        pr('', '  Candidate: 8.0.46-0ubuntu0.24.04.1  [ubuntu noble/main — no third-party repo needed]');
+        return;
+      }
+      pr('', pkg + ':\n  Installed: (none)\n  Candidate: (unknown in this sandbox)');
+      return;
+    }
+    pr('err','apt-cache: this sandbox only supports "apt-cache policy <pkg>"');
+  }
+  function installPackage(pkg){
+    if(pkg === 'unzip'){ vm.packages.unzip = {installed:true, version:'6.0-28ubuntu4'}; pr('', 'Setting up unzip (6.0-28ubuntu4) ...'); return; }
+    if(pkg === 'nginx'){
+      var s = vm.services.nginx;
+      s.installed = true;
+      s.version = vm.aptUpdated ? '1.30.4-1~noble' : '1.24.0-2ubuntu7';
+      pr('', 'Setting up nginx (' + s.version + ') ...');
+      if(s.version.startsWith('1.24')){
+        pr('warn', 'Note: this is Ubuntu\'s own nginx (1.24, sites-enabled layout). The course wants nginx.org\'s 1.30.x with conf.d — run "apt update" after adding the nginx.org repo first, then reinstall.');
+      } else {
+        pr('ok', 'Got 1.30.x from nginx.org, as expected for this course (conf.d layout).');
+      }
+      return;
+    }
+    if(pkg === 'mysql-server'){
+      var m = vm.services.mysql;
+      m.installed = true; m.version = '8.0.46-0ubuntu0.24.04.1';
+      m.enabled = true; m.active = true; m.pid = newPid();
+      pr('', 'Setting up mysql-server (8.0.46-0ubuntu0.24.04.1) ...');
+      pr('ok', 'Unlike nginx, MySQL starts and enables itself automatically — check with "systemctl status mysql".');
+      return;
+    }
+    if(pkg === 'nodejs'){
+      vm.packages.nodejs = {installed:true, version:'24.6.0-1nodesource1'};
+      pr('', 'Setting up nodejs (24.6.0-1nodesource1) ...');
+      return;
+    }
+    pr('err', 'E: Unable to locate package ' + pkg);
+  }
+
+  // ---------------- systemctl ----------------
+  function findService(name){ return vm.services[name]; }
+  function cmdSystemctl(tokens, effRoot){
+    var sub = tokens[1];
+    var rest = tokens.slice(2).filter(function(t){ return t !== '--now'; });
+    var hasNow = tokens.indexOf('--now') !== -1;
+    var name = rest[0];
+    if(!sub){ pr('err','usage: systemctl <status|start|stop|restart|reload|enable|disable|is-enabled|is-active> <service>'); return; }
+    var svc = findService(name);
+
+    if(sub === 'status'){
+      if(!svc || !svc.installed){ pr('err', 'Unit ' + name + '.service could not be found.'); return; }
+      pr('', '● ' + name + '.service - ' + labelFor(name));
+      pr('', '     Loaded: loaded (/etc/systemd/system/' + name + '.service; ' + (svc.enabled?'enabled':'disabled') + ')');
+      if(svc.active){
+        pr('ok', '     Active: active (running) — Main PID: ' + svc.pid);
+      } else {
+        pr('err', '     Active: inactive (dead)');
+      }
+      return;
+    }
+    if(sub === 'is-enabled'){ if(!svc||!svc.installed){pr('err','could not be found');return;} pr(svc.enabled?'ok':'dim', svc.enabled?'enabled':'disabled'); return; }
+    if(sub === 'is-active'){ if(!svc||!svc.installed){pr('err','could not be found');return;} pr(svc.active?'ok':'err', svc.active?'active':'inactive'); return; }
+
+    if(sub === 'enable'){
+      if(!requireSudo(effRoot)) return;
+      if(!svc||!svc.installed){ pr('err','Failed to enable unit: Unit file '+name+'.service does not exist.'); return; }
+      svc.enabled = true;
+      pr('', 'Created symlink /etc/systemd/system/multi-user.target.wants/' + name + '.service.');
+      if(hasNow){ startService(svc, name); }
+      return;
+    }
+    if(sub === 'disable'){
+      if(!requireSudo(effRoot)) return;
+      if(!svc||!svc.installed){ pr('err','Unit file '+name+'.service does not exist.'); return; }
+      svc.enabled = false;
+      pr('', 'Removed /etc/systemd/system/multi-user.target.wants/' + name + '.service.');
+      pr('dim', '(note: it is still ' + (svc.active?'active':'inactive') + ' right now — disable only changes what happens at the next boot)');
+      return;
+    }
+    if(sub === 'start'){
+      if(!requireSudo(effRoot, 'Failed to start '+name+'.service: Interactive authentication required.')) return;
+      if(!svc||!svc.installed){ pr('err','Unit '+name+'.service not found.'); return; }
+      startService(svc, name);
+      return;
+    }
+    if(sub === 'stop'){
+      if(!requireSudo(effRoot)) return;
+      if(!svc||!svc.installed){ pr('err','Unit '+name+'.service not found.'); return; }
+      svc.active = false; svc.pid = null;
+      pr('', 'Stopped ' + name + '.service.');
+      return;
+    }
+    if(sub === 'restart'){
+      if(!requireSudo(effRoot)) return;
+      if(!svc||!svc.installed){ pr('err','Unit '+name+'.service not found.'); return; }
+      if(svc.kind === 'nginx' && !vm.nginxConfigValid){
+        svc.active = false; svc.pid = null;
+        pr('err', 'Job for nginx.service failed because the control process exited with error code.');
+        pr('err', 'See "systemctl status nginx.service" and "journalctl -xeu nginx.service" for details.');
+        pr('warn', '(restart stops everything first — a broken config now takes the whole site down. "reload" would have kept the old config running.)');
+        return;
+      }
+      svc.pid = newPid();
+      pr('', 'Restarted ' + name + '.service (new PID ' + svc.pid + ').');
+      return;
+    }
+    if(sub === 'reload'){
+      if(!requireSudo(effRoot)) return;
+      if(!svc||!svc.installed){ pr('err','Unit '+name+'.service not found.'); return; }
+      if(svc.kind === 'nginx'){
+        if(!vm.nginxConfigValid){
+          pr('err', 'nginx: configuration file /etc/nginx/nginx.conf test failed');
+          pr('warn', 'Reload refused — the OLD config (PID ' + svc.pid + ') just keeps serving. Nothing looks broken from the outside, which is exactly the trap.');
+          return;
+        }
+        pr('ok', 'Reloaded ' + name + '.service — same PID (' + svc.pid + '), new config picked up.');
+        return;
+      }
+      pr('', 'Reloaded ' + name + '.service.');
+      return;
+    }
+    pr('err', 'systemctl: unrecognised subcommand "' + sub + '"');
+  }
+  function labelFor(name){
+    return {nginx:'A high performance web server', mysql:'MySQL Community Server', ssh:'OpenBSD Secure Shell server',
+      cron:'Regular background program processing daemon', 'school-api':'INT134 school API (Node/Express)',
+      'int134-heartbeat':'INT134 heartbeat demo'}[name] || name;
+  }
+  function startService(svc, name){
+    svc.active = true; svc.pid = newPid();
+    pr('ok', 'Started ' + name + '.service — Main PID: ' + svc.pid);
+    if(name === 'nginx' && !vm.ufw.rules[80]){
+      pr('warn', 'nginx is listening on :80, but ufw has no rule for port 80 yet — it will not be reachable from outside until you "ufw allow 80/tcp".');
+    }
+  }
+
+  // ---------------- journalctl ----------------
+  function cmdJournalctl(tokens){
+    var i = tokens.indexOf('-u');
+    var name = i !== -1 ? tokens[i+1] : null;
+    if(!name){ pr('err','usage: journalctl -u <service>'); return; }
+    var svc = findService(name);
+    if(!svc || !svc.installed || (!svc.active && !svc.pid)){ pr('dim', '-- No entries --'); return; }
+    pr('dim', '-- Journal begins at boot --');
+    pr('', 'systemd[1]: Starting ' + name + '.service...');
+    if(svc.kind === 'nginx' && !vm.nginxConfigValid){
+      pr('err', name + '[' + svc.pid + ']: [emerg] invalid number of arguments in directive, /etc/nginx/conf.d/site.conf');
+    } else {
+      pr('ok', 'systemd[1]: Started ' + name + '.service.');
+      if(svc.kind==='nginx') pr('', name + '['+svc.pid+']: nginx worker process started, listening on 0.0.0.0:80');
+      if(svc.kind==='api') pr('', name + '['+svc.pid+']: listening on 0.0.0.0:3xxx');
+    }
+  }
+
+  // ---------------- process / jobs ----------------
+  function cmdPs(tokens){
+    var mode = tokens[1];
+    if(!mode){
+      pr('', '  PID TTY          TIME CMD');
+      pr('', '  ' + pid + ' pts/0    00:00:00 bash');
+      pr('dim', '(a bare "ps" only shows YOUR terminal — try "ps aux" or "ps -ef")');
+      return;
+    }
+    pr('', 'USER         PID  COMMAND');
+    pr('', 'root           1  /sbin/init');
+    pr('', 'root         '+vm.services.ssh.pid+'  /usr/sbin/sshd');
+    pr('', 'root         '+vm.services.cron.pid+'  /usr/sbin/cron');
+    Object.keys(vm.services).forEach(function(k){
+      var s = vm.services[k];
+      if(s.active && s.pid && k!=='ssh' && k!=='cron') pr('', (k==='mysql'?'mysql':'sysadmin') + '        ' + s.pid + '  ' + k);
+    });
+    vm.jobs.forEach(function(j){ pr('', 'sysadmin     ' + j.pid + '  ' + j.cmd); });
+  }
+  function cmdPstree(){
+    pr('', 'init(1)-+-sshd('+vm.services.ssh.pid+')');
+    pr('', '        |-cron('+vm.services.cron.pid+')');
+    Object.keys(vm.services).forEach(function(k){ var s=vm.services[k]; if(s.active && s.pid && k!=='ssh'&&k!=='cron') pr('', '        |-'+k+'('+s.pid+')'); });
+    vm.jobs.forEach(function(j){ pr('', '        \`-'+j.cmd+'('+j.pid+')'); });
+  }
+  function cmdPgrep(tokens){
+    var af = tokens.indexOf('-af') !== -1;
+    var term = tokens[tokens.length-1];
+    var found = [];
+    vm.jobs.forEach(function(j){ if(j.cmd.indexOf(term)!==-1) found.push(j.pid + (af? '  '+j.cmd : '')); });
+    Object.keys(vm.services).forEach(function(k){ var s=vm.services[k]; if(s.active && k.indexOf(term)!==-1) found.push(s.pid + (af? '  '+k : '')); });
+    if(found.length===0){ vm.lastExitCode=1; return; }
+    found.forEach(function(l){ pr('', l); });
+  }
+  function cmdJobs(){
+    if(vm.jobs.length===0){ pr('dim','(no background jobs in this shell)'); return; }
+    vm.jobs.forEach(function(j,i){ pr('', '[' + (i+1) + ']+  Running                 ' + j.cmd + (j.nohup?' (nohup)':'') + ' &'); });
+  }
+  function cmdBg(tokens, isNohup){
+    var cmd = tokens.join(' ') || './app';
+    var job = { pid:newPid(), cmd:cmd.replace(/&\s*$/,'').trim(), nohup:isNohup };
+    vm.jobs.push(job);
+    pr('', '[' + vm.jobs.length + '] ' + job.pid);
+    if(isNohup) pr('dim', 'nohup: ignoring input and appending output to \'nohup.out\'');
+  }
+  function cmdKill(tokens){
+    var opts = tokens.filter(function(t){return t.indexOf('-')===0;});
+    var targets = tokens.filter(function(t){return t.indexOf('-')!==0 && t!=='kill';});
+    var isKill9 = opts.indexOf('-9')!==-1;
+    targets.forEach(function(t){
+      var jobIdx = t.match(/^%(\d+)$/);
+      if(jobIdx){
+        var idx = parseInt(jobIdx[1],10)-1;
+        if(vm.jobs[idx]){ pr('', '[' + (idx+1) + ']+  Terminated              ' + vm.jobs[idx].cmd); vm.jobs.splice(idx,1); }
+        return;
+      }
+      var byPid = parseInt(t,10);
+      var jIdx = vm.jobs.findIndex(function(j){return j.pid===byPid;});
+      if(jIdx!==-1){ pr('', 'Terminated PID ' + byPid); vm.jobs.splice(jIdx,1); return; }
+      var svcName = Object.keys(vm.services).find(function(k){ return vm.services[k].pid===byPid; });
+      if(svcName){
+        var s = vm.services[svcName];
+        if(s.restart && s.active){
+          var oldPid = s.pid; s.pid = newPid();
+          pr('warn', 'PID ' + oldPid + ' killed — but systemd (Restart=always) already brought it back as PID ' + s.pid + '. The service is not the process.');
+        } else if(!isKill9){
+          pr('dim', '(SIGTERM sent — it may trap this and stay running; try -9 to be sure)');
+        } else {
+          s.active = false; s.pid = null;
+          pr('', 'PID ' + oldPid + ' force-killed.');
+        }
+        return;
+      }
+      pr('err', 'kill: (' + t + '): No such process');
+    });
+  }
+
+  // ---------------- ufw ----------------
+  function cmdUfw(tokens, effRoot){
+    var sub = tokens[1];
+    if(!sub){ pr('err','usage: ufw <status|allow|delete|enable|disable>'); return; }
+    if(!requireSudo(effRoot, 'ERROR: You need to be root to run this script')) return;
+    if(sub === 'status'){
+      pr('', 'Status: ' + (vm.ufw.enabled ? 'active' : 'inactive'));
+      if(!vm.ufw.enabled) return;
+      pr('', 'To                         Action      From');
+      pr('', '--                         ------      ----');
+      Object.keys(vm.ufw.rules).forEach(function(port){ pr('', pad(port+'/tcp',27) + vm.ufw.rules[port] + '       Anywhere'); });
+      return;
+    }
+    if(sub === 'allow'){
+      var portStr = tokens[2];
+      var port = parseInt(portStr,10);
+      vm.ufw.rules[port] = 'ALLOW';
+      pr('', 'Rule added');
+      if(port === 3306){
+        pr('err', '⚠ You just opened port 3306 to the whole internet. MySQL binds 127.0.0.1 for a reason — this is the single most common way a database gets wiped. Undo it: sudo ufw delete allow 3306.');
+      }
+      return;
+    }
+    if(sub === 'delete'){
+      var arg = tokens[2];
+      var port2 = arg === 'allow' ? parseInt(tokens[3],10) : parseInt(arg,10);
+      if(port2 === 22){
+        pr('', 'Deleting:');
+        pr('', ' allow 22/tcp');
+        pr('', 'Proceed with operation (y|n)? ');
+        vm.pendingConfirm = { yes: function(){
+          delete vm.ufw.rules[22];
+          pr('err', 'Rule deleted. You have just locked yourself out of SSH (simulated). In real life only console access to the VM could save you now — never delete this rule.');
+        }};
+        return;
+      }
+      delete vm.ufw.rules[port2];
+      pr('', 'Rule deleted');
+      return;
+    }
+    if(sub === 'enable'){ vm.ufw.enabled = true; pr('', 'Firewall is active and enabled on system startup'); return; }
+    if(sub === 'disable'){
+      pr('warn', 'Disabling ufw removes every rule\'s protection at once. AIs love suggesting this to "fix" a connectivity problem — don\'t.');
+      vm.ufw.enabled = false; pr('', 'Firewall stopped and disabled on system startup');
+      return;
+    }
+    pr('err', 'ufw: unrecognised subcommand "' + sub + '"');
+  }
+  function pad(s,n){ while(s.length<n) s+=' '; return s; }
+
+  // ---------------- nginx / curl ----------------
+  function cmdNginx(tokens){
+    if(tokens[1] === '-t'){
+      if(vm.nginxConfigValid){ pr('ok','nginx: configuration file /etc/nginx/nginx.conf syntax is ok'); pr('ok','nginx: configuration file /etc/nginx/nginx.conf test is successful'); }
+      else { pr('err','nginx: [emerg] invalid number of arguments in directive, /etc/nginx/conf.d/site.conf:4'); pr('err','nginx: configuration file /etc/nginx/nginx.conf test failed'); }
+      return;
+    }
+    pr('err', 'nginx: this sandbox only simulates "nginx -t" directly (service control is via systemctl)');
+  }
+  function cmdCurl(tokens, line){
+    var url = tokens[tokens.length-1];
+    var isPost = tokens.indexOf('-X') !== -1 && tokens[tokens.indexOf('-X')+1] === 'POST';
+    var localTarget = /localhost|127\.0\.0\.1/.test(url);
+    var portMatch = url.match(/:(\d+)/);
+    var port = portMatch ? parseInt(portMatch[1],10) : 80;
+
+    if(url.indexOf('/api/') !== -1){
+      var apiUp = vm.services['school-api'].active;
+      if(!apiUp){ pr('err', 'curl: (7) Failed to connect to ' + url.replace(/^https?:\/\//,'').split('/')[0] + ': Connection refused'); return; }
+      if(url.indexOf('/api/health') !== -1){ pr('ok', '{"status":"ok","studentId":"68xxx","time":"'+new Date().toISOString()+'"}'); return; }
+      if(isPost){
+        var dIdx = tokens.indexOf('-d');
+        var body = dIdx!==-1 ? tokens[dIdx+1].replace(/^['"]|['"]$/g,'') : '';
+        var hasFields = /studentId/.test(body) && /firstName/.test(body);
+        if(!hasFields){ pr('err','HTTP/1.1 400 Bad Request'); pr('err','{"error":"studentId, firstName, lastName and major are required"}'); return; }
+        vm.apiRecords.push(body);
+        pr('ok','HTTP/1.1 201 Created');
+        pr('', body);
+        return;
+      }
+      pr('ok', 'HTTP/1.1 200 OK');
+      pr('', JSON.stringify(vm.apiRecords));
+      return;
+    }
+    if(localTarget){
+      var isNginxPort = (port === 80 || !portMatch);
+      if(isNginxPort){
+        if(!vm.services.nginx.active){ pr('err','curl: (7) Failed to connect to localhost port 80: Connection refused'); return; }
+        pr('ok', 'HTTP/1.1 200 OK'); pr('', '<html><body><h1>Welcome to nginx!</h1></body></html>');
+        pr('dim', '(loopback bypasses ufw entirely — this works even if port 80 is not allowed for outside traffic)');
+        return;
+      }
+    }
+    pr('err', 'curl: (7) Failed to connect — nothing in this sandbox is listening there');
+  }
+
+  // ---------------- mysql ----------------
+  function cmdMysqlEntry(tokens, effRoot, line){
+    if(!vm.services.mysql.installed || !vm.services.mysql.active){ pr('err', "ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock'"); return; }
+    var eFlagIdx = tokens.indexOf('-e');
+    if(effRoot && eFlagIdx===-1 && tokens.length===1){
+      vm.mysqlMode = true; vm.mysqlModeUser='root';
+      pr('', 'Welcome to the MySQL monitor. Connection id: 12  Server version: 8.0.46-0ubuntu0.24.04.1');
+      return;
+    }
+    var userFlag = tokens.indexOf('-u');
+    var asUser = userFlag!==-1 ? tokens[userFlag+1] : (effRoot ? 'root' : 'sysadmin');
+    if(eFlagIdx!==-1){
+      var stmt = line.slice(line.indexOf('-e')+2).trim().replace(/^["']|["']$/g,'');
+      if(!effRoot && !vm.mysqlUsers[asUser]){
+        pr('err', "ERROR 1045 (28000): Access denied for user 'sysadmin'@'localhost' (using password: NO)");
+        return;
+      }
+      if(!effRoot && asUser!=='root' && !vm.mysqlUsers[asUser]){
+        pr('err', "ERROR 1045 (28000): Access denied for user '"+asUser+"'@'localhost'"); return;
+      }
+      runMysqlStatement(stmt, asUser, effRoot);
+      return;
+    }
+    pr('err', "ERROR 1045 (28000): Access denied for user 'sysadmin'@'localhost' (using password: NO) — try: sudo mysql");
+  }
+  function runMysql(line){
+    var stmt = line.replace(/;$/,'').trim();
+    if(stmt==='exit' || stmt==='quit' || stmt==='\\q'){ vm.mysqlMode=false; pr('dim','Bye'); return; }
+    runMysqlStatement(stmt, vm.mysqlModeUser || 'root', vm.mysqlModeUser==='root');
+  }
+  function runMysqlStatement(stmt, asUser, isRoot){
+    var s = stmt.toUpperCase();
+    if(s.indexOf('SELECT VERSION') === 0){ pr('', '8.0.46'); return; }
+    if(s.indexOf('SELECT CURRENT_USER') === 0){ pr('', asUser + '@localhost'); return; }
+    if(s.indexOf('CREATE DATABASE') === 0){
+      var m = stmt.match(/CREATE DATABASE (\w+)/i);
+      if(m){ vm.mysqlDbs[m[1]] = {owner:asUser}; pr('ok','Query OK, 1 row affected'); }
+      return;
+    }
+    if(s.indexOf("CREATE USER") === 0){
+      var m2 = stmt.match(/CREATE USER '(\w+)'@'localhost'/i);
+      if(m2){
+        var pwd = Array.from({length:20},function(){return 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*56)];}).join('');
+        vm.mysqlUsers[m2[1]] = { scope:null, pwdOnceShown:true };
+        pr('ok', 'Query OK, 0 rows affected');
+        pr('', 'user\thost\t\tgenerated password\t\tauth_factor');
+        pr('warn', m2[1] + '\tlocalhost\t' + pwd + '\t1');
+        pr('dim', '(shown once — copy it into your .env now, this sandbox will not show it again)');
+      }
+      return;
+    }
+    if(s.indexOf('GRANT') === 0){
+      var m3 = stmt.match(/ON (\w+)\.\* TO '(\w+)'@'localhost'/i);
+      if(m3 && vm.mysqlUsers[m3[2]]){ vm.mysqlUsers[m3[2]].scope = m3[1]; pr('ok','Query OK, 0 rows affected'); }
+      return;
+    }
+    if(s.indexOf('SHOW GRANTS') === 0){
+      var u = vm.mysqlUsers[asUser];
+      pr('', 'GRANT USAGE ON *.* TO \'' + asUser + '\'@\'localhost\'');
+      if(u && u.scope) pr('', 'GRANT ALL PRIVILEGES ON `' + u.scope + '`.* TO \'' + asUser + '\'@\'localhost\'');
+      return;
+    }
+    if(s.indexOf('SHOW DATABASES') === 0){
+      pr('', 'information_schema');
+      pr('', 'performance_schema');
+      if(isRoot){ pr('', 'mysql'); Object.keys(vm.mysqlDbs).forEach(function(d){pr('',d);}); }
+      else { var u2=vm.mysqlUsers[asUser]; if(u2 && u2.scope) pr('', u2.scope); }
+      return;
+    }
+    if(s.indexOf('SELECT USER, HOST FROM MYSQL.USER') === 0 || s.indexOf('SELECT USER,HOST FROM MYSQL.USER')===0){
+      Object.keys(vm.mysqlUsers).forEach(function(u){ pr('', u + '\tlocalhost'); });
+      return;
+    }
+    pr('err', "ERROR 1064 (42000): this sandbox doesn't recognise that SQL — try one of the statements shown in the whiteboard's W4 section");
+  }
+
+  // ---------------- backend tooling ----------------
+  function cmdNpm(tokens){
+    if(tokens[1]==='ci'){ pr('', 'added 105 packages in 4s'); return; }
+    if(tokens[1]==='install'){ pr('warn','npm install may quietly change versions — the course wants "npm ci" for deployment.'); pr('', 'added 105 packages in 6s'); return; }
+    pr('err','npm: this sandbox only simulates "npm ci"');
+  }
+  function cmdNpx(tokens){
+    var line = tokens.join(' ');
+    if(line.indexOf('prisma generate')!==-1){ pr('ok','✔ Generated Prisma Client'); return; }
+    if(line.indexOf('migrate dev')!==-1){
+      pr('err', 'Error: P3014');
+      pr('err', 'Prisma Migrate could not create the shadow database. User was denied access on the database `prisma_migrate_shadow_db_...`');
+      pr('warn', '(this is correct, on purpose — your app user has no CREATE DATABASE privilege. Do not widen the grant.)');
+      return;
+    }
+    if(line.indexOf('migrate diff')!==-1 && line.indexOf('exit-code')!==-1){
+      pr('ok', 'No difference detected.');
+      vm.lastExitCode = 0;
+      return;
+    }
+    pr('err','npx: this sandbox only simulates "prisma generate", "migrate dev" and "migrate diff --exit-code"');
+  }
+
+  function cmdReboot(){
+    pr('warn', 'Rebooting sandbox VM...');
+    Object.keys(vm.services).forEach(function(k){
+      var s = vm.services[k];
+      if(s.installed){ s.active = s.enabled; s.pid = s.active ? newPid() : null; }
+    });
+    vm.jobs = vm.jobs.filter(function(j){ return false; });
+    pr('ok', '...back up. Every ENABLED service is active again with a fresh PID; nothing merely "active" (but disabled) came back; every background job that was not a systemd unit is gone.');
+  }
+
+  // ================= render state panel =================
+  function renderRow(cells){ return '<tr>' + cells.map(function(c){return '<td>'+c+'</td>';}).join('') + '</tr>'; }
+  function render(){
+    refreshPrompt();
+    scrollBottom();
+    var svcRows = Object.keys(vm.services).filter(function(k){return vm.services[k].installed;}).map(function(k){
+      var s = vm.services[k];
+      return renderRow([
+        k,
+        '<span class="dot '+(s.enabled?'on':'off')+'"></span>' + (s.enabled?'enabled':'disabled'),
+        '<span class="dot '+(s.active?'on':'off')+'"></span>' + (s.active?'active':'inactive'),
+        s.pid || '—'
+      ]);
+    });
+    document.getElementById('svcTable').innerHTML = svcRows.length ? svcRows.join('') : '<tr><td class="empty">nothing installed yet — try "sudo apt install nginx -y"</td></tr>';
+
+    var ufwRows = Object.keys(vm.ufw.rules).map(function(p){
+      var warn = p==='3306' ? ' <span class="tag warn">never do this</span>' : (p==='22' ? ' <span class="tag" style="background:var(--accent-soft);color:var(--accent)">keep this</span>' : '');
+      return renderRow([p+'/tcp', vm.ufw.rules[p] + warn]);
+    });
+    document.getElementById('ufwTable').innerHTML = (vm.ufw.enabled ? ufwRows.join('') : '<tr><td class="empty">ufw is disabled — everything is exposed</td></tr>') || '<tr><td class="empty">no rules yet</td></tr>';
+
+    var jobsBox = document.getElementById('jobsBox');
+    jobsBox.innerHTML = vm.jobs.length ? vm.jobs.map(function(j,i){ return '<div style="font-family:var(--font-mono);font-size:11.5px;margin-bottom:4px;">['+(i+1)+'] '+j.pid+' '+j.cmd+(j.nohup?' <span class="tag" style="background:var(--accent-soft);color:var(--accent)">nohup</span>':'')+'</div>'; }).join('') : '<div class="empty">none</div>';
+  }
+
+  // ================= weeks / try-this =================
+  var weeks = {
+    W1:{ label:'W1 · Packages & systemd', tips:[
+      'sudo apt update', 'sudo apt install unzip -y', 'apt list --installed',
+      'systemctl status cron', 'sudo systemctl disable cron', 'sudo reboot', 'systemctl status cron'
+    ], mission:'Watch cron\'s status flip through disable → reboot. Enabled/disabled and active/inactive move independently — that\'s the W1 matrix.'},
+    W2:{ label:'W2 · Processes', tips:[
+      './heartbeat.sh &', 'jobs', 'ps aux', 'nohup ./watcher.sh &', 'kill %1', 'kill -9 <pid from ps>'
+    ], mission:'Start a couple of background jobs, then use the "Close this terminal" scenario below and see which ones survive.'},
+    W3:{ label:'W3 · Static web', tips:[
+      'sudo apt update', 'sudo apt install nginx -y', 'sudo systemctl enable --now nginx',
+      'sudo ufw allow 80/tcp', 'curl -H "Host: x" localhost', 'nginx -t', 'sudo systemctl reload nginx'
+    ], mission:'Install nginx (try it before "apt update" too, to see the 1.24-vs-1.30 trap), open it up, then break the config from the Scenarios panel and compare reload vs restart.'},
+    W4:{ label:'W4 · Backend + DB', tips:[
+      'sudo apt install mysql-server -y', 'systemctl status mysql', 'mysql -e "SELECT 1;"', 'sudo mysql',
+      "CREATE DATABASE school;", "CREATE USER 'school'@'localhost' IDENTIFIED BY RANDOM PASSWORD;",
+      "GRANT ALL PRIVILEGES ON school.* TO 'school'@'localhost';", 'exit',
+      'sudo ufw allow 3xxx/tcp', 'npm ci', 'npx prisma migrate dev --name init'
+    ], mission:'Notice MySQL is already enabled+active right after install. Try mysql without sudo first (ERROR 1045), then with sudo mysql.'},
+    W5:{ label:'W5 · Reverse proxy', tips:[
+      'curl http://localhost/api/health', 'curl -X POST -H "Content-Type: application/json" -d \'{"studentId":"68001","firstName":"A"}\' http://localhost/api/students',
+      'sudo systemctl restart school-api', 'curl http://localhost/api/health'
+    ], mission:'Toggle "reverse proxy configured" in Scenarios, then post a record and restart the API — the record survives even though the process gets a new PID.'}
+  };
+  var currentWeek = 'W1';
+  function renderWeeks(){
+    var tabs = document.getElementById('weektabs');
+    tabs.innerHTML = Object.keys(weeks).map(function(k){ return '<button class="weektab'+(k===currentWeek?' active':'')+'" data-w="'+k+'">'+k+'</button>'; }).join('');
+    Array.prototype.forEach.call(tabs.querySelectorAll('.weektab'), function(btn){
+      btn.addEventListener('click', function(){ currentWeek = btn.getAttribute('data-w'); renderWeeks(); });
+    });
+    document.getElementById('mission').textContent = weeks[currentWeek].mission;
+    document.getElementById('trylist').innerHTML = weeks[currentWeek].tips.map(function(t){ return '<button class="trychip">'+t.replace(/</g,'&lt;')+'</button>'; }).join('');
+    Array.prototype.forEach.call(document.querySelectorAll('.trychip'), function(chip, i){
+      chip.addEventListener('click', function(){ input.value = weeks[currentWeek].tips[i]; input.focus(); });
+    });
+  }
+  renderWeeks();
+
+  // enable school-api once its dependencies exist, and simulate its own install via a dedicated bootstrap
+  vm.services['school-api'].installed = true; // present but not enabled/active until student starts it via commands below
+
+  // ================= scenarios =================
+  document.getElementById('scnClose').addEventListener('click', function(){
+    var before = vm.jobs.length;
+    vm.jobs = vm.jobs.filter(function(j){ return j.nohup; });
+    var killed = before - vm.jobs.length;
+    pr('warn', '[simulated SSH disconnect] ' + killed + ' plain background job(s) died with the terminal. Anything started with nohup, or handed to systemd, is unaffected.');
+    render();
+  });
+  document.getElementById('scnBreak').addEventListener('click', function(){ vm.nginxConfigValid=false; pr('warn','[scenario] the nginx config on disk is now broken.'); render(); });
+  document.getElementById('scnFix').addEventListener('click', function(){ vm.nginxConfigValid=true; pr('ok','[scenario] the nginx config on disk is valid again.'); render(); });
+  document.getElementById('scnCors').addEventListener('click', function(){
+    vm.reverseProxyConfigured = !vm.reverseProxyConfigured;
+    if(vm.reverseProxyConfigured){
+      vm.services['school-api'].enabled = true; vm.services['school-api'].active = true; vm.services['school-api'].pid = newPid();
+      pr('ok', '[scenario] reverse proxy configured: /api/ now proxies to the backend over loopback — same origin, no CORS, and school-api is running.');
+    } else {
+      pr('warn', '[scenario] reverse proxy removed: the frontend and /api/ are two different origins again — a browser fetch would be blocked by CORS.');
+    }
+    render();
+  });
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    vm = freshState(); vm.services['school-api'].installed = true;
+    termEl.innerHTML = '';
+    pr('dim', 'Sandbox reset.'); render();
+  });
+  document.getElementById('linkBoard').addEventListener('click', function(){
+    window.open('https://phakinza007.github.io/int134-exam1-whiteboard/', '_blank');
+  });
+
+  // ================= input handling =================
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      var v = input.value;
+      input.value = '';
+      history.push(v); histPos = history.length;
+      run(v);
+    } else if(e.key === 'ArrowUp'){
+      if(histPos>0){ histPos--; input.value = history[histPos]||''; }
+      e.preventDefault();
+    } else if(e.key === 'ArrowDown'){
+      if(histPos<history.length){ histPos++; input.value = history[histPos]||''; }
+      e.preventDefault();
+    }
+  });
+  termEl.addEventListener('click', function(){ input.focus(); });
+  input.focus();
+  render();
+})();
+</script>
