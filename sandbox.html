@@ -595,14 +595,32 @@
 
   // ---------------- editor ----------------
   function templateFor(path){
+    var base = path.split('/').pop();
+    if(base === 'heartbeat.sh'){
+      return '#!/usr/bin/env bash\nwhile true; do\n    echo "heartbeat $(date \'+%F %T\')"\n    sleep 5\ndone\n';
+    }
+    if(base === 'stubborn.sh'){
+      return '#!/usr/bin/env bash\ntrap \'echo "caught it — not going anywhere"\' TERM\nwhile true; do\n    sleep 1\ndone\n';
+    }
+    if(base === '.env'){
+      return 'DATABASE_URL="mysql://school:REPLACE_WITH_YOUR_PASSWORD@127.0.0.1:3306/school"\nSTUDENT_ID="68xxxxxxxxx"\nPORT=3xxx\nHOST=0.0.0.0\nCORS_ORIGIN=""\n';
+    }
+    if(base === 'config.js'){
+      return 'window.INT134 = {\n  studentId: "68xxxxxxxxx",\n  studentsUrl: "/api/students",\n};\n';
+    }
     if(/\/etc\/nginx\/conf\.d\/.*\.conf$/.test(path)){
       return 'server {\n    listen       80;\n    server_name  class.int134;\n    root         /var/www/site;\n    index        index.html;\n\n    location / {\n    }\n}\n';
     }
     if(/\/etc\/systemd\/system\/.*\.service$/.test(path)){
-      var name = path.split('/').pop().replace('.service','');
-      return '[Unit]\nDescription=' + name + '\n\n[Service]\nExecStart=/usr/bin/node /srv/' + name + '/server.js\nUser=sysadmin\nRestart=always\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target\n';
+      return '[Unit]\nDescription=<...>\n\n[Service]\nExecStart=<...>\nUser=<...>\nRestart=<...>\n\n[Install]\nWantedBy=<...>\n';
     }
     return '';
+  }
+  function execStartValid(content){
+    var m = (content||'').match(/ExecStart\s*=\s*(.+)/);
+    if(!m) return false;
+    var val = m[1].trim();
+    return val.length > 0 && val[0] === '/' && val.indexOf('<...>') === -1;
   }
   function openEditor(path, content, displayPath, canWrite){
     editorCtx = { path:path, displayPath:displayPath, canWrite:canWrite };
@@ -752,11 +770,13 @@
       seen.push(name);
       var content = vm.fs[p].content || '';
       var hasRestart = /Restart\s*=\s*always/i.test(content);
+      var okExec = execStartValid(content);
       if(!vm.services[name]){
-        vm.services[name] = {label:name, installed:true, enabled:false, active:false, pid:null, restart:hasRestart, kind:'custom'};
+        vm.services[name] = {label:name, installed:true, enabled:false, active:false, pid:null, restart:hasRestart, kind:'custom', execOk:okExec};
       } else {
         vm.services[name].installed = true;
         vm.services[name].restart = hasRestart || vm.services[name].restart;
+        vm.services[name].execOk = okExec;
       }
     });
     return seen;
@@ -865,6 +885,12 @@
       'int134-heartbeat':'INT134 heartbeat demo'}[name] || ('user-defined service (' + name + '.service)');
   }
   function startService(svc, name){
+    if(svc.execOk === false){
+      pr('err', 'Job for ' + name + '.service failed because the control process exited with error code.');
+      pr('err', 'See "systemctl status ' + name + '.service" and "journalctl -xeu ' + name + '.service" for details.');
+      pr('warn', '(check ExecStart= in the unit file — it needs a real absolute path, not a "<...>" placeholder or a relative one.)');
+      return;
+    }
     svc.active = true; svc.pid = newPid();
     pr('ok', 'Started ' + name + '.service — Main PID: ' + svc.pid);
     if(name === 'nginx' && !vm.ufw.rules[80]){
@@ -1224,9 +1250,13 @@
       PORT22_CHECK
     ],
     W2: [
-      {label:'a script file (e.g. heartbeat.sh) exists somewhere', hint:'micro heartbeat.sh — save it, even with the template content', test:function(v){ return Object.keys(v.fs).some(function(p){ return p.slice(-3)==='.sh' && v.fs[p].type==='file'; }); }},
-      {label:'int134-heartbeat is a real systemd unit and enabled', hint:'sudo micro /etc/systemd/system/int134-heartbeat.service, then sudo systemctl daemon-reload && sudo systemctl enable --now int134-heartbeat', test:function(v){ var s=v.services['int134-heartbeat']; return !!(s && s.installed && s.enabled); }},
-      {label:'int134-heartbeat is currently active', hint:'sudo systemctl enable --now int134-heartbeat', test:function(v){ var s=v.services['int134-heartbeat']; return !!(s && s.active); }},
+      {label:'heartbeat.sh exists and is executable-looking (has a shebang)', hint:'micro heartbeat.sh — the template starts with #!/usr/bin/env bash', test:function(v){ return Object.keys(v.fs).some(function(p){ return p.slice(-12)==='heartbeat.sh' && v.fs[p].type==='file' && /^#!/.test(v.fs[p].content||''); }); }},
+      {label:'stubborn.sh exists and traps a signal', hint:"micro stubborn.sh — needs a line like: trap '...' TERM", test:function(v){ return Object.keys(v.fs).some(function(p){ return p.slice(-11)==='stubborn.sh' && v.fs[p].type==='file' && /trap\s/.test(v.fs[p].content||''); }); }},
+      {label:'the int134-heartbeat unit file has its blanks filled in (Description, ExecStart, User, Restart, WantedBy)', hint:'sudo micro /etc/systemd/system/int134-heartbeat.service — replace every <...> with a real value; ExecStart needs an absolute path', test:function(v){
+        var f = v.fs['/etc/systemd/system/int134-heartbeat.service'];
+        return !!(f && f.content.indexOf('<...>')===-1 && /ExecStart\s*=\s*\//.test(f.content) && /User\s*=\s*\S/.test(f.content) && /WantedBy\s*=\s*\S/.test(f.content));
+      }},
+      {label:'int134-heartbeat is enabled and active', hint:'sudo systemctl daemon-reload && sudo systemctl enable --now int134-heartbeat', test:function(v){ var s=v.services['int134-heartbeat']; return !!(s && s.installed && s.enabled && s.active); }},
       PORT22_CHECK
     ],
     W3: [
@@ -1241,14 +1271,28 @@
       {label:'mysql-server is installed and active', hint:'sudo apt install mysql-server -y', test:function(v){ return v.services.mysql.installed && v.services.mysql.active; }},
       {label:"a 'school' database exists", hint:"sudo mysql, then: CREATE DATABASE school;", test:function(v){ return !!v.mysqlDbs.school; }},
       {label:"a 'school' mysql user is scoped to the school database", hint:"in sudo mysql: CREATE USER 'school'@'localhost' IDENTIFIED BY RANDOM PASSWORD; then GRANT ALL PRIVILEGES ON school.* TO 'school'@'localhost';", test:function(v){ return !!(v.mysqlUsers.school && v.mysqlUsers.school.scope==='school'); }},
-      {label:'you wrote a school-api systemd unit', hint:'sudo micro /etc/systemd/system/school-api.service', test:function(v){ return !!v.fs['/etc/systemd/system/school-api.service']; }},
+      {label:'you wrote /srv/school/backend/.env with a real DATABASE_URL (never ${VAR})', hint:'micro /srv/school/backend/.env — set DATABASE_URL="mysql://school:<password>@127.0.0.1:3306/school", written literally, never ${SCHOOL_PASSWORD}', test:function(v){
+        var f = v.fs['/srv/school/backend/.env'];
+        return !!(f && /DATABASE_URL\s*=.*mysql:\/\/school:/.test(f.content||'') && f.content.indexOf('${')===-1);
+      }},
+      {label:'you filled in the school-api unit file (Description, ExecStart, User, EnvironmentFile)', hint:'sudo micro /etc/systemd/system/school-api.service — ExecStart needs an absolute path, and add EnvironmentFile=/srv/school/backend/.env', test:function(v){
+        var f = v.fs['/etc/systemd/system/school-api.service'];
+        return !!(f && f.content.indexOf('<...>')===-1 && /ExecStart\s*=\s*\//.test(f.content) && /EnvironmentFile\s*=\s*\/srv\/school\/backend\/\.env/.test(f.content));
+      }},
       {label:'school-api is enabled and active', hint:'sudo systemctl daemon-reload && sudo systemctl enable --now school-api', test:function(v){ var s=v.services['school-api']; return !!(s && s.enabled && s.active); }},
       {label:'port 3306 is NOT open on the firewall', hint:'sudo ufw delete allow 3306 — MySQL binds 127.0.0.1, it never needed a rule', test:function(v){ return !v.ufw.rules[3306]; }}
     ],
     W5: [
-      {label:'the nginx config proxies /api/ to the backend', hint:'sudo micro /etc/nginx/conf.d/site.conf — add a location /api/ { proxy_pass http://localhost:3xxx/; } block (or use the reverse-proxy Scenario toggle)', test:function(v){
+      {label:'/var/www/school/config.js exists and points at your API', hint:'micro /var/www/school/config.js — set studentsUrl (start with the full cross-origin URL to see the CORS error, then fix it below)', test:function(v){ var f=v.fs['/var/www/school/config.js']; return !!(f && /studentsUrl/.test(f.content||'')); }},
+      {label:'CORS_ORIGIN is set in the API .env, or the reverse proxy makes it unnecessary', hint:'micro /srv/school/backend/.env — add CORS_ORIGIN="http://your-vm:page-port" (or finish the reverse proxy instead, which removes the need for it)', test:function(v){
+        var f = v.fs['/srv/school/backend/.env'];
+        var corsSet = !!(f && /CORS_ORIGIN\s*=\s*"http/.test(f.content||''));
+        var proxied = v.reverseProxyConfigured || Object.keys(v.fs).some(function(p){ return /conf\.d\/.*\.conf$/.test(p) && /proxy_pass/i.test(v.fs[p].content||'') && /\/api\//.test(v.fs[p].content||''); });
+        return corsSet || proxied;
+      }},
+      {label:'the nginx config proxies /api/ to the backend, forwarding the real Host header', hint:'sudo micro /etc/nginx/conf.d/site.conf — add location /api/ { proxy_pass http://127.0.0.1:3xxx/; proxy_set_header Host $host; } (or use the reverse-proxy Scenario toggle)', test:function(v){
         return v.reverseProxyConfigured || Object.keys(v.fs).some(function(p){
-          return /conf\.d\/.*\.conf$/.test(p) && /proxy_pass/i.test(v.fs[p].content||'') && /\/api\//.test(v.fs[p].content||'');
+          return /conf\.d\/.*\.conf$/.test(p) && /proxy_pass/i.test(v.fs[p].content||'') && /\/api\//.test(v.fs[p].content||'') && /proxy_set_header\s+Host/i.test(v.fs[p].content||'');
         });
       }},
       {label:'you successfully posted a record to /api/students', hint:"curl -X POST -H 'Content-Type: application/json' -d '{\"studentId\":\"...\",\"firstName\":\"...\"}' http://localhost/api/students", test:function(v){ return v.apiRecords.length>0; }},
@@ -1288,8 +1332,10 @@
     ], mission:'Add "stty -ixon" to ~/.bashrc with micro, and set HISTSIZE=10000 / HISTFILESIZE=20000 there too. Then watch cron\'s status flip through disable → reboot — enabled/disabled and active/inactive move independently, that\'s the W1 matrix.'},
     W2:{ label:'W2 · Processes', tips:[
       'micro heartbeat.sh', './heartbeat.sh &', 'jobs', 'ps aux',
-      'micro nohup-demo.sh', 'nohup ./nohup-demo.sh &', 'kill %1', 'kill -9 <pid from ps>'
-    ], mission:'Create a script with micro, background it, then use "Close this terminal" and see which jobs survive. Write a real unit file at /etc/systemd/system/int134-heartbeat.service, then daemon-reload + enable --now it — that one survives everything.'},
+      'micro stubborn.sh', 'nohup ./stubborn.sh &', 'kill %1', 'kill -9 <pid from ps>',
+      'sudo micro /etc/systemd/system/int134-heartbeat.service', 'sudo systemctl daemon-reload',
+      'sudo systemctl enable --now int134-heartbeat', 'sudo kill -9 <its Main PID>', 'systemctl status int134-heartbeat'
+    ], mission:'Write heartbeat.sh and stubborn.sh with micro (stubborn.sh needs a real trap line). Background one, then use "Close this terminal" and see which jobs survive. Fill in every <...> in the int134-heartbeat unit file yourself, daemon-reload + enable --now it, then kill -9 its Main PID and watch systemd bring it back with a new one.'},
     W3:{ label:'W3 · Static web', tips:[
       'sudo apt update', 'sudo apt install nginx -y', 'sudo systemctl enable --now nginx',
       'sudo ufw allow 80/tcp', 'curl -H "Host: x" localhost', 'nginx -t',
@@ -1299,13 +1345,17 @@
       'sudo apt install mysql-server -y', 'systemctl status mysql', 'mysql -e "SELECT 1;"', 'sudo mysql',
       "CREATE DATABASE school;", "CREATE USER 'school'@'localhost' IDENTIFIED BY RANDOM PASSWORD;",
       "GRANT ALL PRIVILEGES ON school.* TO 'school'@'localhost';", 'exit',
+      'micro /srv/school/backend/.env',
       'sudo micro /etc/systemd/system/school-api.service', 'sudo systemctl daemon-reload',
       'sudo systemctl enable --now school-api', 'sudo ufw allow 3xxx/tcp', 'npm ci', 'npx prisma migrate dev --name init'
-    ], mission:'Notice MySQL is already enabled+active right after install. Try mysql without sudo first (ERROR 1045). Then write the school-api unit file for real and bring it up with daemon-reload + enable --now.'},
+    ], mission:'Notice MySQL is already enabled+active right after install. Try mysql without sudo first (ERROR 1045). Write /srv/school/backend/.env yourself with the real DATABASE_URL — never ${VAR} — then fill in the school-api unit file (including EnvironmentFile=) and bring it up with daemon-reload + enable --now.'},
     W5:{ label:'W5 · Reverse proxy', tips:[
+      'micro /var/www/school/config.js',
+      'micro /srv/school/backend/.env',
+      'sudo micro /etc/nginx/conf.d/site.conf', 'sudo systemctl reload nginx',
       'curl http://localhost/api/health', 'curl -X POST -H "Content-Type: application/json" -d \'{"studentId":"68001","firstName":"A"}\' http://localhost/api/students',
       'sudo systemctl restart school-api', 'curl http://localhost/api/health'
-    ], mission:'Toggle "reverse proxy configured" in Scenarios, then post a record and restart the API — the record survives even though the process gets a new PID.'}
+    ], mission:'Point config.js at the API (CORS will block it), then fix it two ways: set CORS_ORIGIN in .env, or better — write a location /api/ { proxy_pass ...; proxy_set_header Host $host; } block in site.conf. Then post a record and restart the API — it survives even though the process gets a new PID.'}
   };
   var currentWeek = 'W1';
   var mode = 'guided';
