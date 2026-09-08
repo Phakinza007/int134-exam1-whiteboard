@@ -402,7 +402,7 @@
         pr('', 'Logs:     journalctl -u <svc> [-f|-n N]');
         pr('', 'DB:       sudo mysql | mysql -e "..." | MYSQL_PWD=x mysql -u <user> <db> -e "..."');
         pr('', 'Backend:  npm ci | npx prisma generate | npx prisma migrate dev --name x | npx prisma migrate diff --exit-code');
-        pr('', 'Misc:     echo "text" > file | echo $? | sudo reboot | Ctrl+L clear | Ctrl+C cancel line');
+        pr('', 'Misc:     echo "text" > file | echo $? | sudo reboot | Tab to autocomplete | Ctrl+L clear | Ctrl+C cancel line');
         pr('', 'Check:    check | check w3 | int134 check lab03   (grades your current VM state against that week\'s goals)');
         return;
       case 'clear': termEl.innerHTML=''; return;
@@ -1355,8 +1355,92 @@
     window.open('https://phakinza007.github.io/int134-exam1-whiteboard/', '_blank');
   });
 
+  // ================= tab completion =================
+  var COMMAND_LIST = ['help','clear','pwd','whoami','cd','ls','mkdir','touch','cat','rm','micro','nano','echo','id',
+    'sudo','su','exit','apt','apt-cache','systemctl','journalctl','ps','pstree','pgrep','jobs','kill','fg','bg',
+    'nohup','ufw','nginx','curl','mysql','npm','npx','reboot','man','check','int134'];
+  var PATH_COMMANDS = ['cd','ls','mkdir','touch','cat','rm','micro','nano'];
+
+  function commonPrefix(strs){
+    if(strs.length===0) return '';
+    var a = strs[0];
+    for(var i=1;i<strs.length;i++){
+      var b = strs[i], j=0;
+      while(j<a.length && j<b.length && a[j]===b[j]) j++;
+      a = a.slice(0,j);
+    }
+    return a;
+  }
+  function completePath(fragment){
+    var lastSlash = fragment.lastIndexOf('/');
+    var typedDirRaw = lastSlash === -1 ? '' : fragment.slice(0, lastSlash+1);
+    var prefix = lastSlash === -1 ? fragment : fragment.slice(lastSlash+1);
+    var resolvedDir = resolvePath(typedDirRaw || '.');
+    var node = vm.fs[resolvedDir];
+    if(!node || node.type !== 'dir') return { typedDirRaw: typedDirRaw, names: [] };
+    var listPrefix = resolvedDir === '/' ? '/' : resolvedDir + '/';
+    var names = Object.keys(vm.fs).filter(function(p){
+      if(p.indexOf(listPrefix) !== 0) return false;
+      var rest = p.slice(listPrefix.length);
+      return rest.length>0 && rest.indexOf('/')===-1 && rest.indexOf(prefix)===0;
+    }).map(function(p){ return p.slice(listPrefix.length) + (vm.fs[p].type==='dir' ? '/' : ''); }).sort();
+    return { typedDirRaw: typedDirRaw, names: names };
+  }
+
+  var tabState = { value:null };
+  function handleTab(){
+    if(vm.loginStage !== 'done' || vm.sudoPending || vm.mysqlMode) return;
+    var val = input.value;
+    var parts = val.split(' ');
+    var lastIdx = parts.length - 1;
+    var lastTok = parts[lastIdx];
+
+    var offset = 0;
+    if(parts[0] === 'sudo'){ offset = (parts[1] === '-u') ? 3 : 1; }
+    var argIndexWithinCmd = lastIdx - offset;
+    var cmdWord = parts[offset];
+
+    var matches = [];
+    var isPath = false, pathInfo = null;
+
+    if(argIndexWithinCmd <= 0){
+      matches = COMMAND_LIST.filter(function(c){ return c.indexOf(lastTok) === 0; });
+    } else if(cmdWord === 'apt' && parts[offset+1] === 'install' && argIndexWithinCmd === 2){
+      matches = ['nginx','mysql-server','nodejs','unzip'].filter(function(p){ return p.indexOf(lastTok) === 0; });
+    } else if(cmdWord === 'systemctl' && argIndexWithinCmd >= 2){
+      matches = Object.keys(vm.services).filter(function(s){ return vm.services[s].installed && s.indexOf(lastTok) === 0; });
+    } else if(PATH_COMMANDS.indexOf(cmdWord) !== -1){
+      pathInfo = completePath(lastTok); matches = pathInfo.names; isPath = true;
+    } else {
+      pathInfo = completePath(lastTok);
+      if(pathInfo.names.length){ matches = pathInfo.names; isPath = true; }
+    }
+
+    if(matches.length === 0){ return; }
+
+    var completedTok = isPath ? pathInfo.typedDirRaw + commonPrefix(matches) : commonPrefix(matches);
+    var uniqueNonDir = matches.length === 1 && !(isPath && matches[0].slice(-1) === '/');
+    parts[lastIdx] = completedTok + (uniqueNonDir ? ' ' : '');
+    var newVal = parts.join(' ');
+
+    if(newVal === val && matches.length > 1){
+      if(tabState.value === val){
+        prHtml('', '<span class="prompt">' + escapeHtml(currentPrompt()) + '</span>' + escapeHtml(val));
+        pr('', matches.join('  '));
+        render();
+        tabState.value = null;
+      } else {
+        tabState.value = val;
+      }
+      return;
+    }
+    input.value = newVal;
+    tabState.value = null;
+  }
+
   // ================= input handling =================
   input.addEventListener('keydown', function(e){
+    if(e.key === 'Tab'){ e.preventDefault(); handleTab(); return; }
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'l'){
       e.preventDefault(); termEl.innerHTML=''; return;
     }
