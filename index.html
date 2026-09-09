@@ -334,7 +334,7 @@
   /* ---- theory-exam section ---- */
   .quote-strip{
     display:grid; gap:12px; margin:0 0 22px;
-    grid-template-columns:repeat(auto-fit,minmax(258px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));
   }
   .qs{
     background:var(--note-yellow); color:var(--ink); border:1px solid var(--line);
@@ -345,7 +345,7 @@
   .qs .said{font-family:var(--font-marker); font-size:14.5px; line-height:1.5; display:block; margin-bottom:7px;}
   .qs .means{display:block; padding-top:7px; border-top:1px dashed var(--line-strong); font-size:12.4px; color:var(--ink-soft);}
 
-  .fact-grid{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr));}
+  .fact-grid{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));}
   .fact{
     background:var(--surface); border:1px solid var(--line); border-radius:11px;
     padding:14px 15px 13px; box-shadow:var(--shadow);
@@ -366,7 +366,7 @@
   .ftab td{padding:7px 8px 7px 0; border-top:1px solid var(--line); vertical-align:top; line-height:1.65;}
   .ftab tr:first-child td{border-top:none;}
   .ftab td:first-child{
-    font-family:var(--font-mono); font-size:12px; color:var(--ink); white-space:nowrap;
+    font-family:var(--font-mono); font-size:12px; color:var(--ink); white-space:nowrap; overflow-wrap:anywhere;
     padding-right:14px; font-weight:600; width:1%;
   }
   .ftab td:last-child{color:var(--ink-soft);}
@@ -377,7 +377,7 @@
   }
   .fnote b{color:var(--rose);}
 
-  .traps{display:grid; gap:11px; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); margin-top:6px;}
+  .traps{display:grid; gap:11px; grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr)); margin-top:6px;}
   .trap{
     background:var(--red-soft); border-left:3px solid var(--red); border-radius:0 9px 9px 0;
     padding:11px 13px; font-size:12.7px; line-height:1.68; color:var(--ink);
@@ -482,6 +482,70 @@
   .nginx-welcome{text-align:center; padding:14px 0 6px;}
   .nginx-welcome h4{font-size:17px; margin-bottom:9px;}
   .nginx-welcome p{margin:0 0 8px; font-size:12.5px; color:var(--ink-soft); line-height:1.6;}
+  /* ---- file contents + command anatomy ---- */
+  .fbox{margin-top:10px; border:1px solid var(--line); border-radius:8px; overflow:hidden; min-width:0;}
+  .fbox-h{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    padding:5px 10px; background:var(--accent-soft); color:var(--accent);
+  }
+  .fbox-t{font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; font-weight:700;}
+  .fbox-t::before{content:"\270E\00a0";}
+  .fbox-m{
+    margin-left:auto; font-family:var(--font-mono); font-size:10.5px;
+    color:var(--ink-faint); letter-spacing:.02em;
+  }
+  .fbox-p{
+    font-family:var(--font-mono); font-size:11.4px; color:var(--ink-soft);
+    padding:6px 11px; background:var(--surface); border-bottom:1px solid var(--line);
+    overflow-x:auto; white-space:nowrap;
+  }
+  .fbox-c{
+    margin:0; padding:11px; background:var(--surface-2);
+    font-family:var(--font-mono); font-size:11.9px; line-height:1.72;
+    color:var(--ink); white-space:pre; overflow-x:auto;
+  }
+  .fbox-c u{text-decoration:none; background:var(--amber-soft); color:var(--amber); font-weight:600; border-radius:3px; padding:0 3px;}
+  .fbox-n{
+    margin:0; padding:10px 12px 11px 28px; background:var(--surface);
+    border-top:1px solid var(--line); font-size:12.2px; line-height:1.72; color:var(--ink-soft);
+  }
+  .fbox-n li{margin-bottom:7px;}
+  .fbox-n li:last-child{margin-bottom:0;}
+  .fbox-n b{color:var(--ink);}
+  .fbox-n code{font-family:var(--font-mono); font-size:.94em; background:var(--surface-2); padding:1px 4px; border-radius:3px;}
+
+  .anat{margin-top:9px; border:1px dashed var(--line-strong); border-radius:8px; background:var(--surface); min-width:0; overflow:hidden;}
+  .anat > summary{
+    cursor:pointer; list-style:none; padding:7px 11px;
+    font-size:10.8px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--violet); display:flex; gap:7px; align-items:center;
+  }
+  .anat > summary::-webkit-details-marker{display:none;}
+  .anat > summary::before{content:"\25B8"; display:inline-block; transition:transform .15s;}
+  .anat[open] > summary::before{transform:rotate(90deg);}
+  .anat > summary:hover{background:var(--surface-2);}
+  .atab{width:100%; border-collapse:collapse; font-size:12.2px;}
+  .atab td{padding:7px 11px 7px 0; border-top:1px solid var(--line); vertical-align:top; line-height:1.7;}
+  .atab td:first-child{
+    font-family:var(--font-mono); font-size:11.6px; color:var(--violet); font-weight:600;
+    white-space:nowrap; padding-left:11px; padding-right:14px; width:1%;
+  }
+  .atab td:last-child{color:var(--ink-soft); padding-right:11px;}
+  .atab code{font-family:var(--font-mono); font-size:.95em;}
+  .agotcha{
+    margin:0; padding:10px 12px; border-top:1px solid var(--line);
+    background:var(--violet-soft); font-size:12.2px; line-height:1.72; color:var(--ink);
+  }
+  .agotcha b{color:var(--violet);}
+  .agotcha code{font-family:var(--font-mono); font-size:.94em;}
+  @media (max-width:620px){
+    .atab tr{display:block; border-top:1px solid var(--line); padding:7px 0;}
+    .atab tr:first-child{border-top:none;}
+    .atab td{display:block; border-top:none; padding:1px 11px;}
+    .atab td:first-child{width:auto; white-space:normal; padding-bottom:3px;}
+    .atab td{overflow-wrap:anywhere;}
+    .fbox-p{white-space:normal; word-break:break-all;}
+  }
 </style>
 
 <div class="board-frame">
@@ -1168,7 +1232,7 @@
     <div class="band-head">
       <span class="wk-pill">0 → 1</span>
       <h2 data-th="จับมือทำตั้งแต่ศูนย์จนเว็บขึ้นจริง">Hand-held: from an empty VM to a working site</h2>
-      <span class="band-tag" data-th="ทุกคำสั่ง ทุก path เรียงตามลำดับที่ต้องพิมพ์จริง — จบแล้วจะได้ noticeboard ที่เปิดจากเครื่องตัวเองได้ และรอด reboot">Every command and every path, in the order you actually type them. At the end you have a noticeboard you can open from your own laptop — and it survives a reboot.</span>
+      <span class="band-tag" data-th="ทุกคำสั่ง ทุก path เรียงตามลำดับที่ต้องพิมพ์จริง · คำสั่งยากๆ กดแยกดูทีละ flag ได้ ทุกข้อมี output ที่พิสูจน์ว่าสำเร็จ และทุกข้อที่ต้องเปิด editor มีไฟล์ฉบับสมบูรณ์ให้ดู — จบแล้วจะได้ noticeboard ที่เปิดจากเครื่องตัวเองได้ และรอด reboot">Every command and every path, in the order you actually type them. Hard commands open up flag by flag, every step shows the output that proves it worked, and every step that opens an editor shows the finished file. At the end you have a noticeboard you can open from your own laptop — and it survives a reboot.</span>
     </div>
 
     <div class="walk">
@@ -1203,6 +1267,19 @@ Last login: Wed Sep  9 09:12:04 2026 from 10.4.12.31
 <u>-rw-r--r-- 1 root root 1141 Sep  9 09:14 /usr/share/keyrings/nginx-archive-keyring.gpg</u></pre>
             <div class="wok-note" data-th="เงียบ คือสำเร็จ · ถ้าเห็น gpg: no valid OpenPGP data found แปลว่าโหลดไม่สำเร็จและเขียนไฟล์เปล่าไว้ ให้ลบไฟล์แล้วรันใหม่">Silence is the success case here. If you see <b>gpg: no valid OpenPGP data found</b>, the download failed and you wrote an empty file — delete it and run the line again.</div>
           </div>
+          <details class="anat">
+            <summary data-th="แยกคำสั่งนี้ทีละตัว">Take this command apart</summary>
+            <table class="atab">
+              <tr><td>curl -f</td><td data-th="ถ้าเจอ HTTP error ให้ล้มเหลวไปเลย แทนที่จะบันทึกหน้า error นั้นไว้เป็นไฟล์กุญแจอย่างหน้าตาเฉย">fail on an HTTP error instead of cheerfully saving the error page as if it were the key</td></tr>
+              <tr><td>-s</td><td data-th="เงียบ ไม่ต้องแสดงแถบความคืบหน้า เพราะ output กำลังจะไหลเข้า pipe">silent — no progress meter, because the output is going into a pipe</td></tr>
+              <tr><td>-S</td><td data-th="แต่ถ้ามี error ให้แสดงด้วย ถ้าใช้ -s เฉยๆ มันจะซ่อน error ไปด้วย">…but still show me the error if one happens. <code>-s</code> alone would hide it too</td></tr>
+              <tr><td>-L</td><td data-th="ตาม redirect ถ้าไม่ใส่ กุญแจที่ถูกย้ายที่จะกลายเป็นการโหลดหน้า redirect มาแบบเงียบๆ">follow redirects. Without it a moved key silently downloads a redirect page</td></tr>
+              <tr><td>|</td><td data-th="ส่ง output ของ curl ให้โปรแกรมถัดไปตรงๆ โดยไม่ต้องเขียนไฟล์ชั่วคราวเลย">hand curl's output straight to the next program without ever writing a temp file</td></tr>
+              <tr><td>gpg --dearmor</td><td data-th="แปลงกุญแจจากรูปแบบข้อความให้เป็นรูปแบบไบนารีที่ apt ต้องการ">convert the text form of the key into the binary form apt wants</td></tr>
+              <tr><td>-o &lt;path&gt;</td><td data-th="เขียนลงตรงนั้น · /usr/share/keyrings/ คือที่ที่กุญแจเซ็นของ repository ควรอยู่">write it there. <code>/usr/share/keyrings/</code> is where a repository's signing key belongs</td></tr>
+            </table>
+            <p class="agotcha" data-th="<b>นี่คือทั้งหมดของคำถามว่าเราเชื่อซอฟต์แวร์นี้ไหม</b> แพ็กเกจจาก repository นี้ถูกเซ็นไว้ และ apt จะปฏิเสธทุกอย่างที่กุญแจนี้ไม่รับรอง · ถ้าไม่มีมัน เราก็แค่กำลังโหลดไฟล์ที่รันได้จากคนแปลกหน้ามารันด้วยสิทธิ์ root"><b>This is the whole of &ldquo;do I trust this software?&rdquo;</b> Packages from this repository are signed, and apt will refuse anything that key does not vouch for. Without it you are downloading executables from a stranger and running them as root.</p>
+          </details>
         </div></div>
 
         <div class="wstep"><div class="wnum">3</div><div>
@@ -1214,6 +1291,16 @@ Last login: Wed Sep  9 09:12:04 2026 from 10.4.12.31
             <pre><u>deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu noble nginx</u></pre>
             <div class="wok-note" data-th="tee จะพิมพ์สิ่งที่มันเขียนกลับมาให้ดู ต้องได้เป็นบรรทัดเดียวที่ลงท้ายด้วย noble nginx ถ้ามันตัดเป็นสองบรรทัด apt จะฟ้อง malformed entry ตอน update"><code>tee</code> echoes back exactly what it wrote. Check it came out as <b>one single line</b> ending in <code>noble nginx</code> — if it wrapped into two, apt will report a malformed entry at the next update.</div>
           </div>
+          <details class="anat">
+            <summary data-th="แยกคำสั่งนี้ทีละตัว">Take this command apart</summary>
+            <table class="atab">
+              <tr><td>deb</td><td data-th="คำแรกของบรรทัดตามรูปแบบของมันเอง แปลว่านี่คือ repository ของแพ็กเกจไบนารี">the line's own keyword: this is a binary package repository</td></tr>
+              <tr><td>[signed-by=&hellip;]</td><td data-th="ผูก repository อันนี้เข้ากับกุญแจอันนั้น ถ้าไม่ใส่ กุญแจนี้จะถูกเชื่อถือสำหรับ repository ทุกอันบนเครื่อง">bind <em>this one</em> repository to <em>that one</em> key. Without it the key would be trusted for <b>every</b> repository on the machine</td></tr>
+              <tr><td>$(lsb_release -cs)</td><td data-th="command substitution คือรันคำสั่งนี้แล้วเอาผลลัพธ์มาวางตรงนี้ · -c คือ codename, -s คือแบบสั้น มันจึงพิมพ์ว่า noble">command substitution — run this, put its output here. <code>-c</code> codename, <code>-s</code> short, so it prints <code>noble</code></td></tr>
+              <tr><td>| sudo tee &lt;file&gt;</td><td data-th="เขียนลงไฟล์ในฐานะ root และพิมพ์กลับมาให้ดูเพื่อตรวจได้ด้วย">write to the file <em>as root</em>, and echo it back so you can check it</td></tr>
+            </table>
+            <p class="agotcha" data-th="<b>ทำไมต้อง | sudo tee ไม่ใช่ sudo echo … &gt; file</b> เพราะเครื่องหมาย &gt; ถูกทำโดย shell ของเราเองก่อนที่ sudo จะได้รันด้วยซ้ำ ไฟล์จึงถูกสร้างโดยเราที่ไม่มีสิทธิ์ และ /etc/apt/sources.list.d/ ก็ปฏิเสธ · ส่วน tee เป็นโปรแกรม sudo จึงยกสิทธิ์ให้มันได้ · และเหตุผลเดียวกันนี้ทำให้มันพิมพ์กลับมาบนจอ: tee เขียนทั้งลงไฟล์และลง stdout ให้ตรวจได้ว่าออกมาเป็นบรรทัดเดียวจริง"><b>Why <code>| sudo tee</code> and not <code>sudo echo &hellip; &gt; file</code>?</b> The <code>&gt;</code> is performed by <em>your</em> shell before sudo ever runs, so the file is created by the unprivileged you, and <code>/etc/apt/sources.list.d/</code> refuses. <code>tee</code> is a program, so <code>sudo</code> can raise it. Same reason it comes back on your screen: <code>tee</code> writes to the file <em>and</em> to stdout — check it landed as one single line.</p>
+          </details>
         </div></div>
 
         <div class="wstep"><div class="wnum">4</div><div>
@@ -1293,6 +1380,22 @@ drwxrw<u>s</u>r-x 3 sysadmin sysadmin 4096 Sep  9 09:22 frontend
 -rw-rw-r-- 1 sysadmin sysadmin 1204 Aug 19 14:00 README.md</pre>
             <div class="wok-note" data-th="ให้มองหาตัว s ในตำแหน่งที่ควรเป็น x ของกลุ่ม นั่นคือ setgid หรือเลข 2 ใน 2775 และเป็นอักขระตัวเดียวที่พิสูจน์ว่าข้อ 7 สำเร็จ · ถ้าเห็นเป็น drwxrwxr-x เฉยๆ แปลว่า tar รันด้วย sudo แล้วทับสิทธิ์ที่เพิ่งตั้งไป">Look for the <b>s</b> where the group's <code>x</code> should be — that is setgid, the 2 in 2775, and it is the single character that proves step 7 worked. A plain <code>drwxrwxr-x</code> means the <code>tar</code> ran with sudo and flattened what you set.</div>
           </div>
+          <details class="anat">
+            <summary data-th="แยกคำสั่งนี้ทีละตัว">Take this command apart</summary>
+            <table class="atab">
+              <tr><td>install -d</td><td data-th="สร้างโฟลเดอร์ และตั้งเจ้าของ กลุ่ม กับโหมด ในคำสั่งเดียวกัน">make a directory — and set its owner, group and mode <em>in the same command</em></td></tr>
+              <tr><td>-o / -g / -m</td><td data-th="เจ้าของ กลุ่ม โหมด · ถ้าใช้ mkdir แล้ว chown แล้ว chmod จะเป็นสามคำสั่งและมีสองจังหวะที่สิทธิ์ยังผิดอยู่">owner, group, mode. <code>mkdir</code> then <code>chown</code> then <code>chmod</code> is three commands and two moments where it is wrong</td></tr>
+              <tr><td>2775</td><td data-th="เลข 2 คือ setgid: ไฟล์ทุกไฟล์ที่ถูกสร้างข้างในจะสืบทอดกลุ่มของโฟลเดอร์แทนกลุ่มของคนสร้าง · นั่นคือวิธีที่คนหลายคนทำงานบน deployment เดียวกันได้">the <b>2</b> is setgid: every file created inside inherits the directory's group instead of the creator's own. That is how more than one person works on one deployment</td></tr>
+              <tr><td>tar -x</td><td data-th="x คือ extract แตกไฟล์ · c คือ create สร้าง · t คือ list ดูรายการโดยไม่แตก">e<b>x</b>tract. <code>-c</code> would <b>c</b>reate one, <code>-t</code> lis<b>t</b>s without unpacking</td></tr>
+              <tr><td>-z</td><td data-th="archive ถูกบีบด้วย gzip คือส่วน .gz ของ .tar.gz">the archive is gzip-compressed — the <code>.gz</code> half of <code>.tar.gz</code></td></tr>
+              <tr><td>-f &lt;file&gt;</td><td data-th="อ่านไฟล์นี้ · ต้องวางไว้เป็นตัวอักษรสุดท้าย เพราะชื่อไฟล์ตามมาทันที">read this <b>f</b>ile. Put it last of the letters — the filename comes straight after it</td></tr>
+              <tr><td>-C &lt;dir&gt;</td><td data-th="เข้าไปในโฟลเดอร์นี้ก่อน ไฟล์จะได้ลงตรงนั้น ไม่ใช่ตรงที่เรายืนอยู่"><b>c</b>hange into this directory first, so files land there and not wherever you are standing</td></tr>
+              <tr><td>--strip-components=1</td><td data-th="ตัดส่วนแรกของ path ทิ้งทุกรายการ · archive นี้มีโฟลเดอร์ชั้นนอกหนึ่งชั้น ถ้าไม่ใส่จะได้ /srv/noticeboard/noticeboard/backend">throw away the first path segment of every entry. The archive holds one top-level folder; without this you get <code>/srv/noticeboard/noticeboard/backend</code></td></tr>
+              <tr><td>find -perm -u+w</td><td data-th="เอาเฉพาะรายการที่เจ้าของเขียนได้ · เครื่องหมาย - นำหน้าแปลว่าอย่างน้อยต้องมีบิตเหล่านี้ ไม่ใช่ต้องเป็นแบบนี้เป๊ะ">only entries whose <b>owner</b> may write. The leading <code>-</code> means &ldquo;at least these bits&rdquo;, not &ldquo;exactly&rdquo;</td></tr>
+              <tr><td>-exec &hellip; {} +</td><td data-th="รันคำสั่งกับสิ่งที่หาเจอ · {} คือรายการ และ + ส่งให้ทีเดียวหลายอันเพื่อรันน้อยครั้งที่สุด · ถ้าใช้ backslash semicolon จะรัน chmod หนึ่งครั้งต่อหนึ่งไฟล์">run a command on what was found. <code>{}</code> is the list, and <code>+</code> hands it over in as few runs as possible — <code>&#92;;</code> would run <code>chmod</code> once per file</td></tr>
+            </table>
+            <p class="agotcha" data-th="<b>ทำไมต้องมี find ในเมื่อ 2775 ตั้ง setgid ไปแล้ว</b> ให้ดูสิ่งที่ tar ผลิตออกมาจริงๆ: drwxr-sr-x · ตัว s ตกทอดมาจาก parent กลุ่มจึงถูกแล้ว แต่ไม่มีตัว w อยู่ในนั้น · <b>setgid ส่งต่อกลุ่ม ไม่เคยส่งต่อสิทธิ์</b> และโหมดของไฟล์ใน archive คือโหมดของคนที่สร้าง archive ไว้ · แล้วทำไมไม่ใช้ chmod -R g+w · เพราะ -R ให้สิทธิ์กับทุกอย่างรวมถึงไฟล์ที่บางคนตั้งใจทำให้อ่านอย่างเดียว · ส่วน -perm -u+w คือการเขียนกฎจริงลงไป: กลุ่มเขียนได้ตรงที่เจ้าของเขียนได้ และที่อื่นไม่ได้ · คืนนี้สองอย่างนี้ตรงกันพอดี แต่ตั้งแต่คาบ 6 โฟลเดอร์นี้จะกลายเป็น git repository ซึ่งเก็บ object แบบอ่านอย่างเดียวโดยตั้งใจ"><b>Why the <code>find</code> at all, when <code>2775</code> already set setgid?</b> Look at what <code>tar</code> actually produced: <code>drwxr-sr-x</code>. The <code>s</code> came down from the parent so the group is right — but there is no <code>w</code> in it. <b>setgid hands down the group, never the permission</b>, and the modes inside an archive are whatever the person who built it had. And why not <code>chmod -R g+w</code>? Because <code>-R</code> grants it to everything, including files somebody deliberately made read-only. <code>-perm -u+w</code> writes the actual rule down: <em>the group may write wherever the owner may, and nowhere else</em>. Tonight the two agree; from class 6 this becomes a git repository, and git stores its objects read-only on purpose.</p>
+          </details>
         </div></div>
 
         <div class="wstep"><div class="wnum">8</div><div>
@@ -1307,6 +1410,20 @@ sudo rsync -a --chmod=D755,F644 --delete --exclude config.js \
 <u>app.js  config.example.js  data  index.html  store.js  style.css</u></pre>
             <div class="wok-note" data-th="ได้หกรายการ และต้อง ไม่มี backend ไม่มี README.md ไม่มี .env · การไม่มีของพวกนี้คือเหตุผลทั้งหมดที่ต้องคัดลอกแทนการชี้ nginx ไปที่ /srv โดยตรง ทุกอย่างในโฟลเดอร์นี้คือของที่เรายอมให้ทั้งอินเทอร์เน็ตโหลดไปได้">Six entries, and <b>no <code>backend</code>, no <code>README.md</code>, no <code>.env</code></b>. That absence is the point of copying instead of pointing nginx at /srv — everything in this folder is something you are happy for the whole internet to download.</div>
           </div>
+          <details class="anat">
+            <summary data-th="แยกคำสั่งนี้ทีละตัว">Take this command apart</summary>
+            <table class="atab">
+              <tr><td>rsync</td><td data-th="ไม่ใช่ cp เพราะเราจะต้องรันคำสั่งนี้ซ้ำทุกครั้งที่แก้เว็บ">not <code>cp</code>, because you will run this again every time you change the site</td></tr>
+              <tr><td>-a</td><td data-th="archive เป็นตัวย่อของ -rlptgoD คือ ลงลึกทุกชั้น, คงลิงก์สัญลักษณ์, คงสิทธิ์, คงเวลา, คงกลุ่ม, คงเจ้าของ, คง device file"><b>archive</b> — shorthand for <code>-rlptgoD</code>: recurse, keep symlinks, keep permissions, keep timestamps, keep group, keep owner, keep device files</td></tr>
+              <tr><td>--chmod=D755,F644</td><td data-th="เขียนทับสิทธิ์ที่ -a จะคงไว้ · D ใช้กับโฟลเดอร์ F ใช้กับไฟล์">override the permissions <code>-a</code> would have kept. <code>D</code> applies to <b>d</b>irectories, <code>F</code> to <b>f</b>iles</td></tr>
+              <tr><td>--delete</td><td data-th="ลบทุกอย่างที่ปลายทางซึ่งไม่มีที่ต้นทางแล้ว · นี่คือสิ่งที่ทำให้มันเป็นการ sync ไม่ใช่กองไฟล์ที่ทับถมกันไปเรื่อยๆ">remove anything at the destination that is no longer at the source. This is what makes it a <b>sync</b> and not a pile</td></tr>
+              <tr><td>--exclude config.js</td><td data-th="ปกป้องไฟล์เดียวที่แอปไม่ได้มาพร้อมกัน · ข้อ 9 เป็นคนสร้างมัน ถ้าไม่ใส่ deploy ทุกรอบต่อจากนี้จะลบมันทิ้ง">protect the one file the application did <em>not</em> arrive with. Step 9 creates it; without this, every future deploy deletes it</td></tr>
+              <tr><td>&hellip;/frontend<b>/</b></td><td data-th="<b>สแลชท้ายแปลว่าเอาเนื้อข้างใน</b> รวม data/ ด้วย ไม่ใช่เอาตัวโฟลเดอร์ · ถ้าลืมใส่จะได้เป็น /var/www/noticeboard/frontend/index.html"><b>the trailing slash means its contents</b>, <code>data/</code> included — not the directory itself. Drop it and you get <code>/var/www/noticeboard/frontend/index.html</code></td></tr>
+              <tr><td>&hellip;/noticeboard/</td><td data-th="ปลายทาง · ทั้งสองฝั่งมีสแลชท้ายเหมือนกัน และเป็นนิสัยที่ควรติดไว้">the destination. Both sides carry a slash here, and it is a habit worth keeping</td></tr>
+              <tr><td>sudo</td><td data-th="ต้องใช้เพราะเขียนใต้ /var/www · สังเกตว่า tar ในข้อ 7 <b>ไม่</b> ใส่ sudo เพราะมันจะทับสิทธิ์ความเป็นเจ้าของที่เพิ่งตั้งไป">needed to write under <code>/var/www</code>. Note there is <b>no</b> sudo on the <code>tar</code> in step 7 — that one would have flattened the ownership you just set</td></tr>
+            </table>
+            <p class="agotcha" data-th="<b>--chmod คืออีกครึ่งหนึ่งของ find ในข้อ 7 และมันชี้ไปคนละทาง</b> · -a คงสิทธิ์เดิมไว้ ซึ่งแปลว่า <em>ถ้าไม่มี flag นี้ โหมดของโฟลเดอร์ต้นทางจะกลายเป็นโหมดของสิ่งที่โลกได้รับไป</em> · เราเพิ่งเปิดให้กลุ่มเขียนต้นทางได้เพื่อให้ทีมทำงานร่วมกัน แต่สำเนาที่เผยแพร่ต้องไม่เป็นแบบนั้น เพราะ document root ควรให้เว็บเซิร์ฟเวอร์อ่านได้และไม่ควรให้ใครที่มันเข้าถึงได้เขียนเลย · และเหตุผลที่มันอยู่บนบรรทัด deploy แทนที่จะไป chmod ทีหลัง ก็เพื่อให้ <b>ทุกครั้งที่ deploy ใหม่มันยืนยันกฎนี้ซ้ำเอง</b> รวมถึงตอนที่ GitHub Actions deploy ให้ในคาบ 10 ซึ่งไม่มีใครมาคอยจำคำสั่งที่สอง · ตรวจด้วย ls -l: คอลัมน์กลุ่มต้องไม่มี w คือ -rw-r--r-- กับ drwxr-xr-x เทียบกับต้นทางที่เป็น -rw-rw-r-- กับ drwxrwsr-x"><b><code>--chmod</code> is the other half of the <code>find</code> in step 7, and it points the opposite way.</b> <code>-a</code> preserves permissions — which means that <em>without this flag, the modes of your source directory become the modes of what the world is handed</em>. You just made the source group-writable so a team can work on it; the published copy must not be, because a document root should be readable by the web server and writable by nobody it could be. And it lives on the deploy line rather than in a <code>chmod</code> afterwards so that <b>every future deploy reasserts it</b> — including the one GitHub Actions runs for you in class 10, where there is nobody to remember a second command. Check it with <code>ls -l</code>: no <code>w</code> in the group column, <code>-rw-r--r--</code> and <code>drwxr-xr-x</code>, against the source's <code>-rw-rw-r--</code> and <code>drwxrwsr-x</code>.</p>
+          </details>
         </div></div>
 
         <div class="wstep"><div class="wnum">9</div><div>
@@ -1320,6 +1437,22 @@ micro /var/www/noticeboard/config.js</div>
   noticesUrl: "/data/notices.json",</pre>
             <div class="wok-note" data-th="ต้องเป็นเลข 11 หลักของตัวเอง โดยที่เครื่องหมายคำพูดและจุลภาคท้ายบรรทัดยังอยู่ครบ · noticesUrl ยังชี้ที่ไฟล์ก่อน แล้วจะเปลี่ยนเป็น /api/notices ในข้อ 23 บรรทัดเดียวนั้นคือความต่างทั้งหมดระหว่างหน้าเว็บกับแอปพลิเคชัน">Your own 11 digits, with the quotes and the trailing comma still intact. <code>noticesUrl</code> stays on the file for now — it becomes <code>/api/notices</code> in step 23, and that one line is the entire difference between a page and an application.</div>
           </div>
+          <div class="fbox">
+            <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
+            <div class="fbox-p">/var/www/noticeboard/config.js</div>
+            <pre class="fbox-c">window.INT134 = {
+  // Your 11-digit student number.
+  studentId: <u>"68130500123"</u>,
+
+  // Class 3: the data file this site ships with.
+  noticesUrl: "/data/notices.json",
+};</pre>
+            <ul class="fbox-n">
+              <li data-th="<b>มีสองค่า แก้แค่ค่าเดียว</b> พิมพ์เลข 11 หลักของตัวเองทับตัวอย่าง ส่วน noticesUrl ปล่อยไว้อย่างนั้น จะไปเปลี่ยนในข้อ 23 ไม่ใช่ตอนนี้"><b>Two values, and you change one.</b> Type your own eleven digits over the example, and leave <code>noticesUrl</code> exactly as it is — it changes in step 23 and not before.</li>
+              <li data-th="เครื่องหมายคำพูดคู่และจุลภาคท้ายบรรทัดต้องอยู่ครบ นี่คือ JavaScript ที่เบราว์เซอร์อ่าน ถ้าคำพูดขาดไปหน้าเว็บจะโหลดขึ้นแต่ไม่มีข้อมูลและไม่ฟ้องอะไรเลย ต้องไปเปิด console ของเบราว์เซอร์ถึงจะเห็น">Keep the double quotes and keep the trailing comma. This is JavaScript being read by a browser, and a missing quote means the page loads with no data and no visible error — you would only find it in the browser's console.</li>
+              <li data-th="<b>ทำไมไฟล์นี้ไม่ได้มากับ archive</b> เพราะมันต่างกันทุกเครื่อง ซึ่งคือความหมายของคำว่า configuration · config.example.js มาด้วยเพื่อให้รู้ว่าต้องเขียนอะไร รูปแบบเดียวกันนี้จะกลับมาอีกในข้อ 18 คราวนั้นมีรหัสฐานข้อมูลอยู่ในนั้น"><b>Why this file is not in the archive.</b> It is different on every machine, which is what configuration means. <code>config.example.js</code> ships beside it so you know what to write — the same pattern returns in step 18 with a database password in it.</li>
+            </ul>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">10</div><div>
@@ -1331,6 +1464,29 @@ micro /var/www/noticeboard/config.js</div>
 <b>sysadmin@lvm68xxx:~$</b> ls /etc/nginx/conf.d/
 <u>default.conf  noticeboard.conf</u></pre>
             <div class="wok-note" data-th="ทั้งสองชื่อลงท้ายด้วย .conf · nginx.conf include แค่ conf.d ดอกจันจุด conf เท่านั้น ไฟล์ชื่อ noticeboard.config หรือ noticeboard.conf.bak จึงล่องหน และ nginx -t ก็ยังบอกว่าผ่าน เพราะไฟล์ที่ไม่เคยถูกอ่านย่อมไม่มีอะไรผิด">Both names end in <b>.conf</b>. <code>nginx.conf</code> includes <code>conf.d/*.conf</code> and nothing else, so a file called <code>noticeboard.config</code> or <code>noticeboard.conf.bak</code> is invisible — and <code>nginx -t</code> will still say the config is fine, because a file that is never read has nothing wrong in it.</div>
+          </div>
+          <div class="fbox">
+            <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
+            <div class="fbox-p">/etc/nginx/conf.d/noticeboard.conf</div>
+            <pre class="fbox-c">server {
+    listen      80 <u>default_server</u>;
+    server_name lvm68xxx.sit.kmutt.ac.th lvm68xxx;
+
+    access_log  /var/log/nginx/noticeboard.access.log  <u>main</u>;
+    error_log   /var/log/nginx/noticeboard.error.log   <u>warn</u>;
+
+    root  /var/www/noticeboard;
+    index index.html;
+
+    location / { try_files $uri $uri/ =404; }
+}</pre>
+            <ul class="fbox-n">
+              <li data-th="<b>อย่าเขียนขึ้นมาเองจากศูนย์</b> ไฟล์ /etc/nginx/conf.d/default.conf มากับแพ็กเกจและเป็น server block ที่ใช้งานได้จริง เปิดอ่าน ก็อปมาแก้ · การเอา config ของคนอื่นมาปรับคืองานส่วนใหญ่ของอาชีพนี้ และเป็นสิ่งที่ข้อสอบให้ทำ"><b>Don't write this from nothing.</b> <code>/etc/nginx/conf.d/default.conf</code> came with the package and is a working server block — open it, read it, copy it, edit it. Adapting somebody else's configuration is most of this job, and it is what the exam asks you to do.</li>
+              <li data-th="<b>บนพอร์ต 80 มี default_server ได้แค่บล็อกเดียว</b> ไฟล์ default.conf ของแพ็กเกจจองไว้อยู่แล้ว ต้องเอาออกจากไฟล์นั้นก่อน ไม่งั้น nginx ไม่ยอมโหลดและ nginx -t จะบอกว่ามี default server ซ้ำ · ที่ต้องเป็น default เพราะ checker จะยิงด้วยชื่อโฮสต์ที่มันสุ่มขึ้นมาตอนรัน การเป็น default ทำให้ผ่านทุกชื่อในคราวเดียว"><b>Only one block on port 80 may be <code>default_server</code>.</b> The package's <code>default.conf</code> already claims it — take it out of that file first, or nginx refuses to load and <code>nginx -t</code> tells you a duplicate default server exists. You want the default because the checker probes with a hostname it invents while it runs: being the default passes every name at once.</li>
+              <li data-th="<b>สองบรรทัด log รับอาร์กิวเมนต์ตัวที่สองคนละแบบ</b> access_log รับ format ชื่อ main ซึ่งนิยามไว้ใน nginx.conf ลองเปิดไปอ่าน · error_log รับ level เช่น warn หรือ notice คือเรื่องต้องแย่แค่ไหนถึงจะถูกบันทึก · สลับกันคือความผิดพลาดแรกที่คนทำกันประจำ และ nginx -t จะฟ้อง"><b>The two log lines do not take the same second argument.</b> <code>access_log</code> takes a <em>format</em> — <code>main</code>, which is defined in <code>nginx.conf</code>; go and read it. <code>error_log</code> takes a <em>level</em>, like <code>warn</code> or <code>notice</code>: how bad a thing has to be before it gets written down. Swapping them is the usual first mistake, and <code>nginx -t</code> will say so.</li>
+              <li data-th="<b>ไฟล์ log ต้องอยู่ใน /var/log/nginx/ ตรงๆ และลงท้ายด้วย .log</b> ไม่ใช่เรื่องความเป็นระเบียบ แต่ /etc/logrotate.d/nginx หมุนไฟล์ตามแพตเทิร์น /var/log/nginx/ดอกจันจุด log ซึ่งไม่มองเข้าไปในโฟลเดอร์ย่อยและไม่ตรงกับชื่ออื่น · log ที่ไม่มีใครหมุนจะโตจนดิสก์เต็ม และดิสก์เต็มทำให้ทุก service บนเครื่องล่ม ไม่ใช่แค่ตัวนี้"><b>Logs go directly in <code>/var/log/nginx/</code> and must end in <code>.log</code>.</b> Not tidiness: <code>/etc/logrotate.d/nginx</code> rotates <code>/var/log/nginx/*.log</code>, a pattern that does not look inside subdirectories and does not match any other name. A log nothing rotates grows until it fills the disk, and a full disk takes down every service on the machine, not just this one.</li>
+              <li data-th="try_files $uri $uri/ =404 แปลว่า: เอาไฟล์ถ้ามี ถ้าไม่มีลองเป็นโฟลเดอร์แล้วหา index ถ้ายังไม่มีให้ตอบตรงๆ ว่าไม่มี · ถ้าไม่ใส่ ไฟล์ที่หายไปจะให้ผลลัพธ์ที่ซื่อสัตย์น้อยกว่านั้น"><code>try_files $uri $uri/ =404</code> says: the file if it exists, then the directory index, and otherwise say plainly that there is nothing there. Without it a missing file produces something less honest.</li>
+            </ul>
           </div>
         </div></div>
 
@@ -1348,6 +1504,16 @@ window.INT134 = {
   studentId: "68130500123",</pre>
             <div class="wok-note" data-th="ต้องได้สองบรรทัดจาก nginx -t ไม่ใช่บรรทัดเดียว · และดูว่า curl พิสูจน์อะไร: nginx กำลังเสิร์ฟไฟล์ของเราจาก root ของเราแล้ว · ถ้าไม่ได้อะไรกลับมา แปลว่า reload ไม่ได้ทำอะไรเลยเพราะ nginx -t ไม่ผ่านและ && ตัดสายไป ซึ่งเป็นเหตุผลที่ต้องเขียนต่อกันแบบนั้น">Two lines from <code>nginx -t</code>, not one. And note what curl proves: nginx is now serving <em>your</em> file from <em>your</em> root. If it returns nothing, the reload silently did nothing because <code>nginx -t</code> failed and <code>&amp;&amp;</code> stopped the chain — which is exactly why the two commands are chained that way.</div>
           </div>
+          <details class="anat">
+            <summary data-th="แยกคำสั่งนี้ทีละตัว">Take this command apart</summary>
+            <table class="atab">
+              <tr><td>nginx -t</td><td data-th="อ่าน config แล้วบอกว่ามันโหลดได้ไหม โดยไม่แตะเซิร์ฟเวอร์ที่กำลังรันอยู่">read the configuration and say whether it would load, <b>without</b> touching the running server</td></tr>
+              <tr><td>&amp;&amp;</td><td data-th="รันคำสั่งถัดไปก็ต่อเมื่อคำสั่งก่อนหน้าสำเร็จ · ถ้าเทสต์ไม่ผ่าน reload จะไม่ถูกรันเลย">run the next command <b>only if</b> the previous one succeeded. A failed test stops the reload dead</td></tr>
+              <tr><td>systemctl reload</td><td data-th="อ่าน config ใหม่โดยไม่ตัดการเชื่อมต่อที่กำลังทำงานอยู่">re-read the configuration without dropping connections that are in flight</td></tr>
+              <tr><td>curl -s &hellip;</td><td data-th="เงียบ เอาแค่เนื้อหา ไม่ต้องมีแถบความคืบหน้า · ถามเซิร์ฟเวอร์ ไม่ใช่ถามระบบไฟล์">silent — just the body, no progress meter. Ask the server, not the filesystem</td></tr>
+            </table>
+            <p class="agotcha" data-th="<b>ต่อกันด้วย && อย่างตั้งใจ</b> · การ reload ด้วยไฟล์ที่พังจะทำให้ config <em>เก่า</em> ยังทำงานต่อ ไม่ล่ม และก็ไม่เห็นความเปลี่ยนแปลงด้วย ซึ่งดูเหมือนกับว่าที่แก้ไปไม่มีผลอะไรเป๊ะ · ส่วน restart ในสถานการณ์เดียวกันจะหยุดทุกอย่างก่อนแล้วเว็บล่มทั้งเว็บ · เทสต์ก่อน แล้วค่อย reload และห้าม restart กับ config ที่ยังไม่ได้เทสต์"><b>Chain them with <code>&amp;&amp;</code> on purpose.</b> A reload with a broken file leaves the <em>old</em> configuration running: no downtime, and no visible change either — which looks exactly like your edit not mattering. A <code>restart</code> in the same situation stops everything first and takes the site down. Test, then reload, and never restart on a config you have not tested.</p>
+          </details>
         </div></div>
 
         <div class="mock">
@@ -1437,6 +1603,17 @@ Query OK, 0 rows affected (0.01 sec)</pre>
 2 rows in set (0.00 sec)</pre>
             <div class="wok-note" data-th="ต้องได้สองแถวพอดี · USAGE ON *.* ไม่ใช่สิทธิ์ แปลว่าต่อเข้ามาได้แต่ทำอะไรไม่ได้ และมันมีอยู่เสมอ · แถวที่สองคือสิทธิ์จริงอันเดียว และมันระบุว่า noticeboard.* · ถ้าเมื่อไหร่เห็น ALL PRIVILEGES ON *.* แปลว่าให้สิทธิ์ทั้งเซิร์ฟเวอร์ไปแล้ว และหลักสิทธิ์เท่าที่จำเป็นก็หายไป">Exactly two rows. <b>USAGE ON *.*</b> is not a privilege — it means “may connect, may do nothing”, and it is always there. The second row is the only real grant, and it names <code>noticeboard.*</code>. If you ever see <b>ALL PRIVILEGES ON *.*</b>, you gave the app the whole server and least privilege is gone.</div>
           </div>
+          <details class="anat">
+            <summary data-th="แยกคำสั่งนี้ทีละตัว">Take this command apart</summary>
+            <table class="atab">
+              <tr><td>MYSQL_PWD='&hellip;'</td><td data-th="prefix assignment ของ shell: มันใส่ตัวแปรเข้าไปใน environment ของคำสั่งนั้นคำสั่งเดียว ไม่เข้าไปใน shell นี้ และไม่ติดไปกับคำสั่งถัดไป">a shell <b>prefix assignment</b>: it puts the variable into the environment of that one command and nowhere else — not into this shell, not into the next thing you run</td></tr>
+              <tr><td>' '</td><td data-th="single quote ทำให้ shell ไม่ตีความอะไรข้างในเลย · รหัสที่สุ่มมาอาจมี $ = หรือ * และไม่มีทางมี single quote อยู่ในนั้น">single quotes, so the shell interprets nothing inside them. A generated password can hold <code>$</code>, <code>=</code> or <code>*</code>, and never holds a single quote</td></tr>
+              <tr><td>-u noticeboard</td><td data-th="ต่อในฐานะ user นั้นของ MySQL ไม่ใช่ user ของ OS และไม่ใช่ root ของ MySQL">connect as that MySQL user — not as your OS user, and not as MySQL's root</td></tr>
+              <tr><td>noticeboard</td><td data-th="คำที่สองที่ไม่มี flag นำหน้าคือชื่อ database ที่จะใช้ตอนต่อ">the second bare word is the <b>database</b> to use on connect</td></tr>
+              <tr><td>-e "SQL"</td><td data-th="รันคำสั่งนี้แล้วออก แทนที่จะเปิด prompt แบบโต้ตอบ mysql&gt;">execute this and exit, instead of opening the interactive <code>mysql&gt;</code> prompt</td></tr>
+            </table>
+            <p class="agotcha" data-th="<b>ห้ามใช้ mysql -p ตามด้วยรหัสติดกันเด็ดขาด</b> · command line อ่านได้จริงโดยทุกบัญชีบนเครื่องผ่าน ps และมันยังเข้าไปอยู่ใน history ของเราด้วย · แบบ prefix กันได้ทั้งสองอย่าง · คู่มือของ MySQL เองบอกว่า MYSQL_PWD ไม่ปลอดภัย คำเตือนนั้นพูดถึงระบบที่บัญชีหนึ่งอ่าน environment ของอีกบัญชีได้ ซึ่งบน Linux ไฟล์ /proc/pid/environ เป็นโหมด -r-------- คือเจ้าของเท่านั้น · การรู้ว่าเรากำลังพึ่งการรับประกันข้อไหนของแพลตฟอร์ม คือความต่างระหว่างคำเตือนที่ใช้กับเราได้กับคำเตือนที่ใช้ไม่ได้"><b>Never <code>mysql -p&lt;password&gt;</code> with the password stuck to the flag.</b> A command line really is readable by every account on the machine through <code>ps</code>, and it goes into your shell history as well. The prefix form keeps it out of both. MySQL's own manual calls <code>MYSQL_PWD</code> insecure — that warning is about systems where one account can read another's environment, and on Linux <code>/proc/&lt;pid&gt;/environ</code> is mode <code>-r--------</code>, owner only. Knowing which of your platform's guarantees you are leaning on is the difference between a warning that applies to you and one that does not.</p>
+          </details>
         </div></div>
       </div>
 
@@ -1486,6 +1663,32 @@ micro /srv/noticeboard/backend/.env</div>
 1</pre>
             <div class="wok-note" data-th="-rw------- คือโหมด 600: เจ้าของอ่านและเขียนได้ คนอื่นบนเครื่องอ่านไม่ได้เลย · ถ้าเห็นตัว r ในหกอักขระท้าย แปลว่ารหัสฐานข้อมูลเปิดให้ทุกคนอ่านได้ · คำสั่ง install -m 600 ตั้งค่านี้ให้ในขั้นตอนเดียว จึงใช้แทน cp"><b>-rw-------</b> is mode 600: you can read and write it, and nobody else on the machine can read it at all. Anything with an <code>r</code> in the last six characters means the database password is world-readable. Note <code>install -m 600</code> set that in one step, which is why the walkthrough uses it instead of <code>cp</code>.</div>
           </div>
+          <details class="anat">
+            <summary data-th="แยกคำสั่งนี้ทีละตัว">Take this command apart</summary>
+            <table class="atab">
+              <tr><td>install -m 600</td><td data-th="คัดลอกไฟล์และตั้งโหมดในคำสั่งเดียว โดยไม่มีจังหวะไหนเลยที่ไฟล์มีอยู่ด้วยสิทธิ์ที่ผิด">copy a file <em>and</em> set its mode, in one command — with no moment in between where it exists at the wrong permissions</td></tr>
+              <tr><td>.env.example .env</td><td data-th="ต้นทางแล้วปลายทาง · ไฟล์ example มากับแอป ส่วน .env เป็นของเราและอยู่ใน .gitignore">source then destination. The example ships with the app; <code>.env</code> is yours and is in <code>.gitignore</code></td></tr>
+              <tr><td>600</td><td data-th="เจ้าของอ่านและเขียนได้ คนอื่นทำอะไรไม่ได้เลย · ไฟล์ที่มีรหัสผ่านแล้วทุกคนอ่านได้ ไม่ใช่ความลับ">owner may read and write, nobody else may do anything. A file with a password in it that everybody can read is not a secret</td></tr>
+            </table>
+            <p class="agotcha" data-th="<b>ตั้งโหมด 600 ตั้งแต่ก่อนที่จะมีอะไรอยู่ในไฟล์</b> · ถ้าทำสลับกัน คือสร้างไฟล์ วางรหัสผ่าน แล้วค่อย chmod ไฟล์ที่มีความลับอยู่ข้างในจะดำรงอยู่ด้วยโหมดที่ umask เลือกให้ นานเท่ากับเวลาที่เราใช้พิมพ์คำสั่งที่สอง · ช่องนั้นเล็ก แต่มีอยู่จริง"><b>Mode 600 <em>before</em> there is anything in it.</b> Do it the other way round — create the file, paste the password, then <code>chmod</code> — and the file exists, with a secret in it, at whatever mode your umask chose, for as long as it takes you to type the second command. That window is small and it is real.</p>
+          </details>
+          <div class="fbox">
+            <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
+            <div class="fbox-p">/srv/noticeboard/backend/.env</div>
+            <pre class="fbox-c">DATABASE_URL="mysql://noticeboard:<u>}Kq3!vX8sN%2FwQ2rT-mZ4</u>@127.0.0.1:3306/noticeboard"
+STUDENT_ID="68130500123"
+PORT=3000
+HOST=0.0.0.0
+CORS_ORIGIN=""
+</pre>
+            <ul class="fbox-n">
+              <li data-th="<b>เข้ารหัสรหัสผ่านแบบ percent-encoding และทำเฉพาะใน URL นี้เท่านั้น</b> DATABASE_URL เป็น URL ซึ่งมีไวยากรณ์: / จบส่วนโฮสต์, @ จบส่วนรหัส, ? เริ่ม query, # เริ่ม fragment · ดังนั้น / เป็น %2F, @ เป็น %40, ? เป็น %3F, # เป็น %23, : เป็น %3A และตัว % เองเป็น %25 · ในตัวอย่างข้างบนรหัสที่สุ่มมามี / ปนอยู่ · <b>เข้ารหัสรอบเดียว</b> ถ้าเข้าซ้ำสองรอบ %40 จะกลายเป็น %2540 แล้วจะได้ Access denied ทั้งที่ GRANT ถูกต้องทุกอย่าง"><b>Percent-encode the password, and only inside this URL.</b> A <code>DATABASE_URL</code> is a URL and has a grammar: <code>/</code> ends the host, <code>@</code> ends the credentials, <code>?</code> starts a query, <code>#</code> starts a fragment. So <code>/</code>&rarr;<code>%2F</code>, <code>@</code>&rarr;<code>%40</code>, <code>?</code>&rarr;<code>%3F</code>, <code>#</code>&rarr;<code>%23</code>, <code>:</code>&rarr;<code>%3A</code>, and <code>%</code> itself&rarr;<code>%25</code>. In the example above the generated password contained a <code>/</code>. <b>Encode once.</b> Encoding twice turns <code>%40</code> into <code>%2540</code> and you get Access denied while the GRANT is perfectly fine.</li>
+              <li data-th="<b>ห้ามเขียน ${VAR} ในไฟล์นี้เด็ดขาด</b> มีสองโปรแกรมที่อ่านไฟล์นี้และตีความไม่ตรงกัน: Prisma CLI ขยาย ${...} ให้ ส่วน systemd ตรง EnvironmentFile= ไม่ขยาย มันส่งอักขระตรงตัวไปเลย · แปลว่ามันจะทำงานได้ทุกวิธีที่เราทดสอบในบ่ายวันนั้น แล้วไปพังในวิธีเดียวที่แอปถูกรันจริง คือข้อ 21 โดยไม่มีอะไรบนจอบอกสาเหตุ · และยังมีเหตุผลที่สองที่ยืนได้ด้วยตัวเอง: การแทนค่าตัวแปรทำ percent-encoding ให้ไม่ได้"><b>Never write <code>${VAR}</code> in here.</b> Two programs read this file and they disagree: the Prisma CLI expands <code>${...}</code>, and systemd at <code>EnvironmentFile=</code> does not — it hands over the literal characters. So it works every way you are likely to test it this afternoon, and fails the one way the application is actually run, at step 21, with nothing on screen to suggest why. A second reason stands on its own: substitution cannot percent-encode.</li>
+              <li data-th="<b>ตอนนี้ใส่ HOST=0.0.0.0 แล้วไปเปลี่ยนเป็น 127.0.0.1 ในข้อ 24</b> checker ของ lab04 ยิง API จากนอกเครื่อง มันจึงต้องฟังทุก interface · พอ nginx มายืนหน้าให้ในข้อ 22 แล้ว มันต้องการแค่ loopback และค่าที่แคบกว่าคือปลายทางที่ถูกต้อง"><b><code>HOST=0.0.0.0</code> for now, <code>127.0.0.1</code> at step 24.</b> Lab04's checker probes the API from outside the machine, so it must listen on every interface. Once nginx sits in front of it at step 22, it only ever needs loopback — and the narrower value is the right end state.</li>
+              <li data-th="CORS_ORIGIN ปล่อยว่างไว้ · ปล่อยว่างแล้วคำขอข้าม origin จะถูกปฏิเสธ ซึ่งถูกต้อง เพราะหลังข้อ 22 จะไม่เหลือคำขอข้าม origin ให้ต้องอนุญาตอีกแล้ว"><code>CORS_ORIGIN=""</code> stays empty here. Leave it empty and cross-origin requests are refused — which is correct, because after step 22 there is no cross-origin request left to allow.</li>
+              <li data-th="ไฟล์ต้องเป็นโหมด 600 ซึ่งคำสั่ง install -m 600 ข้างบนตั้งให้แล้ว · มี .gitignore วางอยู่ข้างๆ ที่ระบุชื่อไฟล์นี้ไว้ เพราะตั้งแต่คาบ 6 โฟลเดอร์นี้จะกลายเป็น repository และรหัสผ่านที่ commit ลงไปแล้วจะเป็นสาธารณะตลอดกาล ต่อให้ลบทีหลังก็ตาม">The file must be mode <code>600</code>, which <code>install -m 600</code> in the command above already set. There is a <code>.gitignore</code> beside it naming this very file: from class 6 this directory becomes a repository, and a password committed to one is public for ever — even after you delete it.</li>
+            </ul>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">19</div><div>
@@ -1505,6 +1708,16 @@ migrations/
 &#10004; Generated Prisma Client to ./node_modules/@prisma/client in 180ms</pre>
             <div class="wok-note" data-th="migration หนึ่งอันถูกลง และมันสร้างตาราง notices ขึ้นมาแบบว่างเปล่า · ตารางว่างคือผลลัพธ์ที่ถูกต้อง แอปนี้ไม่มีข้อมูลตั้งต้น · แต่ถ้าเห็น Error: P1001 Can't reach database server แปลว่า DATABASE_URL ในข้อ 18 ผิด และเก้าในสิบครั้งคือเครื่องหมาย / ในรหัสผ่านที่ยังไม่ได้เข้ารหัส">One migration applied, and it created the <code>notices</code> table — <b>empty</b>. An empty table is the correct outcome here; there is no seed data in this app. If instead you see <b>Error: P1001 Can't reach database server</b>, the DATABASE_URL in step 18 is wrong, and nine times out of ten it is the un-encoded <code>/</code> in the password.</div>
           </div>
+          <details class="anat">
+            <summary data-th="แยกคำสั่งนี้ทีละตัว">Take this command apart</summary>
+            <table class="atab">
+              <tr><td>npx</td><td data-th="รันคำสั่งจาก node_modules/.bin โดยไม่ต้องติดตั้งแบบ global · ได้เวอร์ชันที่โปรเจกต์นี้ปักไว้ ไม่ใช่เวอร์ชันอะไรก็ตามที่บังเอิญมีบนเครื่อง">run a command from <code>node_modules/.bin</code> without installing it globally — the version this project pinned, not whatever is on the machine</td></tr>
+              <tr><td>migrate deploy</td><td data-th="ลง migration ที่มีอยู่แล้ว ไม่สร้างใหม่ ไม่ลบอะไร · เป็นคำสั่งของคนติดตั้ง">apply the migrations that already exist. Authors nothing, destroys nothing — the operator's command</td></tr>
+              <tr><td>migrate dev</td><td data-th="<em>ไม่ใช่ตัวนี้</em> · มันสร้าง migration ใหม่และจะรีเซ็ตฐานข้อมูลทิ้งเมื่อเจอความไม่ตรงกัน · เป็นคำสั่งของคนพัฒนา"><em>not this one.</em> It authors new migrations and will reset the database when it finds a mismatch. The developer's command</td></tr>
+              <tr><td>prisma generate</td><td data-th="สร้าง client library จาก schema.prisma · ไม่แตะฐานข้อมูลเลยแม้แต่นิดเดียว">build the client library from <code>schema.prisma</code>. Touches no database at all</td></tr>
+            </table>
+            <p class="agotcha" data-th="<b>ถ้า migrate dev พังตรงนี้ แปลว่าถูกต้องแล้ว อย่าไปแก้ด้วยการเพิ่มสิทธิ์</b> · มันพังเพราะมันอยากสร้าง shadow database คือฐานข้อมูลสำเนาทิ้งขว้างที่สร้างขึ้นเพื่อทดสอบการเปลี่ยนแปลงอย่างปลอดภัย แต่ user ของแอปเรามีสิทธิ์บนฐานข้อมูลเดียวเท่านั้น · การที่มันถูกปฏิเสธคือหลักสิทธิ์เท่าที่จำเป็นกำลังทำงาน · และคำสั่งของคนติดตั้งไม่ต้องใช้มันเลย"><b>If <code>migrate dev</code> fails here, that is correct — do not fix it by widening the grant.</b> It fails because it wants to create a <em>shadow database</em>, a disposable copy it builds to test the change safely, and your application user has rights on exactly one database and nothing else. That refusal is least privilege working. The operator's command does not need one.</p>
+          </details>
         </div></div>
 
         <div class="wstep"><div class="wnum">20</div><div>
@@ -1517,6 +1730,39 @@ migrations/
 <b>sysadmin@lvm68xxx:~$</b> ls /etc/systemd/system/noticeboard-api.service
 <u>/etc/systemd/system/noticeboard-api.service</u></pre>
             <div class="wok-note" data-th="systemd-analyze verify เงียบ แปลว่าไฟล์อ่านได้ ไม่ได้แปลว่า ExecStart ชี้ไปที่ของที่มีอยู่จริง · ตรวจเองด้วย ls -l /usr/bin/node เพราะการใส่ path แบบสัมพัทธ์หรือใส่ tilde ตรงนั้นคือสาเหตุอันดับหนึ่งที่ unit file แรกของทุกคนไม่ยอมสตาร์ท">Silence from <code>systemd-analyze verify</code> means the file parses — it does <em>not</em> mean <code>ExecStart</code> points at anything real. Check that yourself with <code>ls -l /usr/bin/node</code>, because a relative path or a <code>~</code> there is the single most common reason a first unit file never starts.</div>
+          </div>
+          <div class="fbox">
+            <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
+            <div class="fbox-p">/etc/systemd/system/noticeboard-api.service</div>
+            <pre class="fbox-c">[Unit]
+Description=INT134 noticeboard API
+After=network-online.target <u>mysql.service</u>
+
+[Service]
+User=sysadmin
+WorkingDirectory=/srv/noticeboard/backend
+EnvironmentFile=/srv/noticeboard/backend/.env
+ExecStart=<u>/usr/bin/node</u> server.js
+Restart=always
+RestartSec=5
+
+# It reads its code and its configuration. It has no reason to
+# write anywhere on this machine, and saying so costs nothing.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+
+[Install]
+WantedBy=multi-user.target</pre>
+            <ul class="fbox-n">
+              <li data-th="<b>WorkingDirectory= คือเหตุผลที่ ExecStart= ลงท้ายด้วย server.js เฉยๆ ได้</b> เพราะ systemd รันโปรแกรมจากโฟลเดอร์นั้น · แต่ตัว interpreter ยังต้องเป็น path เต็มอยู่ดี กฎจากคาบ 2 ไม่ได้เปลี่ยน: systemd ไม่ขยาย tilde และไม่รู้ว่าเรายืนอยู่โฟลเดอร์ไหน"><b><code>WorkingDirectory=</code> is why <code>ExecStart=</code> can end in a bare <code>server.js</code>.</b> systemd runs the program from that directory. The <em>interpreter</em> still needs its absolute path — class 2's rule has not moved: systemd expands no <code>~</code> and has no idea what directory you were standing in.</li>
+              <li data-th="<b>EnvironmentFile= ระบุชื่อไฟล์ ไม่ใช่โฟลเดอร์ที่ไฟล์อยู่</b> systemd เป็นคนอ่านแล้วส่งค่าให้เป็น environment variable โค้ดของแอปไม่เคยเปิดไฟล์นั้นและไม่เคยเอ่ยชื่อมันเลย · นั่นคือเหตุผลที่โค้ดชุดเดิมรันใน container ในคาบ 8 ได้โดยไม่ต้องแก้ ทั้งที่ค่าถูกส่งมาคนละวิธีโดยสิ้นเชิง"><b><code>EnvironmentFile=</code> names the file, not the directory holding it.</b> systemd reads it and hands the values over as environment variables — the application's own code never opens that file and never mentions its name. That is why the same code runs unchanged in a container in class 8 with the values supplied a completely different way.</li>
+              <li data-th="<b>After= จัดลำดับการเริ่มเท่านั้น</b> มันไม่ได้รอให้ MySQL พร้อมตอบ รอแค่ให้ unit ของมันเริ่มแล้ว · สิ่งที่อุดช่องว่างตรงนี้จริงๆ คือ Restart=always: API จะ crash ตอนพยายามต่อครั้งแรก แล้วถูกเริ่มใหม่อีกอึดใจหนึ่ง"><b><code>After=</code> orders startup, and that is all it does.</b> It does not wait for MySQL to be ready to <em>answer</em> — only for its unit to have started. What actually covers that gap is <code>Restart=always</code>: the API crashes on its first connection attempt and is simply started again a moment later.</li>
+              <li data-th="<b>ถ้าไม่ใส่ User= service จะรันเป็น root</b> เว็บแอปที่เข้าถึงได้จากเครือข่ายคือโปรแกรมประเภทที่ไม่ควรเป็น root ที่สุด และ checker ตรวจข้อนี้"><b>Leave <code>User=</code> out and the service runs as root.</b> A web application reachable from the network is exactly the kind of program that should not, and the checker looks.</li>
+              <li data-th="RestartSec=5 คือเวลาที่ systemd รอก่อนเริ่มใหม่ · ถ้าไม่ใส่ โปรแกรมที่พังทันทีจะถูกเริ่มใหม่เร็วเท่าที่เครื่องจะทำได้ ทำให้ deploy ที่พังครั้งเดียวกลายเป็นเครื่องที่ทำงานหนักตลอดเวลา"><code>RestartSec=5</code> is how long systemd waits before restarting. Without it a program that fails instantly is restarted as fast as the machine can manage, which turns one broken deployment into a busy machine.</li>
+              <li data-th="สี่บรรทัด Protect… เป็นของแถมที่ไม่เสียอะไร · มันบอกว่า service นี้ห้ามได้สิทธิ์เพิ่ม, มี /tmp เป็นของตัวเอง, เห็น /usr กับ /boot เป็นอ่านอย่างเดียว และอ่านโฟลเดอร์ home ได้อย่างเดียว · ทุกข้อคือสิ่งที่โปรแกรมนี้ไม่มีเหตุผลจะทำอยู่แล้ว">The four <code>Protect…</code> lines are optional but free. They say the service may not gain new privileges, gets its own <code>/tmp</code>, sees <code>/usr</code> and <code>/boot</code> as read-only, and can only read home directories. Every one of them is a thing this program has no reason to do.</li>
+            </ul>
           </div>
         </div></div>
 
@@ -1545,13 +1791,30 @@ Rule added (v6)
 
         <div class="wstep"><div class="wnum">22</div><div>
           <div class="wcmd">sudo micro /etc/nginx/conf.d/noticeboard.conf</div>
-          <div class="wwhy" data-th="เพิ่ม block นี้เข้าไปในไฟล์เดิม: <code>location /api/ { proxy_pass http://127.0.0.1:3000/; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; }</code> — ต้องมี proxy_set_header ไม่งั้น backend จะเห็น Host เป็น 127.0.0.1">Add to the same file: <code>location /api/ { proxy_pass http://127.0.0.1:3000/; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; }</code> — without the headers the backend only ever sees <code>Host: 127.0.0.1</code>.</div>
+          <div class="wwhy" data-th="เพิ่ม block นี้เข้าไปในไฟล์เดิม: <code>location /api/ { proxy_pass http://127.0.0.1:3000; …ตามด้วย proxy_set_header อีกสี่บรรทัด }</code> — และ <strong>ห้ามมีสแลชหลังเลขพอร์ต</strong> ดูบล็อกเต็มและเหตุผลเรื่องสแลชได้ในกล่องไฟล์ด้านล่าง">Add to the same file: <code>location /api/ { proxy_pass http://127.0.0.1:3000; …plus four proxy_set_header lines }</code> — and <strong>no slash after the port</strong>. See the file box below for the whole block and why that slash matters.</div>
           <div class="wok">
             <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
             <pre><b>sysadmin@lvm68xxx:~$</b> sudo nginx -t
 nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 <u>nginx: configuration file /etc/nginx/nginx.conf test is successful</u></pre>
-            <div class="wok-note" data-th="ระวัง: การผ่านตรงนี้บอกแค่ว่าวงเล็บปีกกาครบ ไม่ได้บอกว่า proxy_pass ชี้พอร์ตถูก · location /api/ ที่ชี้ไปพอร์ต 3001 ที่ไม่มีอะไรอยู่ ก็ test successful เหมือนกัน แล้วตอบ 502 ให้ทุกคน · เครื่องหมาย / ท้าย http://127.0.0.1:3000/ ก็สำคัญ ถ้าไม่มี backend จะได้รับ /api/notices แทนที่จะเป็น /notices">Careful: this passing tells you the braces balance, <b>not</b> that <code>proxy_pass</code> has the right port. A <code>location /api/</code> pointing at a dead port 3001 tests successful and returns 502 to every visitor. The trailing slash on <code>http://127.0.0.1:3000/</code> matters too — without it the backend receives <code>/api/notices</code> instead of <code>/notices</code>.</div>
+            <div class="wok-note" data-th="ระวัง: การผ่านตรงนี้บอกแค่ว่าวงเล็บปีกกาครบ ไม่ได้บอกว่า proxy_pass ชี้พอร์ตถูก · location /api/ ที่ชี้ไปพอร์ต 3001 ที่ไม่มีอะไรอยู่ ก็ test successful เหมือนกัน แล้วตอบ 502 ให้ทุกคน · และการใส่สแลชท้าย http://127.0.0.1:3000 ก็ผ่านการทดสอบเหมือนกัน แล้วทำให้ backend ตอบว่า no such endpoint กับทุกอย่าง ดูกล่องไฟล์ด้านบน">Careful: this passing tells you the braces balance, <b>not</b> that <code>proxy_pass</code> has the right port. A <code>location /api/</code> pointing at a dead port 3001 tests successful and returns 502 to every visitor. And a trailing slash on <code>http://127.0.0.1:3000</code> also passes the test, then makes the backend answer <code>no such endpoint</code> to everything — see the file box above.</div>
+          </div>
+          <div class="fbox">
+            <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
+            <div class="fbox-p" data-th="/etc/nginx/conf.d/noticeboard.conf &mdash; เพิ่มเข้าไปใน server { } เดิม">/etc/nginx/conf.d/noticeboard.conf &mdash; add inside the same server { }</div>
+            <pre class="fbox-c">location /api/ {
+    proxy_pass http://127.0.0.1:3000<u>;</u>
+    proxy_set_header Host              $host;
+    proxy_set_header X-Real-IP         $remote_addr;
+    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}</pre>
+            <ul class="fbox-n">
+              <li data-th="<b>ห้ามมี slash หลังเลขพอร์ต ข้อนี้คือข้อที่ทุกคนพลาด</b> ถ้าไม่มีส่วน URI ต่อท้าย nginx จะส่ง path เดิมไปทั้งอัน backend จะได้รับ /api/notices ซึ่งตรงกับ route ที่ server.js นิยามไว้พอดี · แต่ถ้าเขียนเป็น http://127.0.0.1:3000/ nginx จะ <em>แทนที่</em> ส่วน /api/ ที่แมตช์ด้วย / แทน backend จะได้รับ /notices ซึ่งไม่ตรงกับ route ไหนเลย แล้วตอบกลับว่า no such endpoint · ไฟล์เดิม reload เหมือนเดิม แต่ได้ 404 ที่ดูเหมือน API พัง"><b>No slash after the port. This is the one that catches everybody.</b> With no URI part, nginx forwards the path unchanged and the backend receives <code>/api/notices</code> — exactly the route <code>server.js</code> defines. Write <code>http://127.0.0.1:3000/</code> instead and nginx <em>replaces</em> the matched <code>/api/</code> with <code>/</code>: the backend receives <code>/notices</code>, matches nothing, and answers <code>{"error":"no such endpoint"}</code>. Same file, same reload, a 404 that looks like the API is broken.</li>
+              <li data-th="<b>แบบที่มี slash ไม่ได้ผิด มันไว้ใช้กับงานคนละอย่าง</b> มันคือวิธีเสิร์ฟแอปใต้ path ย่อย: location /school/api/ { proxy_pass http://127.0.0.1:PORT/api/; } จะรับ /school/api/students จากเบราว์เซอร์แล้วไปถาม backend ว่า /api/students · จำง่ายๆ: มี URI ต่อท้ายพอร์ต แปลว่าแทนที่ส่วนที่แมตช์ด้วยอันนี้ · ไม่มี URI แปลว่าส่งผ่านไปทั้งอันไม่แตะ"><b>The form <em>with</em> a slash is not wrong — it is for a different job.</b> It is how you serve an app under a sub-path: <code>location /school/api/ { proxy_pass http://127.0.0.1:PORT/api/; }</code> takes <code>/school/api/students</code> from the browser and asks the backend for <code>/api/students</code>. Rule of thumb: a URI after the port means &ldquo;replace the matched prefix with this&rdquo;; no URI means &ldquo;pass it through untouched&rdquo;.</li>
+              <li data-th="<b>reverse proxy ไม่ได้ส่งต่อสิ่งที่มันได้รับ มันประกอบคำขอขึ้นมาใหม่</b> ทุกอย่างที่ API กำลังจะรู้เกี่ยวกับคนที่เรียกมา nginx เป็นคนตัดสินทั้งหมด · ถ้าไม่ใส่สี่บรรทัดนั้น API จะเชื่อว่าคำขอทุกอันในโลกมาจาก 127.0.0.1 ทำให้ log ของมันไร้ประโยชน์ rate limit ไม่มีความหมาย และคำถามว่าใครทำ ตอบไม่ได้เลย"><b>A reverse proxy does not forward what it received — it composes a new request.</b> Everything the API is about to be told about who is calling, nginx decided. Without those four headers the API believes every request in the world came from <code>127.0.0.1</code>, which makes its logs useless, its rate limits meaningless, and &ldquo;who did this?&rdquo; unanswerable.</li>
+              <li data-th="บล็อกนี้ต้องอยู่ <em>ข้างใน</em> server { } เดิม ใต้ location / · nginx เลือกตาม prefix ที่ยาวที่สุด ดังนั้น /api/notices จะเข้าบล็อกนี้ ส่วนอย่างอื่นยังตกไปที่ location / เหมือนเดิม">The block goes <em>inside</em> the existing <code>server { }</code>, below <code>location /</code>. nginx matches the longest prefix, so <code>/api/notices</code> reaches this block and everything else still falls to <code>location /</code>.</li>
+            </ul>
           </div>
         </div></div>
 
@@ -1565,6 +1828,16 @@ sudo nginx -t &amp;&amp; sudo systemctl reload nginx</div>
 <b>sysadmin@lvm68xxx:~$</b> curl -s http://127.0.0.1/api/notices
 <u>[]</u></pre>
             <div class="wok-note" data-th="วงเล็บเหลี่ยมเปล่าคือผลลัพธ์ที่ถูกต้อง · บอร์ดเพิ่งเลิกอ่านประกาศสามอันที่มากับไฟล์ data/notices.json แล้วหันไปอ่านตารางในฐานข้อมูลที่ว่างเปล่าจริงๆ · หน้าเว็บจะดูเหมือนพัง แต่มันไม่ได้พัง เราแค่ย้ายมันจากไฟล์ไปเป็นแอปพลิเคชัน ซึ่งคือประเด็นทั้งหมดของสัปดาห์ที่ 5"><b><code>[]</code> is the success case.</b> The board just stopped reading the three notices that shipped in <code>data/notices.json</code> and started reading a database table that is genuinely empty. Your page will look like it broke. It didn't — you just moved it from a file to an application, which is the entire point of week 5.</div>
+          </div>
+          <div class="fbox">
+            <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
+            <div class="fbox-p" data-th="/var/www/noticeboard/config.js &mdash; บรรทัดเดียว">/var/www/noticeboard/config.js &mdash; one line</div>
+            <pre class="fbox-c">  noticesUrl: <u>"/api/notices"</u>,</pre>
+            <ul class="fbox-n">
+              <li data-th="<b>เป็น path ล้วนๆ ไม่มีชื่อโฮสต์ ไม่มีพอร์ต</b> path แปลว่าถามคนที่เสิร์ฟหน้านี้ให้ฉัน ดังนั้นจึงไม่มีอะไรที่ต้องคอยแก้ให้ตรงกัน และหน้าเว็บใช้ได้เหมือนเดิมไม่ว่าจะเข้าด้วยชื่อโฮสต์ ด้วย IP หรือวันหนึ่งเข้าด้วย https"><b>A bare path, with no host and no port.</b> A path means &ldquo;ask whoever served me this page&rdquo; — so there is nothing to keep in step with anything else, and the page works unchanged whether it is reached by hostname, by IP, or one day over https.</li>
+              <li data-th="บรรทัดเดียวนี้คือความต่างทั้งหมดระหว่างหน้าเว็บกับแอปพลิเคชัน และเป็นจังหวะที่ปัญหา CORS หายไปเลย ไม่ใช่ถูกตั้งค่าอ้อมไป">This one line is the entire difference between a page and an application, and it is the moment CORS stops existing rather than being configured around.</li>
+              <li data-th="อย่าลืมว่าต้องแก้ตัวที่อยู่ใน /var/www/ ไม่ใช่ตัวใน /srv/ · โฟลเดอร์ต้นทางไม่มี config.js อยู่เลย และ --exclude config.js ในข้อ 8 คือสิ่งที่กันไม่ให้ deploy รอบหน้าลบไฟล์นี้ทิ้ง">Remember to edit the copy in <code>/var/www/</code>, not the one in <code>/srv/</code>. The source tree has no <code>config.js</code> at all — <code>--exclude config.js</code> in step 8 is what keeps the next deploy from deleting this file.</li>
+            </ul>
           </div>
         </div></div>
 
@@ -1587,6 +1860,16 @@ To                         Action      From
 <b>sysadmin@lvm68xxx:~$</b> ss -tln | grep 3000
 LISTEN 0  511  <u>127.0.0.1:3000</u>  0.0.0.0:*</pre>
             <div class="wok-note" data-th="มีสองอย่างเปลี่ยนไปและสำคัญทั้งคู่ · พอร์ต 3000 หายไปจาก ufw แล้ว และที่อยู่ที่ฟังกลายเป็น 127.0.0.1:3000 ไม่ใช่ 0.0.0.0:3000 · แปลว่าต่อให้ปิด firewall ทิ้ง ข้างนอกก็ยังเข้าถึง API ไม่ได้อยู่ดี · กันสองชั้น และเรียงถูกลำดับ">Two things changed and both matter. <b>3000 is gone from ufw</b>, and the listen address is now <code>127.0.0.1:3000</code> rather than <code>0.0.0.0:3000</code> — so even with the firewall off, nothing outside the machine could reach the API. Belt and braces, in the right order.</div>
+          </div>
+          <div class="fbox">
+            <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
+            <div class="fbox-p" data-th="/srv/noticeboard/backend/.env &mdash; บรรทัดเดียว">/srv/noticeboard/backend/.env &mdash; one line</div>
+            <pre class="fbox-c">HOST=<u>127.0.0.1</u></pre>
+            <ul class="fbox-n">
+              <li data-th="<b>ต้อง restart ไม่ใช่ reload</b> EnvironmentFile= ถูกอ่านครั้งเดียวตอน service เริ่ม · reload อ่าน unit ใหม่ ไม่ได้อ่าน environment file ใหม่ API จึงยังรันด้วยค่าเดิมอยู่ แล้วเราจะสรุปว่าที่แก้ไปไม่มีผลอะไร"><b><code>restart</code>, not <code>reload</code>.</b> <code>EnvironmentFile=</code> is read once, when the service starts. A reload re-reads the <em>unit</em>, not the environment file, so the API would keep running with the old value and you would conclude the edit did nothing.</li>
+              <li data-th="ยืนยันด้วย ss -tln | grep 3000 · ที่อยู่ที่ฟังต้องกลายเป็น 127.0.0.1:3000 ไม่ใช่ 0.0.0.0:3000 · การเปลี่ยนตรงนี้กับคำสั่ง ufw delete ข้างๆ คือกุญแจสองดอกที่อิสระต่อกันบนประตูบานเดียวกัน">Confirm with <code>ss -tln | grep 3000</code>: the listen address must now read <code>127.0.0.1:3000</code> and not <code>0.0.0.0:3000</code>. That change, and the <code>ufw delete</code> beside it, are two independent locks on the same door.</li>
+              <li data-th="<b>ถ้ากำลังส่ง lab04 ให้หยุดตรงนี้</b> checker ตัวนั้นยิง API จากนอกเครื่องและต้องการ HOST=0.0.0.0 พร้อมพอร์ต 3000 เปิดอยู่ · ค่าที่แคบลงนี้คือปลายทางของสัปดาห์ที่ 5"><b>Stop here if you are submitting lab04.</b> That checker probes the API from outside the machine and needs <code>HOST=0.0.0.0</code> with port 3000 open. This narrower setting is the week-5 end state.</li>
+            </ul>
           </div>
         </div></div>
 
@@ -1646,6 +1929,16 @@ curl -s -X POST -H 'Content-Type: application/json' \
 <u>[{"id":1,"author":"68130500123","message":"hello","createdAt":"..."}]</u></pre>
             <div class="wok-note" data-th="POST ตอบกลับมาพร้อม id ที่เซิร์ฟเวอร์ออกให้ และ GET รอบถัดไปมีมันอยู่ · การไปกลับรอบนี้คือสิ่งเดียวที่พิสูจน์ว่าทั้งสี่ชิ้นต่อกันครบพร้อมกัน: nginx ส่งต่อ, API อ่าน, Prisma เขียน, MySQL เก็บ · ได้ 400 แปลว่า JSON ขาด author หรือ message · ได้ 502 แปลว่า API ล่ม ไม่ใช่ proxy พัง">The POST comes back with an <b><code>id</code></b> the server assigned, and the next GET contains it. That round trip is the only thing that proves all four pieces are wired together at once: nginx routed it, the API parsed it, Prisma wrote it, MySQL kept it. A 400 here means your JSON was missing <code>author</code> or <code>message</code>; a 502 means the API is down, not the proxy.</div>
           </div>
+          <details class="anat">
+            <summary data-th="แยกคำสั่งนี้ทีละตัว">Take this command apart</summary>
+            <table class="atab">
+              <tr><td>-X POST</td><td data-th="เมธอดของ HTTP · ถ้าไม่ใส่ curl จะส่ง GET ซึ่งเป็นการอ่าน ไม่ใช่การเขียน">the HTTP method. Without it curl sends GET, which reads instead of writing</td></tr>
+              <tr><td>-H 'Content-Type: application/json'</td><td data-th="บอกเซิร์ฟเวอร์ว่าเนื้อหาเป็น JSON · ถ้าไม่ใส่ Express จะไม่แกะ body ทำให้ author กับ message มาเป็นค่าว่าง แล้วได้ 400 กลับมา">tell the server the body is JSON. Leave it out and Express does not parse the body, so <code>author</code> and <code>message</code> arrive empty and you get a 400</td></tr>
+              <tr><td>-d '{&hellip;}'</td><td data-th="เนื้อหาของคำขอ · ครอบด้วย single quote เพื่อให้ shell ไม่ไปยุ่งกับ double quote ที่อยู่ใน JSON">the request body. Single quotes so the shell leaves the JSON's double quotes alone</td></tr>
+              <tr><td>http://127.0.0.1/api/notices</td><td data-th="พอร์ต 80 ผ่าน nginx <b>ไม่ใช่</b> พอร์ต 3000 ตรงๆ · นั่นคือสิ่งที่พิสูจน์ว่า proxy ทำงาน">port 80 through nginx, <b>not</b> port 3000 direct. That is what proves the proxy</td></tr>
+            </table>
+            <p class="agotcha" data-th="<b>อ่านรหัสสถานะที่ได้กลับมา เพราะมันชี้ตัวคนผิดให้เลย</b> · 201 พร้อม id แปลว่าทั้งสี่ชิ้นต่อกันครบ · 400 แปลว่า JSON ขาด author หรือ message หรือลืมใส่ -H · 404 พร้อมข้อความ no such endpoint แปลว่าคำขอไปถึง API แล้วแต่ผิด path ซึ่งคือเรื่องสแลชท้าย proxy_pass ในข้อ 22 · 502 แปลว่าไปไม่ถึง API เลย"><b>Read the status you get back, because it names the culprit.</b> <code>201</code> with an <code>id</code> means all four pieces are wired together. <code>400</code> means your JSON was missing <code>author</code> or <code>message</code>, or the <code>-H</code> was missing. <code>404</code> with <code>no such endpoint</code> means the request reached the API but at the wrong path — that is the trailing slash on <code>proxy_pass</code> in step 22. <code>502</code> means it never reached the API at all.</p>
+          </details>
         </div></div>
 
         <div class="wstep"><div class="wnum">27</div><div>
