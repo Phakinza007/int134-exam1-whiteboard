@@ -310,6 +310,8 @@
   .phase.p5{border-color:var(--green);}
   .phase.p6{border-color:var(--ink-faint);}
   .phase-head{font-family:var(--font-marker); font-size:17px; margin-bottom:4px;}
+  .phase-why{font-size:12.6px; color:var(--ink-soft); line-height:1.6; background:var(--surface-2); border-radius:7px; padding:9px 12px; margin:6px 0 9px;}
+  .phase-why b{color:var(--ink); font-weight:600;}
   .phase-sub{font-size:12.5px; color:var(--ink-faint); margin-bottom:14px;}
   .wstep{display:grid; grid-template-columns:24px 1fr; gap:10px; margin-bottom:15px;}
   .wnum{font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--ink-faint); padding-top:8px;}
@@ -1021,6 +1023,7 @@
 
       <div class="phase p1">
         <h3 class="phase-head" data-th="ช่วงที่ 1 · เข้าเครื่อง แล้วทำให้ nginx วิ่ง">Phase 1 · Get in, get nginx running</h3>
+        <div class="phase-why"><b data-th="ทำไปทำไม:">Why this phase:</b> <span data-th="คนนอกยังเข้าถึงอะไรบนเครื่องนี้ไม่ได้เลย จนกว่าจะมีโปรแกรมฟังพอร์ตอยู่ และ firewall ยอมให้ผ่าน — nginx คือประตูหน้าบ้านนั้น ทุกช่วงหลังจากนี้ไม่เสิร์ฟผ่านมัน ก็หลบอยู่ข้างหลังมัน ทำก่อนยังได้เปรียบตรงที่ถ้า DNS, SSH หรือ firewall จะมีปัญหา จะรู้ทันทีตอนที่ยังไม่มีอย่างอื่นให้โทษ">Nothing on this machine is reachable from outside until something is listening on a port and the firewall lets it through — nginx is that front door, and everything later either serves through it or hides behind it. Doing it first also means DNS, SSH or firewall trouble surfaces now, while there is nothing else to blame it on.</span></div>
         <div class="phase-sub" data-th="จบช่วงนี้: เปิด http://lvm68xxx.sit.kmutt.ac.th/ แล้วเจอหน้า Welcome to nginx">By the end: http://lvm68xxx.sit.kmutt.ac.th/ shows the "Welcome to nginx" page.</div>
 
         <div class="wstep"><div class="wnum">1</div><div>
@@ -1061,6 +1064,7 @@ curl -s http://localhost/ | head -3</div>
 
       <div class="phase p2">
         <h3 class="phase-head" data-th="ช่วงที่ 2 · เอาหน้าเว็บ (frontend) ขึ้น">Phase 2 · Put the frontend on it</h3>
+        <div class="phase-why"><b data-th="ทำไปทำไม:">Why this phase:</b> <span data-th="เว็บเซิร์ฟเวอร์ที่ไม่มีเนื้อหาพิสูจน์ได้แค่ว่าเซิร์ฟเวอร์ทำงาน ไม่ได้พิสูจน์อะไรเกี่ยวกับงานเราเลย ช่วงนี้คือตอนที่เครื่องเริ่มเสิร์ฟ<em>ไฟล์ของเรา</em>ภายใต้<em>ชื่อของเรา</em> และเป็นตอนที่วางกฎที่ทุกช่วงหลังต้องอยู่กับมัน: ซอร์สอยู่ /srv สำเนาที่เสิร์ฟจริงอยู่ /var/www — วางผิดตรงนี้ ช่วงหลังรับผลไปหมด">A web server with no content proves the server works and nothing about your deployment. This is where the machine starts serving <em>your</em> files under <em>your</em> name — and where you set the split everything later depends on: source in /srv, published copy in /var/www. Get it wrong here and every later phase inherits it.</span></div>
         <div class="phase-sub" data-th="จบช่วงนี้: เปิดชื่อเครื่องตัวเองแล้วเห็นหน้า noticeboard (ปุ่มเพิ่มประกาศยังใช้ไม่ได้ ปกติ)">By the end: your VM's own name shows the noticeboard page. The "add notice" button still won't work — that's expected.</div>
 
         <div class="wstep"><div class="wnum">7</div><div>
@@ -1097,6 +1101,7 @@ curl -s http://127.0.0.1/config.js</div>
 
       <div class="phase p3">
         <h3 class="phase-head" data-th="ช่วงที่ 3 · ฐานข้อมูล">Phase 3 · The database</h3>
+        <div class="phase-why"><b data-th="ทำไปทำไม:">Why this phase:</b> <span data-th="backend เริ่มไม่ได้ถ้าไม่มีฐานข้อมูลให้ต่อ — ถ้าเอา backend ขึ้นก่อน มันจะ crash แล้ว restart แล้ว crash วนไปกิน CPU ฟรีๆ ลำดับจึงต้องเป็นฐานข้อมูลก่อนเสมอ และช่วงนี้ยังเป็นจุดที่ทำให้แอปทำลายอะไรไม่ได้เกินขอบเขตตัวเอง: หนึ่งแอป หนึ่ง database หนึ่ง user ตัดสินใจตอนนี้ง่าย ย้อนมาแก้ทีหลังเจ็บ">The backend cannot start without a database to connect to — bring it up second and the API just crashes, restarts, crashes again, burning CPU for nothing. This is also where the app loses the ability to damage anything beyond its own data: one app, one database, one user. Cheap to decide now, painful to retrofit.</span></div>
         <div class="phase-sub" data-th="จบช่วงนี้: มี database + user ของตัวเอง และรหัสผ่านถูกเก็บไว้ในไฟล์เดียวเท่านั้น">By the end: your own database and user exist, and the password lives in exactly one file.</div>
 
         <div class="wstep"><div class="wnum">12</div><div>
@@ -1126,6 +1131,7 @@ exit</div>
 
       <div class="phase p4">
         <h3 class="phase-head" data-th="ช่วงที่ 4 · Backend">Phase 4 · The backend</h3>
+        <div class="phase-why"><b data-th="ทำไปทำไม:">Why this phase:</b> <span data-th="นี่คือของชิ้นแรกบนเครื่องที่ “รับ” อะไรเข้ามา ไม่ใช่แค่ยื่นไฟล์ออกไป และเป็นชิ้นแรกที่ต้องอยู่ได้โดยไม่มีเรา ทุกอย่างในช่วงนี้จึงเป็นเรื่องการส่งมันให้ systemd ดูแลให้ถูกวิธี เพื่อให้ “มันรันอยู่” กลายเป็น “มันกลับมาเอง” — หลัง crash หลัง logout หลัง reboot">This is the first thing on the machine that <em>accepts</em> something rather than just handing files out, and the first that has to keep working without you sitting there. So everything here is about handing it to systemd properly — turning "it runs" into "it comes back": after a crash, after a logout, after a reboot.</span></div>
         <div class="phase-sub" data-th="จบช่วงนี้: API ตอบที่ port 3000 และเป็น service ที่รอด reboot">By the end: the API answers on port 3000 as a service that survives a reboot.</div>
 
         <div class="wstep"><div class="wnum">16</div><div>
@@ -1173,6 +1179,7 @@ curl -s http://127.0.0.1:3000/api/health</div>
 
       <div class="phase p5">
         <h3 class="phase-head" data-th="ช่วงที่ 5 · รวมร่างแล้วปิดประตูส่วนเกิน">Phase 5 · Join them up, then shut the extra door</h3>
+        <div class="phase-why"><b data-th="ทำไปทำไม:">Why this phase:</b> <span data-th="ตอนนี้หน้าเว็บกับ API อยู่คนละที่อยู่ ซึ่งเบราว์เซอร์นับเป็นคนละ origin แล้วบล็อกทิ้ง จะกลบด้วย CORS header ก็ได้ หรือจะ<em>ตัด origin ที่สองทิ้งไปเลย</em>ด้วยการเอา nginx ไปยืนหน้า — ทางหลังยังทำให้ปิดพอร์ตที่เปิดไว้แค่ทดสอบได้ด้วย นั่นคือประเด็นทั้งหมด: ระบบที่เสร็จแล้วเปิดประตูแค่บานเดียว">The page and the API currently live at two addresses, which the browser treats as two origins and blocks. You can paper over that with CORS headers — or <em>remove the second origin</em> by putting nginx in front. The second way also lets you close the port you only ever opened to test, which is the whole point: a finished system exposes exactly one door.</span></div>
         <div class="phase-sub" data-th="จบช่วงนี้: ทุกอย่างเข้าทางพอร์ต 80 ทางเดียว ไม่มี CORS และพอร์ต 3000 ถูกปิดคืน">By the end: everything arrives on port 80 alone, no CORS, and port 3000 is closed again.</div>
 
         <div class="wstep"><div class="wnum">22</div><div>
@@ -1196,6 +1203,7 @@ sudo ufw delete allow 3000/tcp</div>
 
       <div class="phase p6">
         <h3 class="phase-head" data-th="ช่วงที่ 6 · พิสูจน์ว่า deploy สำเร็จจริง">Phase 6 · Prove it's actually deployed</h3>
+        <div class="phase-why"><b data-th="ทำไปทำไม:">Why this phase:</b> <span data-th="ทุกอย่างก่อนหน้านี้พิสูจน์แค่ว่าระบบทำงาน<em>ตอนที่เรายืนอยู่ข้างๆ</em> แต่คำว่า deploy คือการอ้างว่ามันทำงานต่อตอนที่เราไม่อยู่ การทดสอบที่ซื่อสัตย์อย่างเดียวจึงคือเอาเครื่องออกไปจากตัวเองแล้วดูว่ามันกลับมาไหม — การข้ามช่วงนี้คือวิธีที่คนไปรู้เอาวันสอบว่า service ไม่เคยถูก enable">Everything up to here proves the system works <em>while you are standing next to it</em>. Deployment is the claim that it keeps working when you are not — so the only honest test is to take the machine away from yourself and watch it come back. Skipping this is exactly how people find out on exam day that a service was never enabled.</span></div>
         <div class="phase-sub" data-th="ข้ามช่วงนี้ไม่ได้ — “ตอนนี้มันวิ่งอยู่” ไม่เท่ากับ “deploy แล้ว”">Do not skip this. "It's running right now" is not the same claim as "it's deployed".</div>
 
         <div class="wstep"><div class="wnum">25</div><div>
