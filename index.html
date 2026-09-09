@@ -500,8 +500,8 @@
     overflow-x:auto; white-space:nowrap;
   }
   .fbox-c{
-    margin:0; padding:11px; background:var(--surface-2);
-    font-family:var(--font-mono); font-size:11.9px; line-height:1.72;
+    margin:0; padding:9px 0; background:var(--surface-2);
+    font-family:var(--font-mono); font-size:11.9px; line-height:1.75;
     color:var(--ink); white-space:pre; overflow-x:auto;
   }
   .fbox-c u{text-decoration:none; background:var(--amber-soft); color:var(--amber); font-weight:600; border-radius:3px; padding:0 3px;}
@@ -546,6 +546,30 @@
     .atab td{overflow-wrap:anywhere;}
     .fbox-p{white-space:normal; word-break:break-all;}
   }
+  .fbox-cap{
+    padding:7px 11px; background:var(--surface); border-bottom:1px solid var(--line);
+    font-size:12px; line-height:1.6; color:var(--ink-soft);
+  }
+  .fbox-cap b{color:var(--ink);}
+  .fbox-cap code{font-family:var(--font-mono); font-size:.94em;}
+  .fbox-c .ln{display:block; padding:0 11px 0 22px; position:relative;}
+  .fbox-c .ln::before{
+    position:absolute; left:7px; width:9px; text-align:center;
+    font-weight:700; font-size:11px;
+  }
+  .fbox-c .a{background:var(--green-soft); box-shadow:inset 2px 0 0 var(--green);}
+  .fbox-c .a::before{content:"+"; color:var(--green);}
+  .fbox-c .c{background:var(--amber-soft); box-shadow:inset 2px 0 0 var(--amber);}
+  .fbox-c .c::before{content:"~"; color:var(--amber);}
+  .fbox-c .x{color:var(--ink-faint);}
+  .fbox-lg{
+    padding:6px 11px; background:var(--surface); border-top:1px solid var(--line);
+    font-family:var(--font-mono); font-size:10.6px; color:var(--ink-faint);
+  }
+  .fbox-lg b{display:inline-block; width:13px; text-align:center; border-radius:3px; font-weight:700;}
+  .fbox-lg .lg-a{background:var(--green-soft); color:var(--green);}
+  .fbox-lg .lg-c{background:var(--amber-soft); color:var(--amber);}
+  .fbox-lg .lg-x{background:var(--surface-2); color:var(--ink-faint);}
 </style>
 
 <div class="board-frame">
@@ -1440,13 +1464,9 @@ micro /var/www/noticeboard/config.js</div>
           <div class="fbox">
             <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
             <div class="fbox-p">/var/www/noticeboard/config.js</div>
-            <pre class="fbox-c">window.INT134 = {
-  // Your 11-digit student number.
-  studentId: <u>"68130500123"</u>,
-
-  // Class 3: the data file this site ships with.
-  noticesUrl: "/data/notices.json",
-};</pre>
+            <div class="fbox-cap" data-th="<b>หลัง</b> <code>cp config.example.js config.js</code> &mdash; แก้บรรทัดเดียว ไม่ได้เพิ่มอะไรเลย"><b>after</b> <code>cp config.example.js config.js</code> &mdash; one line changes, nothing is added</div>
+            <pre class="fbox-c"><span class="ln x">// Copy this file to `config.js` and fill both values in.</span><span class="ln x">//   &hellip; (the comment block the file ships with)</span><span class="ln x"> </span><span class="ln x">window.INT134 = {</span><span class="ln x">  // Your 11-digit student number.</span><span class="ln c">  studentId: <u>"68130500123"</u>,</span><span class="ln x"> </span><span class="ln x">  // Class 3: the data file this site ships with.</span><span class="ln x">  noticesUrl: "/data/notices.json",</span><span class="ln x">};</span></pre>
+            <div class="fbox-lg" data-th="<b class='lg-a'>+</b> เพิ่มใหม่ &nbsp;<b class='lg-c'>~</b> ค่าที่ต้องแก้ &nbsp;<b class='lg-x'>&nbsp;</b> มีอยู่แล้ว"><b class="lg-a">+</b> added &nbsp;<b class="lg-c">~</b> value you change &nbsp;<b class="lg-x">&nbsp;</b> already in the file</div>
             <ul class="fbox-n">
               <li data-th="<b>มีสองค่า แก้แค่ค่าเดียว</b> พิมพ์เลข 11 หลักของตัวเองทับตัวอย่าง ส่วน noticesUrl ปล่อยไว้อย่างนั้น จะไปเปลี่ยนในข้อ 23 ไม่ใช่ตอนนี้"><b>Two values, and you change one.</b> Type your own eleven digits over the example, and leave <code>noticesUrl</code> exactly as it is — it changes in step 23 and not before.</li>
               <li data-th="เครื่องหมายคำพูดคู่และจุลภาคท้ายบรรทัดต้องอยู่ครบ นี่คือ JavaScript ที่เบราว์เซอร์อ่าน ถ้าคำพูดขาดไปหน้าเว็บจะโหลดขึ้นแต่ไม่มีข้อมูลและไม่ฟ้องอะไรเลย ต้องไปเปิด console ของเบราว์เซอร์ถึงจะเห็น">Keep the double quotes and keep the trailing comma. This is JavaScript being read by a browser, and a missing quote means the page loads with no data and no visible error — you would only find it in the browser's console.</li>
@@ -1468,18 +1488,9 @@ micro /var/www/noticeboard/config.js</div>
           <div class="fbox">
             <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
             <div class="fbox-p">/etc/nginx/conf.d/noticeboard.conf</div>
-            <pre class="fbox-c">server {
-    listen      80 <u>default_server</u>;
-    server_name lvm68xxx.sit.kmutt.ac.th lvm68xxx;
-
-    access_log  /var/log/nginx/noticeboard.access.log  <u>main</u>;
-    error_log   /var/log/nginx/noticeboard.error.log   <u>warn</u>;
-
-    root  /var/www/noticeboard;
-    index index.html;
-
-    location / { try_files $uri $uri/ =404; }
-}</pre>
+            <div class="fbox-cap" data-th="เป็น<b>ไฟล์ใหม่</b> &mdash; ก็อป default.conf มาเป็นแบบ แล้วเขียนแบบนี้">a <b>new file</b> &mdash; copy <code>default.conf</code> as your model, then write this</div>
+            <pre class="fbox-c"><span class="ln a">server {</span><span class="ln a">    listen      80 <u>default_server</u>;</span><span class="ln a">    server_name <u>lvm68xxx.sit.kmutt.ac.th lvm68xxx</u>;</span><span class="ln a"> </span><span class="ln a">    access_log  /var/log/nginx/noticeboard.access.log  <u>main</u>;</span><span class="ln a">    error_log   /var/log/nginx/noticeboard.error.log   <u>warn</u>;</span><span class="ln a"> </span><span class="ln a">    root  /var/www/noticeboard;</span><span class="ln a">    index index.html;</span><span class="ln a"> </span><span class="ln a">    location / { try_files $uri $uri/ =404; }</span><span class="ln a">}</span></pre>
+            <div class="fbox-lg" data-th="<b class='lg-a'>+</b> เพิ่มใหม่ &nbsp;<b class='lg-c'>~</b> ค่าที่ต้องแก้ &nbsp;<b class='lg-x'>&nbsp;</b> มีอยู่แล้ว"><b class="lg-a">+</b> added &nbsp;<b class="lg-c">~</b> value you change &nbsp;<b class="lg-x">&nbsp;</b> already in the file</div>
             <ul class="fbox-n">
               <li data-th="<b>อย่าเขียนขึ้นมาเองจากศูนย์</b> ไฟล์ /etc/nginx/conf.d/default.conf มากับแพ็กเกจและเป็น server block ที่ใช้งานได้จริง เปิดอ่าน ก็อปมาแก้ · การเอา config ของคนอื่นมาปรับคืองานส่วนใหญ่ของอาชีพนี้ และเป็นสิ่งที่ข้อสอบให้ทำ"><b>Don't write this from nothing.</b> <code>/etc/nginx/conf.d/default.conf</code> came with the package and is a working server block — open it, read it, copy it, edit it. Adapting somebody else's configuration is most of this job, and it is what the exam asks you to do.</li>
               <li data-th="<b>บนพอร์ต 80 มี default_server ได้แค่บล็อกเดียว</b> ไฟล์ default.conf ของแพ็กเกจขวางอยู่ และ lab03 ตรวจว่ามันต้อง <b>ถูกปลดจากการใช้งานแต่ยังอยู่บนเครื่อง</b> ดังนั้นให้เปลี่ยนชื่อ ไม่ใช่ลบทิ้งหรือรื้อข้างใน: sudo mv default.conf default.conf.disabled · เพราะอ่านเฉพาะไฟล์ที่ลงท้าย .conf การเปลี่ยนชื่อจึงเป็นสวิตช์ปิดในตัวมันเอง · ที่เราต้องเป็น default เองเพราะ checker จะยิงด้วยชื่อโฮสต์ที่มันสุ่มขึ้นตอนรัน การเป็น default ทำให้ผ่านทุกชื่อในคราวเดียว"><b>Only one block on port 80 may be <code>default_server</code>.</b> The package's <code>default.conf</code> is in the way, and lab03 checks for it being <b>out of service and still on the machine</b> — so rename it rather than deleting or gutting it: <code>sudo mv default.conf default.conf.disabled</code>. Only <code>*.conf</code> is read, so the rename <em>is</em> the off switch. You want the default yourself because the checker probes with a hostname it invents while it runs, and being the default passes every name at once.</li>
@@ -1676,12 +1687,9 @@ micro /srv/noticeboard/backend/.env</div>
           <div class="fbox">
             <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
             <div class="fbox-p">/srv/noticeboard/backend/.env</div>
-            <pre class="fbox-c">DATABASE_URL="mysql://noticeboard:<u>}Kq3!vX8sN%2FwQ2rT-mZ4</u>@127.0.0.1:3306/noticeboard"
-STUDENT_ID="68130500123"
-PORT=3000
-HOST=0.0.0.0
-CORS_ORIGIN=""
-</pre>
+            <div class="fbox-cap" data-th="<b>หลัง</b> <code>install -m 600 .env.example .env</code> &mdash; แก้สามค่า อีกสองค่าปล่อยไว้ตามเดิม"><b>after</b> <code>install -m 600 .env.example .env</code> &mdash; three values change, two stay as they shipped</div>
+            <pre class="fbox-c"><span class="ln x"># `.env` is NOT in git. It holds a database password, and it is</span><span class="ln x"># different on every machine &mdash; which is what configuration means.</span><span class="ln x"> </span><span class="ln x"># Format: mysql://USER:PASSWORD@HOST:PORT/DATABASE</span><span class="ln c">DATABASE_URL="mysql://noticeboard:<u>}Kq3!vX8sN%2FwQ2rT-mZ4</u>@127.0.0.1:3306/noticeboard"</span><span class="ln x"> </span><span class="ln x"># Your 11-digit student number. /api/health reports it.</span><span class="ln c">STUDENT_ID=<u>"68130500123"</u></span><span class="ln x"> </span><span class="ln x"># The port this API listens on.</span><span class="ln x">PORT=3000</span><span class="ln x"> </span><span class="ln x"># Which address to listen on.</span><span class="ln c">HOST=<u>0.0.0.0</u></span><span class="ln x"> </span><span class="ln x"># Leave it empty and cross-origin requests are refused.</span><span class="ln x">CORS_ORIGIN=""</span></pre>
+            <div class="fbox-lg" data-th="<b class='lg-a'>+</b> เพิ่มใหม่ &nbsp;<b class='lg-c'>~</b> ค่าที่ต้องแก้ &nbsp;<b class='lg-x'>&nbsp;</b> มีอยู่แล้ว"><b class="lg-a">+</b> added &nbsp;<b class="lg-c">~</b> value you change &nbsp;<b class="lg-x">&nbsp;</b> already in the file</div>
             <ul class="fbox-n">
               <li data-th="<b>เข้ารหัสรหัสผ่านแบบ percent-encoding และทำเฉพาะใน URL นี้เท่านั้น</b> DATABASE_URL เป็น URL ซึ่งมีไวยากรณ์: / จบส่วนโฮสต์, @ จบส่วนรหัส, ? เริ่ม query, # เริ่ม fragment · ดังนั้น / เป็น %2F, @ เป็น %40, ? เป็น %3F, # เป็น %23, : เป็น %3A และตัว % เองเป็น %25 · ในตัวอย่างข้างบนรหัสที่สุ่มมามี / ปนอยู่ · <b>เข้ารหัสรอบเดียว</b> ถ้าเข้าซ้ำสองรอบ %40 จะกลายเป็น %2540 แล้วจะได้ Access denied ทั้งที่ GRANT ถูกต้องทุกอย่าง"><b>Percent-encode the password, and only inside this URL.</b> A <code>DATABASE_URL</code> is a URL and has a grammar: <code>/</code> ends the host, <code>@</code> ends the credentials, <code>?</code> starts a query, <code>#</code> starts a fragment. So <code>/</code>&rarr;<code>%2F</code>, <code>@</code>&rarr;<code>%40</code>, <code>?</code>&rarr;<code>%3F</code>, <code>#</code>&rarr;<code>%23</code>, <code>:</code>&rarr;<code>%3A</code>, and <code>%</code> itself&rarr;<code>%25</code>. In the example above the generated password contained a <code>/</code>. <b>Encode once.</b> Encoding twice turns <code>%40</code> into <code>%2540</code> and you get Access denied while the GRANT is perfectly fine.</li>
               <li data-th="<b>ห้ามเขียน ${VAR} ในไฟล์นี้เด็ดขาด</b> มีสองโปรแกรมที่อ่านไฟล์นี้และตีความไม่ตรงกัน: Prisma CLI ขยาย ${...} ให้ ส่วน systemd ตรง EnvironmentFile= ไม่ขยาย มันส่งอักขระตรงตัวไปเลย · แปลว่ามันจะทำงานได้ทุกวิธีที่เราทดสอบในบ่ายวันนั้น แล้วไปพังในวิธีเดียวที่แอปถูกรันจริง คือข้อ 21 โดยไม่มีอะไรบนจอบอกสาเหตุ · และยังมีเหตุผลที่สองที่ยืนได้ด้วยตัวเอง: การแทนค่าตัวแปรทำ percent-encoding ให้ไม่ได้"><b>Never write <code>${VAR}</code> in here.</b> Two programs read this file and they disagree: the Prisma CLI expands <code>${...}</code>, and systemd at <code>EnvironmentFile=</code> does not — it hands over the literal characters. So it works every way you are likely to test it this afternoon, and fails the one way the application is actually run, at step 21, with nothing on screen to suggest why. A second reason stands on its own: substitution cannot percent-encode.</li>
@@ -1735,27 +1743,9 @@ migrations/
           <div class="fbox">
             <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
             <div class="fbox-p">/etc/systemd/system/noticeboard-api.service</div>
-            <pre class="fbox-c">[Unit]
-Description=INT134 noticeboard API
-After=network-online.target <u>mysql.service</u>
-
-[Service]
-User=sysadmin
-WorkingDirectory=/srv/noticeboard/backend
-EnvironmentFile=/srv/noticeboard/backend/.env
-ExecStart=<u>/usr/bin/node</u> server.js
-Restart=always
-RestartSec=5
-
-# It reads its code and its configuration. It has no reason to
-# write anywhere on this machine, and saying so costs nothing.
-NoNewPrivileges=true
-PrivateTmp=true
-ProtectSystem=full
-ProtectHome=read-only
-
-[Install]
-WantedBy=multi-user.target</pre>
+            <div class="fbox-cap" data-th="เป็น<b>ไฟล์ใหม่</b> &mdash; ทุกบรรทัดคือของที่เราต้องเขียนเอง">a <b>new file</b> &mdash; every line of it is yours to write</div>
+            <pre class="fbox-c"><span class="ln a">[Unit]</span><span class="ln a">Description=INT134 noticeboard API</span><span class="ln a">After=network-online.target <u>mysql.service</u></span><span class="ln a"> </span><span class="ln a">[Service]</span><span class="ln a">User=sysadmin</span><span class="ln a">WorkingDirectory=/srv/noticeboard/backend</span><span class="ln a">EnvironmentFile=/srv/noticeboard/backend/.env</span><span class="ln a">ExecStart=<u>/usr/bin/node</u> server.js</span><span class="ln a">Restart=always</span><span class="ln a">RestartSec=5</span><span class="ln a"> </span><span class="ln a"># It reads its code and its configuration. It has no reason to</span><span class="ln a"># write anywhere on this machine, and saying so costs nothing.</span><span class="ln a">NoNewPrivileges=true</span><span class="ln a">PrivateTmp=true</span><span class="ln a">ProtectSystem=full</span><span class="ln a">ProtectHome=read-only</span><span class="ln a"> </span><span class="ln a">[Install]</span><span class="ln a">WantedBy=multi-user.target</span></pre>
+            <div class="fbox-lg" data-th="<b class='lg-a'>+</b> เพิ่มใหม่ &nbsp;<b class='lg-c'>~</b> ค่าที่ต้องแก้ &nbsp;<b class='lg-x'>&nbsp;</b> มีอยู่แล้ว"><b class="lg-a">+</b> added &nbsp;<b class="lg-c">~</b> value you change &nbsp;<b class="lg-x">&nbsp;</b> already in the file</div>
             <ul class="fbox-n">
               <li data-th="<b>WorkingDirectory= คือเหตุผลที่ ExecStart= ลงท้ายด้วย server.js เฉยๆ ได้</b> เพราะ systemd รันโปรแกรมจากโฟลเดอร์นั้น · แต่ตัว interpreter ยังต้องเป็น path เต็มอยู่ดี กฎจากคาบ 2 ไม่ได้เปลี่ยน: systemd ไม่ขยาย tilde และไม่รู้ว่าเรายืนอยู่โฟลเดอร์ไหน"><b><code>WorkingDirectory=</code> is why <code>ExecStart=</code> can end in a bare <code>server.js</code>.</b> systemd runs the program from that directory. The <em>interpreter</em> still needs its absolute path — class 2's rule has not moved: systemd expands no <code>~</code> and has no idea what directory you were standing in.</li>
               <li data-th="<b>EnvironmentFile= ระบุชื่อไฟล์ ไม่ใช่โฟลเดอร์ที่ไฟล์อยู่</b> systemd เป็นคนอ่านแล้วส่งค่าให้เป็น environment variable โค้ดของแอปไม่เคยเปิดไฟล์นั้นและไม่เคยเอ่ยชื่อมันเลย · นั่นคือเหตุผลที่โค้ดชุดเดิมรันใน container ในคาบ 8 ได้โดยไม่ต้องแก้ ทั้งที่ค่าถูกส่งมาคนละวิธีโดยสิ้นเชิง"><b><code>EnvironmentFile=</code> names the file, not the directory holding it.</b> systemd reads it and hands the values over as environment variables — the application's own code never opens that file and never mentions its name. That is why the same code runs unchanged in a container in class 8 with the values supplied a completely different way.</li>
@@ -1802,14 +1792,10 @@ nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
           </div>
           <div class="fbox">
             <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
-            <div class="fbox-p" data-th="/etc/nginx/conf.d/noticeboard.conf &mdash; เพิ่มเข้าไปใน server { } เดิม">/etc/nginx/conf.d/noticeboard.conf &mdash; add inside the same server { }</div>
-            <pre class="fbox-c">location /api/ {
-    proxy_pass http://127.0.0.1:3000<u>;</u>
-    proxy_set_header Host              $host;
-    proxy_set_header X-Real-IP         $remote_addr;
-    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-}</pre>
+            <div class="fbox-p">/etc/nginx/conf.d/noticeboard.conf</div>
+            <div class="fbox-cap" data-th="<b>เพิ่มหกบรรทัดเข้าไปในไฟล์ที่เขียนไว้ตอนข้อ 10</b> &mdash; ของเดิมอยู่ครบเหมือนเดิม"><b>six lines go into the file you wrote at step 10</b> &mdash; everything already there stays</div>
+            <pre class="fbox-c"><span class="ln x">server {</span><span class="ln x">    listen      80 default_server;</span><span class="ln x">    server_name lvm68xxx.sit.kmutt.ac.th lvm68xxx;</span><span class="ln x">    &hellip;</span><span class="ln x">    location / { try_files $uri $uri/ =404; }</span><span class="ln a"> </span><span class="ln a">    location /api/ {</span><span class="ln a">        proxy_pass http://127.0.0.1:3000<u>;</u></span><span class="ln a">        proxy_set_header Host              $host;</span><span class="ln a">        proxy_set_header X-Real-IP         $remote_addr;</span><span class="ln a">        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;</span><span class="ln a">        proxy_set_header X-Forwarded-Proto $scheme;</span><span class="ln a">    }</span><span class="ln x">}</span></pre>
+            <div class="fbox-lg" data-th="<b class='lg-a'>+</b> เพิ่มใหม่ &nbsp;<b class='lg-c'>~</b> ค่าที่ต้องแก้ &nbsp;<b class='lg-x'>&nbsp;</b> มีอยู่แล้ว"><b class="lg-a">+</b> added &nbsp;<b class="lg-c">~</b> value you change &nbsp;<b class="lg-x">&nbsp;</b> already in the file</div>
             <ul class="fbox-n">
               <li data-th="<b>ห้ามมี slash หลังเลขพอร์ต ข้อนี้คือข้อที่ทุกคนพลาด</b> ถ้าไม่มีส่วน URI ต่อท้าย nginx จะส่ง path เดิมไปทั้งอัน backend จะได้รับ /api/notices ซึ่งตรงกับ route ที่ server.js นิยามไว้พอดี · แต่ถ้าเขียนเป็น http://127.0.0.1:3000/ nginx จะ <em>แทนที่</em> ส่วน /api/ ที่แมตช์ด้วย / แทน backend จะได้รับ /notices ซึ่งไม่ตรงกับ route ไหนเลย แล้วตอบกลับว่า no such endpoint · ไฟล์เดิม reload เหมือนเดิม แต่ได้ 404 ที่ดูเหมือน API พัง"><b>No slash after the port. This is the one that catches everybody.</b> With no URI part, nginx forwards the path unchanged and the backend receives <code>/api/notices</code> — exactly the route <code>server.js</code> defines. Write <code>http://127.0.0.1:3000/</code> instead and nginx <em>replaces</em> the matched <code>/api/</code> with <code>/</code>: the backend receives <code>/notices</code>, matches nothing, and answers <code>{"error":"no such endpoint"}</code>. Same file, same reload, a 404 that looks like the API is broken.</li>
               <li data-th="<b>แบบที่มี slash ไม่ได้ผิด มันไว้ใช้กับงานคนละอย่าง</b> มันคือวิธีเสิร์ฟแอปใต้ path ย่อย: location /school/api/ { proxy_pass http://127.0.0.1:PORT/api/; } จะรับ /school/api/students จากเบราว์เซอร์แล้วไปถาม backend ว่า /api/students · จำง่ายๆ: มี URI ต่อท้ายพอร์ต แปลว่าแทนที่ส่วนที่แมตช์ด้วยอันนี้ · ไม่มี URI แปลว่าส่งผ่านไปทั้งอันไม่แตะ"><b>The form <em>with</em> a slash is not wrong — it is for a different job.</b> It is how you serve an app under a sub-path: <code>location /school/api/ { proxy_pass http://127.0.0.1:PORT/api/; }</code> takes <code>/school/api/students</code> from the browser and asks the backend for <code>/api/students</code>. Rule of thumb: a URI after the port means &ldquo;replace the matched prefix with this&rdquo;; no URI means &ldquo;pass it through untouched&rdquo;.</li>
@@ -1832,8 +1818,10 @@ sudo nginx -t &amp;&amp; sudo systemctl reload nginx</div>
           </div>
           <div class="fbox">
             <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
-            <div class="fbox-p" data-th="/var/www/noticeboard/config.js &mdash; บรรทัดเดียว">/var/www/noticeboard/config.js &mdash; one line</div>
-            <pre class="fbox-c">  noticesUrl: <u>"/api/notices"</u>,</pre>
+            <div class="fbox-p">/var/www/noticeboard/config.js</div>
+            <div class="fbox-cap" data-th="<b>แก้บรรทัดเดียวในไฟล์จากข้อ 9</b> &mdash; ที่เหลือไม่ต้องแตะ"><b>one line in the file from step 9 changes</b> &mdash; nothing else in it moves</div>
+            <pre class="fbox-c"><span class="ln x">window.INT134 = {</span><span class="ln x">  studentId: "68130500123",</span><span class="ln c">  noticesUrl: <u>"/api/notices"</u>,</span><span class="ln x">};</span></pre>
+            <div class="fbox-lg" data-th="<b class='lg-a'>+</b> เพิ่มใหม่ &nbsp;<b class='lg-c'>~</b> ค่าที่ต้องแก้ &nbsp;<b class='lg-x'>&nbsp;</b> มีอยู่แล้ว"><b class="lg-a">+</b> added &nbsp;<b class="lg-c">~</b> value you change &nbsp;<b class="lg-x">&nbsp;</b> already in the file</div>
             <ul class="fbox-n">
               <li data-th="<b>เป็น path ล้วนๆ ไม่มีชื่อโฮสต์ ไม่มีพอร์ต</b> path แปลว่าถามคนที่เสิร์ฟหน้านี้ให้ฉัน ดังนั้นจึงไม่มีอะไรที่ต้องคอยแก้ให้ตรงกัน และหน้าเว็บใช้ได้เหมือนเดิมไม่ว่าจะเข้าด้วยชื่อโฮสต์ ด้วย IP หรือวันหนึ่งเข้าด้วย https"><b>A bare path, with no host and no port.</b> A path means &ldquo;ask whoever served me this page&rdquo; — so there is nothing to keep in step with anything else, and the page works unchanged whether it is reached by hostname, by IP, or one day over https.</li>
               <li data-th="บรรทัดเดียวนี้คือความต่างทั้งหมดระหว่างหน้าเว็บกับแอปพลิเคชัน และเป็นจังหวะที่ปัญหา CORS หายไปเลย ไม่ใช่ถูกตั้งค่าอ้อมไป">This one line is the entire difference between a page and an application, and it is the moment CORS stops existing rather than being configured around.</li>
@@ -1864,8 +1852,10 @@ LISTEN 0  511  <u>127.0.0.1:3000</u>  0.0.0.0:*</pre>
           </div>
           <div class="fbox">
             <div class="fbox-h"><span class="fbox-t" data-th="ไฟล์นี้ต้องเขียนอะไรบ้าง">What actually goes in this file</span><span class="fbox-m">micro &middot; ^S save &middot; ^Q quit &middot; ^R ruler</span></div>
-            <div class="fbox-p" data-th="/srv/noticeboard/backend/.env &mdash; บรรทัดเดียว">/srv/noticeboard/backend/.env &mdash; one line</div>
-            <pre class="fbox-c">HOST=<u>127.0.0.1</u></pre>
+            <div class="fbox-p">/srv/noticeboard/backend/.env</div>
+            <div class="fbox-cap" data-th="<b>แก้บรรทัดเดียวในไฟล์จากข้อ 18</b> &mdash; ที่เหลือปล่อยไว้"><b>one line in the file from step 18 changes</b> &mdash; leave the rest alone</div>
+            <pre class="fbox-c"><span class="ln x">DATABASE_URL="mysql://noticeboard:&hellip;@127.0.0.1:3306/noticeboard"</span><span class="ln x">STUDENT_ID="68130500123"</span><span class="ln x">PORT=3000</span><span class="ln c">HOST=<u>127.0.0.1</u></span><span class="ln x">CORS_ORIGIN=""</span></pre>
+            <div class="fbox-lg" data-th="<b class='lg-a'>+</b> เพิ่มใหม่ &nbsp;<b class='lg-c'>~</b> ค่าที่ต้องแก้ &nbsp;<b class='lg-x'>&nbsp;</b> มีอยู่แล้ว"><b class="lg-a">+</b> added &nbsp;<b class="lg-c">~</b> value you change &nbsp;<b class="lg-x">&nbsp;</b> already in the file</div>
             <ul class="fbox-n">
               <li data-th="<b>ต้อง restart ไม่ใช่ reload</b> EnvironmentFile= ถูกอ่านครั้งเดียวตอน service เริ่ม · reload อ่าน unit ใหม่ ไม่ได้อ่าน environment file ใหม่ API จึงยังรันด้วยค่าเดิมอยู่ แล้วเราจะสรุปว่าที่แก้ไปไม่มีผลอะไร"><b><code>restart</code>, not <code>reload</code>.</b> <code>EnvironmentFile=</code> is read once, when the service starts. A reload re-reads the <em>unit</em>, not the environment file, so the API would keep running with the old value and you would conclude the edit did nothing.</li>
               <li data-th="ยืนยันด้วย ss -tln | grep 3000 · ที่อยู่ที่ฟังต้องกลายเป็น 127.0.0.1:3000 ไม่ใช่ 0.0.0.0:3000 · การเปลี่ยนตรงนี้กับคำสั่ง ufw delete ข้างๆ คือกุญแจสองดอกที่อิสระต่อกันบนประตูบานเดียวกัน">Confirm with <code>ss -tln | grep 3000</code>: the listen address must now read <code>127.0.0.1:3000</code> and not <code>0.0.0.0:3000</code>. That change, and the <code>ufw delete</code> beside it, are two independent locks on the same door.</li>
