@@ -2189,6 +2189,18 @@ curl -s http://127.0.0.1:3000/api/health</div>
         <div class="fnote" data-th="update ไม่ได้ติดตั้งอะไร มันแค่ไปดึงรายการเวอร์ชันล่าสุดมาไว้ · upgrade คือตัวที่ลงจริง · ที่อาจารย์ย้ำในคาบ 4 คือถ้าไม่ update ก่อน จะได้ micro เวอร์ชันเก่าและงงว่าทำไมเมนูไม่ตรงกับที่สอน"><code>update</code> installs nothing — it refreshes the list of what is available. <code>upgrade</code> is what actually installs. In class 4 he made the point that skipping <code>update</code> gets you an old <code>micro</code> whose menus don't match the demo.</div>
       </div>
 
+      <div class="fact g">
+        <h3 data-th="ที่มาของแพ็กเกจ Ubuntu — คาบ 1">Where an Ubuntu package comes from — class 1</h3>
+        <p class="lede" data-th="ทุกแพ็กเกจของ Ubuntu เองอยู่ใน 4 component นี้ อธิบายด้วยแกน 2 มิติ: ใครดูแล × ปัญหาทางกฎหมาย">Every one of Ubuntu's own packages sits in one of these four — a 2&times;2 of who maintains it and whether it carries a legal complication.</p>
+        <table class="ftab">
+          <tr><td>main</td><td data-th="ฟรี/โอเพนซอร์ส ที่ Canonical ซัพพอร์ตเอง">free and open-source, supported by Canonical itself</td></tr>
+          <tr><td>universe</td><td data-th="ฟรี/โอเพนซอร์ส เหมือนกัน แต่ชุมชนดูแล ไม่ใช่ Canonical">free and open-source too, but community-maintained, not Canonical</td></tr>
+          <tr><td>restricted</td><td data-th="ไดรเวอร์ proprietary สำหรับอุปกรณ์ เช่นการ์ดจอ">proprietary drivers for devices — a graphics card, for instance</td></tr>
+          <tr><td>multiverse</td><td data-th="ซอฟต์แวร์ที่ติดปัญหาลิขสิทธิ์หรือกฎหมายอื่น">software restricted by copyright or other legal issues</td></tr>
+        </table>
+        <div class="fnote" data-th="ทั้งสี่อยู่รวมกันบรรทัดเดียวใน sources.list.d: <code>Components: main restricted universe multiverse</code> ไม่ได้แยกไฟล์กัน · <b>nginx.org ไม่ได้อยู่ในสี่ตัวนี้เลย</b> — nginx ของ Ubuntu เอง (1.24) มาจาก main ก็จริง แต่ nginx.org (1.30.x ที่วิชานี้ใช้) เป็น third-party repo ที่เพิ่มเข้าไปเองด้วย GPG key กับไฟล์ .list ต่างหาก คนละระบบกับสี่ component นี้โดยสิ้นเชิง — นั่นคือเหตุผลที่มันต้องมีขั้นตอน &ldquo;เพิ่ม repo อย่างปลอดภัย&rdquo; ในคาบ 3 ที่แพ็กเกจ Ubuntu เองไม่ต้องทำ">All four sit on one line in a sources.list.d file — <code>Components: main restricted universe multiverse</code> — not one file each. <b>nginx.org is in none of these four.</b> Ubuntu's own nginx (1.24) does come from <code>main</code>, but nginx.org's 1.30.x — the one this course installs — is a third-party repo added by hand with its own GPG key and <code>.list</code> file, entirely outside this system. That is why class 3 needs a &ldquo;trust the repository&rdquo; step that Ubuntu's own packages never do.</div>
+      </div>
+
       <div class="fact">
         <h3 data-th="ประวัติคำสั่งและปุ่มลัด — คาบ 1">Command history and the keys — class 1</h3>
         <p class="lede" data-th="เรื่องนี้ท่องง่าย ออกช้อยส์ง่าย และช่วยจริงในภาคปฏิบัติที่จับเวลา">Cheap to memorise, easy to examine, and genuinely useful in a timed practical.</p>
@@ -2559,6 +2571,10 @@ curl -s http://127.0.0.1:3000/api/health</div>
 
       <details class="q"><summary data-th="ถ้าใช้ reverse proxy แล้ว ทำไม CORS_ORIGIN ถึงไม่จำเป็นอีกต่อไป">With a reverse proxy in place, why is CORS_ORIGIN no longer needed?</summary>
         <div class="qa"><span class="ans" data-th="เพราะไม่เหลือคำขอข้าม origin ให้ต้องอนุญาตแล้ว">Because there is no cross-origin request left to permit.</span><span data-th="CORS_ORIGIN เป็นวิธีขออนุญาตข้าม<em>ขอบ</em> ส่วน proxy เป็นการเอาขอบนั้นออกไปเลย · หน้าเว็บเรียก /api/notices บน origin เดียวกับที่มันถูกเสิร์ฟมา เบราว์เซอร์จึงไม่มีเหตุให้ต้องตรวจอะไร · ข้อดีที่ตามมาคือไม่มีค่าที่ต้องคอยให้ตรงกันสองที่ และปิดพอร์ต 3000 ได้ ซึ่งเป็นสิ่งที่ lab 5 ตรวจจริง"><code>CORS_ORIGIN</code> is a way of asking permission to cross a boundary; the proxy removes the boundary. The page asks <code>/api/notices</code> on the very origin it was served from, so the browser has nothing to check. The knock-on benefits are that no value has to be kept in step in two places, and that port 3000 can be closed — which is what lab 5 actually tests.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="nginx.org (1.30.x) อยู่ใน component ไหนของ Ubuntu — main, universe, restricted หรือ multiverse">Which Ubuntu component does nginx.org's 1.30.x live in — main, universe, restricted, or multiverse?</summary>
+        <div class="qa"><span class="ans" data-th="ไม่มีอันไหนเลย มันเป็น third-party repo ต่างหาก">None of them. It is a third-party repository entirely outside that system.</span><span data-th="สี่ component นั้นเป็นของแพ็กเกจ Ubuntu เองทั้งหมด และ nginx เวอร์ชัน 1.24 ของ Ubuntu ก็มาจาก main จริง · แต่ nginx.org เพิ่มเข้าไปเองด้วยมือ: ดาวน์โหลดกุญแจ แปลงด้วย gpg --dearmor เขียนไฟล์ .list ของตัวเองใน sources.list.d — คนละระบบกับ main/universe/restricted/multiverse โดยสิ้นเชิง ซึ่งเป็นเหตุผลที่ต้องมีขั้นตอนเรื่องความเชื่อถือ (signed-by) ที่แพ็กเกจ Ubuntu เองไม่ต้องทำ">Those four are for Ubuntu's own packages, and Ubuntu's own nginx (1.24) genuinely does come from <code>main</code>. But nginx.org is added by hand — key downloaded, converted with <code>gpg --dearmor</code>, its own <code>.list</code> file written into <code>sources.list.d</code> — entirely outside main/universe/restricted/multiverse. That is why it needs a trust step (<code>signed-by=</code>) that an Ubuntu package never does.</span></div>
       </details>
 
     </div>
