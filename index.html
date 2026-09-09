@@ -285,6 +285,13 @@
   .footer-card ul{margin:0; padding-left:18px; font-size:13.6px; line-height:1.6; color:var(--ink-soft);}
   .footer-card p{font-size:13.6px; line-height:1.6; color:var(--ink-soft); margin:0 0 10px;}
   .kbd{font-family:var(--font-mono); background:var(--surface-2); border-radius:4px; padding:1px 6px; font-size:12.3px; color:var(--ink);}
+  .recipe-wrap{overflow-x:auto; margin-top:20px;}
+  .recipe-table{width:100%; border-collapse:collapse; font-size:13px; min-width:640px;}
+  .recipe-table td{padding:11px 10px; border-top:1px solid var(--line); vertical-align:top;}
+  .recipe-table tr:first-child td{border-top:none;}
+  .recipe-table td:first-child{font-family:var(--font-mono); font-weight:700; color:var(--ink-faint); width:22px;}
+  .recipe-table td:nth-child(2){font-family:var(--font-mono); font-size:12.3px; white-space:nowrap; padding-right:18px; color:var(--ink);}
+  .recipe-table td:last-child{color:var(--ink-soft); line-height:1.5;}
   .cta-link{
     display:flex; align-items:center; gap:6px; margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);
     font-family:var(--font-mono); font-size:13px; font-weight:600; color:var(--accent); text-decoration:none;
@@ -932,6 +939,43 @@
       </svg>
       <figcaption data-th="ลูกศรที่วนจากขั้น 3 กลับไปขั้น 2 ไม่ใช่ความผิดพลาดในไดอะแกรม — มันคืองานจริง: ตั้งค่า ทดสอบ แก้ ทดสอบใหม่ ไปเรื่อยๆ จนกว่า nginx -t (หรือของเทียบเท่า) จะบอกว่าผ่าน">The loop back from step 3 to step 2 is not a mistake in the diagram — it's the actual job: configure, test, fix, test again, until <code>nginx -t</code> (or its equivalent) says yes.</figcaption>
     </figure>
+
+    <div class="recipe-wrap">
+      <table class="recipe-table">
+        <tr>
+          <td>1</td><td>sudo apt install nginx -y</td>
+          <td data-th="ต้องมีของบนดิสก์ก่อนถึงจะทำอะไรต่อได้ และเช็กเวอร์ชันเสมอ เพราะแต่ละแพ็กเกจตัดสินใจไม่เหมือนกัน (nginx ต้องสั่ง start เอง ส่วน MySQL เปิดให้เองตั้งแต่ติดตั้งเสร็จ)">The software has to exist on disk before anything else can happen. Always check the version — packagers decide differently (nginx stays stopped after install; MySQL starts itself).</td>
+        </tr>
+        <tr>
+          <td>2</td><td>micro .env</td>
+          <td data-th="ของที่ติดตั้ง/คัดลอกมาใหม่มีแค่ค่า default ทั่วไป — student ID, พอร์ต, connection string จะมีค่าจริงก็ต่อเมื่อเราเขียนมันเข้าไปเอง">A fresh install or copy only ships generic defaults. Your student ID, your port, your connection string exist only because you typed them in.</td>
+        </tr>
+        <tr>
+          <td>3</td><td>nginx -t</td>
+          <td data-th="reload จะยังใช้ config เก่าต่อถ้าของใหม่พัง — หน้าตาเหมือนไม่มีอะไรเปลี่ยน ถ้าไม่ทดสอบก่อนจะไม่รู้เลยว่ามันพัง">A reload keeps serving the OLD config if the new one is broken — nothing looks different from the outside. Test first, or you won't even notice it failed.</td>
+        </tr>
+        <tr>
+          <td>4</td><td>sudo systemctl daemon-reload && sudo systemctl enable --now &lt;svc&gt;</td>
+          <td data-th="daemon-reload คือบอก systemd ให้อ่าน unit file ที่เพิ่งแก้ใหม่ ส่วน enable (ตอนบูต) กับ active (ตอนนี้) เป็นสวิตช์คนละตัว — reboot จะปลุกแค่ตัวที่ enabled">daemon-reload tells systemd to re-read the unit file you just edited. enable (boot) and active (now) are separate switches — a reboot only revives what's enabled.</td>
+        </tr>
+        <tr>
+          <td>5</td><td>sudo ufw allow 80/tcp</td>
+          <td data-th="ค่าเริ่มต้นคือปิดกั้นหมด พอร์ตที่เปิดทุกพอร์ตคือคำสัญญาว่าจะต้องเฝ้าดูมันตลอด — ห้ามเปิดพอร์ตของฐานข้อมูล (3306) เด็ดขาด">Default is deny-all. Every port you open is a promise to keep watching it — never the database's own port (3306).</td>
+        </tr>
+        <tr>
+          <td>6</td><td>systemctl status &lt;svc&gt; → ss -tln → curl localhost → curl &lt;public address&gt;</td>
+          <td data-th="ไล่เช็กตามลำดับนี้จะบอกได้ว่าชั้นไหนพังจริงๆ แทนที่จะเดา: โปรเซสรันอยู่ไหม → มันฟังพอร์ตไหม → เข้าถึงได้จากในเครื่องไหม → เข้าถึงได้จากข้างนอกไหม">Checking in this order tells you which layer is actually broken instead of guessing: is it running, is it listening, does localhost see it, does the outside world see it.</td>
+        </tr>
+        <tr>
+          <td>7</td><td>location /api/ { proxy_pass http://127.0.0.1:3xxx/; proxy_set_header Host $host; }</td>
+          <td data-th="ให้โลกภายนอกเห็นที่อยู่เดียว ไม่มีปัญหา CORS แล้วพอร์ตที่เปิดไว้แค่ทดสอบในขั้น 5 ก็ปิดคืนได้เลย">One address for the outside world, no CORS problem — and the port you opened just to test in step 5 can close again.</td>
+        </tr>
+        <tr>
+          <td>8</td><td>int134 check labNN</td>
+          <td data-th="“ทำงานอยู่ตอนนี้” ไม่เท่ากับ “deploy สำเร็จแล้ว” มีแค่การเช็กเท่านั้นที่พิสูจน์ได้จริงว่ามันจะรอด reboot รอด crash และรอดตอนที่เราไม่อยู่หน้าจอ">"It's running right now" is not "it's deployed." Only checking proves it survives a reboot, a crash, and you walking away.</td>
+        </tr>
+      </table>
+    </div>
   </section>
 
 </div>
