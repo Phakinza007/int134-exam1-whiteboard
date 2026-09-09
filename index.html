@@ -285,6 +285,20 @@
   .footer-card ul{margin:0; padding-left:18px; font-size:13.6px; line-height:1.6; color:var(--ink-soft);}
   .footer-card p{font-size:13.6px; line-height:1.6; color:var(--ink-soft); margin:0 0 10px;}
   .kbd{font-family:var(--font-mono); background:var(--surface-2); border-radius:4px; padding:1px 6px; font-size:12.3px; color:var(--ink);}
+  .walk{margin-top:20px;}
+  .phase{border-left:3px solid var(--accent); padding-left:18px; margin-bottom:28px;}
+  .phase.p2{border-color:var(--violet);}
+  .phase.p3{border-color:var(--amber);}
+  .phase.p4{border-color:var(--rose);}
+  .phase.p5{border-color:var(--green);}
+  .phase.p6{border-color:var(--ink-faint);}
+  .phase-head{font-family:var(--font-marker); font-size:17px; margin-bottom:4px;}
+  .phase-sub{font-size:12.5px; color:var(--ink-faint); margin-bottom:14px;}
+  .wstep{display:grid; grid-template-columns:24px 1fr; gap:10px; margin-bottom:15px;}
+  .wnum{font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--ink-faint); padding-top:8px;}
+  .wcmd{font-family:var(--font-mono); font-size:12.2px; background:var(--surface-2); border:1px solid var(--line); border-radius:6px; padding:8px 11px; overflow-x:auto; white-space:pre; color:var(--ink); line-height:1.6;}
+  .wwhy{font-size:12.8px; color:var(--ink-soft); margin-top:6px; line-height:1.55;}
+  .path{font-family:var(--font-mono); font-size:11.7px; background:var(--accent-soft); color:var(--accent); border-radius:4px; padding:1px 5px; white-space:nowrap;}
   .recipe-wrap{overflow-x:auto; margin-top:20px;}
   .recipe-table{width:100%; border-collapse:collapse; font-size:13px; min-width:640px;}
   .recipe-table td{padding:11px 10px; border-top:1px solid var(--line); vertical-align:top;}
@@ -975,6 +989,218 @@
           <td data-th="“ทำงานอยู่ตอนนี้” ไม่เท่ากับ “deploy สำเร็จแล้ว” มีแค่การเช็กเท่านั้นที่พิสูจน์ได้จริงว่ามันจะรอด reboot รอด crash และรอดตอนที่เราไม่อยู่หน้าจอ">"It's running right now" is not "it's deployed." Only checking proves it survives a reboot, a crash, and you walking away.</td>
         </tr>
       </table>
+    </div>
+  </section>
+
+  <!-- ================= FULL WALKTHROUGH ================= -->
+  <section class="band" style="margin-top:44px;">
+    <div class="band-head">
+      <span class="wk-pill">0 → 1</span>
+      <h2 data-th="จับมือทำตั้งแต่ศูนย์จนเว็บขึ้นจริง">Hand-held: from an empty VM to a working site</h2>
+      <span class="band-tag" data-th="ทุกคำสั่ง ทุก path เรียงตามลำดับที่ต้องพิมพ์จริง — จบแล้วจะได้ noticeboard ที่เปิดจากเครื่องตัวเองได้ และรอด reboot">Every command and every path, in the order you actually type them. At the end you have a noticeboard you can open from your own laptop — and it survives a reboot.</span>
+    </div>
+
+    <div class="walk">
+
+      <div class="phase p1">
+        <h3 class="phase-head" data-th="ช่วงที่ 1 · เข้าเครื่อง แล้วทำให้ nginx วิ่ง">Phase 1 · Get in, get nginx running</h3>
+        <div class="phase-sub" data-th="จบช่วงนี้: เปิด http://lvm68xxx.sit.kmutt.ac.th/ แล้วเจอหน้า Welcome to nginx">By the end: http://lvm68xxx.sit.kmutt.ac.th/ shows the "Welcome to nginx" page.</div>
+
+        <div class="wstep"><div class="wnum">1</div><div>
+          <div class="wcmd">ssh sysadmin@lvm68xxx.sit.kmutt.ac.th</div>
+          <div class="wwhy" data-th="ใส่รหัสผ่านที่ได้จากอีเมล พอเข้ามาแล้วจะอยู่ที่ <span class='path'>/home/sysadmin</span> เช็กด้วย <code>pwd</code> ได้">Password comes from your @ad.sit.kmutt.ac.th email. You land in <span class="path">/home/sysadmin</span> — confirm with <code>pwd</code>.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">2</div><div>
+          <div class="wcmd">curl -fsSL https://nginx.org/keys/nginx_signing.key \
+  | sudo gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg</div>
+          <div class="wwhy" data-th="กุญแจไปอยู่ที่ <span class='path'>/usr/share/keyrings/nginx-archive-keyring.gpg</span> — เอาไว้ยืนยันว่าแพ็กเกจที่โหลดมาเป็นของ nginx.org จริง">The key lands at <span class="path">/usr/share/keyrings/nginx-archive-keyring.gpg</span> — it's what proves the packages really came from nginx.org.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">3</div><div>
+          <div class="wcmd">echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu $(lsb_release -cs) nginx" \
+  | sudo tee /etc/apt/sources.list.d/nginx.list</div>
+          <div class="wwhy" data-th="ไฟล์ repo อยู่ที่ <span class='path'>/etc/apt/sources.list.d/nginx.list</span> ต้องเป็นบรรทัดเดียว ถ้าวางแล้วมันตัดบรรทัด apt จะฟ้อง malformed entry">The repo file is <span class="path">/etc/apt/sources.list.d/nginx.list</span> and must stay one single line — if pasting breaks it in two, apt reports a malformed entry.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">4</div><div>
+          <div class="wcmd">sudo apt update &amp;&amp; sudo apt install nginx -y
+nginx -v</div>
+          <div class="wwhy" data-th="ต้องได้ <code>1.30.x</code> ถ้าได้ 1.24 แปลว่า repo ยังไม่ติด — ย้อนกลับไปทำข้อ 2–3 ใหม่">You must see <code>1.30.x</code>. If you got 1.24, the repo didn't take — redo steps 2–3 and install again.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">5</div><div>
+          <div class="wcmd">sudo systemctl enable --now nginx
+systemctl is-enabled nginx ; systemctl is-active nginx</div>
+          <div class="wwhy" data-th="ติดตั้ง nginx เสร็จมันไม่ start ให้เอง ต้องสั่งเอง สองคำสั่งท้ายต้องตอบ <code>enabled</code> กับ <code>active</code>">Installing nginx does not start it — you have to. Those last two commands must answer <code>enabled</code> and <code>active</code>.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">6</div><div>
+          <div class="wcmd">sudo ufw allow 80/tcp
+curl -s http://localhost/ | head -3</div>
+          <div class="wwhy" data-th="curl จากในเครื่องผ่าน loopback ไม่สนใจ firewall อยู่แล้ว ส่วน rule 80 คือทำให้เปิดจากเครื่องตัวเองได้">The curl goes over loopback and ignores the firewall entirely; the port-80 rule is what lets your own laptop reach it.</div>
+        </div></div>
+      </div>
+
+      <div class="phase p2">
+        <h3 class="phase-head" data-th="ช่วงที่ 2 · เอาหน้าเว็บ (frontend) ขึ้น">Phase 2 · Put the frontend on it</h3>
+        <div class="phase-sub" data-th="จบช่วงนี้: เปิดชื่อเครื่องตัวเองแล้วเห็นหน้า noticeboard (ปุ่มเพิ่มประกาศยังใช้ไม่ได้ ปกติ)">By the end: your VM's own name shows the noticeboard page. The "add notice" button still won't work — that's expected.</div>
+
+        <div class="wstep"><div class="wnum">7</div><div>
+          <div class="wcmd">sudo install -d -o sysadmin -g sysadmin -m 2775 /srv/noticeboard
+tar -xzf /home/public/labs/lab03/noticeboard.tar.gz -C /srv/noticeboard --strip-components=1</div>
+          <div class="wwhy" data-th="ซอร์สอยู่ที่ <span class='path'>/srv/noticeboard</span> — <code>tar</code> ห้ามใส่ sudo เพราะจะทับสิทธิ์ที่เพิ่งตั้ง ส่วน <code>--strip-components=1</code> ตัดโฟลเดอร์ชั้นนอกออก ไม่งั้นจะได้ /srv/noticeboard/noticeboard/">Source lives at <span class="path">/srv/noticeboard</span>. No sudo on <code>tar</code> — it would overwrite the permissions you just set. <code>--strip-components=1</code> drops the archive's outer folder.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">8</div><div>
+          <div class="wcmd">sudo install -d -o sysadmin -g sysadmin -m 2775 /var/www/noticeboard
+sudo rsync -a --chmod=D755,F644 --delete --exclude config.js \
+  /srv/noticeboard/frontend/ /var/www/noticeboard/</div>
+          <div class="wwhy" data-th="เว็บเสิร์ฟจาก <span class='path'>/var/www/noticeboard</span> เท่านั้น ห้ามชี้ nginx ไปที่ <span class='path'>/srv/noticeboard</span> เพราะในนั้นมี backend, README และ .git ที่คนนอกไม่ควรเห็น">nginx serves <span class="path">/var/www/noticeboard</span> only. Never point it at <span class="path">/srv/noticeboard</span> — that folder also holds the backend, the README, and later a .git directory.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">9</div><div>
+          <div class="wcmd">cp /srv/noticeboard/frontend/config.example.js /var/www/noticeboard/config.js
+micro /var/www/noticeboard/config.js</div>
+          <div class="wwhy" data-th="ใส่รหัสนักศึกษา 11 หลักของตัวเองใน <span class='path'>/var/www/noticeboard/config.js</span> — checker ดูค่านี้ ส่วน noticesUrl ยังไม่ต้องแตะ">Put your own 11-digit student ID into <span class="path">/var/www/noticeboard/config.js</span> — the checker reads it. Leave <code>noticesUrl</code> alone for now.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">10</div><div>
+          <div class="wcmd">sudo micro /etc/nginx/conf.d/noticeboard.conf</div>
+          <div class="wwhy" data-th="server block อยู่ที่ <span class='path'>/etc/nginx/conf.d/noticeboard.conf</span> ต้องมี: <code>listen 80 default_server;</code> · <code>server_name</code> ทั้งชื่อยาวและชื่อสั้นของเครื่อง · <code>root /var/www/noticeboard;</code> · <code>index index.html;</code> · และ log ของตัวเอง <span class='path'>/var/log/nginx/noticeboard.access.log</span> กับ <span class='path'>…error.log</span>">The server block goes in <span class="path">/etc/nginx/conf.d/noticeboard.conf</span> and needs: <code>listen 80 default_server;</code> · a <code>server_name</code> claiming both of your VM's names · <code>root /var/www/noticeboard;</code> · <code>index index.html;</code> · and its own <span class="path">/var/log/nginx/noticeboard.access.log</span> and <span class="path">…error.log</span>.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">11</div><div>
+          <div class="wcmd">sudo nginx -t &amp;&amp; sudo systemctl reload nginx
+curl -s http://127.0.0.1/config.js</div>
+          <div class="wwhy" data-th="ทดสอบก่อน reload เสมอ ถ้า <code>nginx -t</code> ไม่ผ่าน reload จะไม่ทำอะไรเลยและยังเสิร์ฟ config เก่าอยู่ — ดูเหมือนปกติทั้งที่แก้ไม่ติด">Always test before reloading. If <code>nginx -t</code> fails, the reload does nothing and the old config keeps serving — it looks fine while your change quietly isn't live.</div>
+        </div></div>
+      </div>
+
+      <div class="phase p3">
+        <h3 class="phase-head" data-th="ช่วงที่ 3 · ฐานข้อมูล">Phase 3 · The database</h3>
+        <div class="phase-sub" data-th="จบช่วงนี้: มี database + user ของตัวเอง และรหัสผ่านถูกเก็บไว้ในไฟล์เดียวเท่านั้น">By the end: your own database and user exist, and the password lives in exactly one file.</div>
+
+        <div class="wstep"><div class="wnum">12</div><div>
+          <div class="wcmd">sudo apt install mysql-server -y
+systemctl is-enabled mysql ; systemctl is-active mysql</div>
+          <div class="wwhy" data-th="อันนี้ต่างจาก nginx — MySQL เปิดและ enable ให้เองตั้งแต่ติดตั้งเสร็จ ไม่ต้องสั่ง start">Unlike nginx, MySQL enables and starts itself on install. You don't run <code>enable --now</code> here.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">13</div><div>
+          <div class="wcmd">sudo mysql</div>
+          <div class="wwhy" data-th="เข้าได้เลยไม่ต้องใส่รหัส เพราะ admin ผูกกับ user ของ OS (auth_socket) — ลอง <code>mysql -e &quot;SELECT 1;&quot;</code> เฉยๆ จะโดน <code>ERROR 1045</code> ซึ่งถูกแล้ว">You get in with no password because the admin account is tied to your OS user (auth_socket). Try plain <code>mysql -e "SELECT 1;"</code> and you'll get <code>ERROR 1045</code> — that's correct behaviour.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">14</div><div>
+          <div class="wcmd">CREATE DATABASE noticeboard CHARACTER SET utf8mb4;
+CREATE USER 'noticeboard'@'localhost' IDENTIFIED BY RANDOM PASSWORD;
+GRANT ALL PRIVILEGES ON noticeboard.* TO 'noticeboard'@'localhost';
+exit</div>
+          <div class="wwhy" data-th="คัดลอกรหัสผ่าน 20 ตัวที่มันพิมพ์ออกมาทันที — เซิร์ฟเวอร์เก็บแค่ hash บอกซ้ำไม่ได้ ถ้าพลาดต้อง <code>ALTER USER … IDENTIFIED BY RANDOM PASSWORD;</code> ออกอันใหม่">Copy the 20-character password it prints, right now. The server keeps only a hash and cannot tell you again — if you lose it, generate a new one with <code>ALTER USER … IDENTIFIED BY RANDOM PASSWORD;</code>.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">15</div><div>
+          <div class="wcmd">install -m 600 /dev/null /srv/noticeboard/db/noticeboard.env
+micro /srv/noticeboard/db/noticeboard.env</div>
+          <div class="wwhy" data-th="ไฟล์รหัสผ่านอยู่ที่ <span class='path'>/srv/noticeboard/db/noticeboard.env</span> ตั้ง 600 ตั้งแต่ตอนสร้าง ก่อนความลับจะเข้าไป ข้างในเขียนสามบรรทัด: NOTICEBOARD_USER / NOTICEBOARD_DATABASE / NOTICEBOARD_PASSWORD (ครอบด้วย single quote)">The password file is <span class="path">/srv/noticeboard/db/noticeboard.env</span>, created at mode 600 <em>before</em> the secret goes in. Three lines inside: user, database, and the password in single quotes.</div>
+        </div></div>
+      </div>
+
+      <div class="phase p4">
+        <h3 class="phase-head" data-th="ช่วงที่ 4 · Backend">Phase 4 · The backend</h3>
+        <div class="phase-sub" data-th="จบช่วงนี้: API ตอบที่ port 3000 และเป็น service ที่รอด reboot">By the end: the API answers on port 3000 as a service that survives a reboot.</div>
+
+        <div class="wstep"><div class="wnum">16</div><div>
+          <div class="wcmd">curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+  | sudo gpg --dearmor -o /usr/share/keyrings/nodesource.gpg
+echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" \
+  | sudo tee /etc/apt/sources.list.d/nodesource.list
+sudo apt update &amp;&amp; sudo apt install nodejs -y
+node -v</div>
+          <div class="wwhy" data-th="รูปแบบเดียวกับ nginx เป๊ะ: กุญแจ → ไฟล์ repo → update → install ต้องได้ Node 24 เพราะของ Ubuntu เองเป็น v18 ที่หมดอายุไปแล้ว">Exactly the same shape as nginx: key → repo file → update → install. You need Node 24; Ubuntu's own package is the dead v18.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">17</div><div>
+          <div class="wcmd">cd /srv/noticeboard/backend
+npm ci</div>
+          <div class="wwhy" data-th="<code>npm ci</code> ไม่ใช่ <code>npm install</code> — ci ลงเวอร์ชันตรงตาม <span class='path'>package-lock.json</span> เป๊ะ ไม่เดาเวอร์ชันใหม่ให้">Use <code>npm ci</code>, not <code>npm install</code> — ci installs exactly what <span class="path">package-lock.json</span> records instead of quietly picking newer versions.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">18</div><div>
+          <div class="wcmd">install -m 600 .env.example .env
+micro /srv/noticeboard/backend/.env</div>
+          <div class="wwhy" data-th="ไฟล์ตั้งค่าแอปอยู่ที่ <span class='path'>/srv/noticeboard/backend/.env</span> ใส่ <code>DATABASE_URL</code> เป็น <code>mysql://noticeboard:รหัสผ่านที่ percent-encode แล้ว@127.0.0.1:3306/noticeboard</code> พร้อม STUDENT_ID, PORT=3000, HOST=0.0.0.0 — เขียนรหัสตรงตัว ห้ามใช้ <code>${VAR}</code> เพราะ systemd ไม่ขยายให้">The app's settings live at <span class="path">/srv/noticeboard/backend/.env</span>: <code>DATABASE_URL</code> with the <strong>percent-encoded</strong> password, plus STUDENT_ID, PORT=3000, HOST=0.0.0.0. Write the password literally — <code>${VAR}</code> is not expanded by systemd.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">19</div><div>
+          <div class="wcmd">npx prisma migrate deploy
+npx prisma generate</div>
+          <div class="wwhy" data-th="<code>migrate deploy</code> คือคำสั่งของคนติดตั้ง (เอา migration ที่มีอยู่ไปลง) ส่วน <code>migrate dev</code> เป็นของคนพัฒนาและจะพังตรง shadow database — ถูกแล้ว ห้ามแก้ด้วยการเพิ่มสิทธิ์">
+<code>migrate deploy</code> is the operator's command — it applies the migration that already ships. <code>migrate dev</code> is the developer's and will fail on the shadow database; that's correct, don't fix it by widening the grant.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">20</div><div>
+          <div class="wcmd">sudo micro /etc/systemd/system/noticeboard-api.service</div>
+          <div class="wwhy" data-th="unit file อยู่ที่ <span class='path'>/etc/systemd/system/noticeboard-api.service</span> ต้องมี <code>User=sysadmin</code> · <code>WorkingDirectory=/srv/noticeboard/backend</code> · <code>EnvironmentFile=/srv/noticeboard/backend/.env</code> · <code>ExecStart=/usr/bin/node server.js</code> (ตัว node ต้องเป็น path เต็ม) · <code>Restart=always</code> · <code>After=network-online.target mysql.service</code> · <code>WantedBy=multi-user.target</code>">Unit file at <span class="path">/etc/systemd/system/noticeboard-api.service</span> with <code>User=sysadmin</code> · <code>WorkingDirectory=/srv/noticeboard/backend</code> · <code>EnvironmentFile=/srv/noticeboard/backend/.env</code> · <code>ExecStart=/usr/bin/node server.js</code> (the interpreter needs its absolute path) · <code>Restart=always</code> · <code>After=network-online.target mysql.service</code> · <code>WantedBy=multi-user.target</code>.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">21</div><div>
+          <div class="wcmd">sudo systemctl daemon-reload
+sudo systemctl enable --now noticeboard-api
+sudo ufw allow 3000/tcp
+curl -s http://127.0.0.1:3000/api/health</div>
+          <div class="wwhy" data-th="ถ้าไม่ขึ้น ให้ดู <code>journalctl -u noticeboard-api -n 20</code> ก่อนเสมอ — 90% เป็น .env ผิดหรือ ExecStart ไม่ใช่ path เต็ม พอร์ต 3000 เปิดไว้ชั่วคราวเพื่อทดสอบเท่านั้น เดี๋ยวช่วงที่ 5 จะปิดคืน">If it won't start, read <code>journalctl -u noticeboard-api -n 20</code> first — it's almost always the .env or a non-absolute ExecStart. Port 3000 is open only temporarily; phase 5 closes it again.</div>
+        </div></div>
+      </div>
+
+      <div class="phase p5">
+        <h3 class="phase-head" data-th="ช่วงที่ 5 · รวมร่างแล้วปิดประตูส่วนเกิน">Phase 5 · Join them up, then shut the extra door</h3>
+        <div class="phase-sub" data-th="จบช่วงนี้: ทุกอย่างเข้าทางพอร์ต 80 ทางเดียว ไม่มี CORS และพอร์ต 3000 ถูกปิดคืน">By the end: everything arrives on port 80 alone, no CORS, and port 3000 is closed again.</div>
+
+        <div class="wstep"><div class="wnum">22</div><div>
+          <div class="wcmd">sudo micro /etc/nginx/conf.d/noticeboard.conf</div>
+          <div class="wwhy" data-th="เพิ่ม block นี้เข้าไปในไฟล์เดิม: <code>location /api/ { proxy_pass http://127.0.0.1:3000/; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; }</code> — ต้องมี proxy_set_header ไม่งั้น backend จะเห็น Host เป็น 127.0.0.1">Add to the same file: <code>location /api/ { proxy_pass http://127.0.0.1:3000/; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; }</code> — without the headers the backend only ever sees <code>Host: 127.0.0.1</code>.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">23</div><div>
+          <div class="wcmd">micro /var/www/noticeboard/config.js
+sudo nginx -t &amp;&amp; sudo systemctl reload nginx</div>
+          <div class="wwhy" data-th="เปลี่ยน <code>noticesUrl</code> ให้ชี้ที่ <code>/api/notices</code> เฉยๆ (path ล้วน ไม่ต้องมีชื่อโฮสต์กับพอร์ต) — พอเป็น origin เดียวกันแล้ว CORS ก็หายไปเอง ไม่ต้องตั้งค่าอะไรเพิ่ม">Change <code>noticesUrl</code> to just <code>/api/notices</code> — a bare path, no host and no port. Same origin now, so the CORS problem disappears instead of being configured around.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">24</div><div>
+          <div class="wcmd">sudo micro /srv/noticeboard/backend/.env
+sudo systemctl restart noticeboard-api
+sudo ufw delete allow 3000/tcp</div>
+          <div class="wwhy" data-th="แก้ <code>HOST</code> เป็น <code>127.0.0.1</code> ให้ backend ฟังเฉพาะในเครื่อง (nginx เรียกผ่าน loopback อยู่แล้ว) ต้อง <code>restart</code> ไม่ใช่ <code>reload</code> เพราะ EnvironmentFile อ่านตอน start เท่านั้น แล้วปิดพอร์ต 3000 ที่เปิดไว้ข้อ 21">Set <code>HOST</code> to <code>127.0.0.1</code> so the API only listens locally — nginx reaches it over loopback anyway. Use <code>restart</code>, not reload: EnvironmentFile is read only at start. Then close the port you opened in step 21.</div>
+        </div></div>
+      </div>
+
+      <div class="phase p6">
+        <h3 class="phase-head" data-th="ช่วงที่ 6 · พิสูจน์ว่า deploy สำเร็จจริง">Phase 6 · Prove it's actually deployed</h3>
+        <div class="phase-sub" data-th="ข้ามช่วงนี้ไม่ได้ — “ตอนนี้มันวิ่งอยู่” ไม่เท่ากับ “deploy แล้ว”">Do not skip this. "It's running right now" is not the same claim as "it's deployed".</div>
+
+        <div class="wstep"><div class="wnum">25</div><div>
+          <div class="wcmd">systemctl is-enabled nginx mysql noticeboard-api
+systemctl is-active  nginx mysql noticeboard-api
+sudo ufw status</div>
+          <div class="wwhy" data-th="ต้องได้ enabled/active ครบทั้งหกคำตอบ และใน ufw ต้องเหลือแค่ 22 กับ 80 — ถ้ายังเห็น 3000 หรือ 3306 แปลว่าเปิดทิ้งไว้">All six answers must come back enabled/active, and ufw should list only 22 and 80. Seeing 3000 or 3306 there means you left a door open.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">26</div><div>
+          <div class="wcmd">curl -s http://127.0.0.1/api/notices
+curl -s -X POST -H 'Content-Type: application/json' \
+  -d '{"author":"68xxxxxxxxx","message":"hello"}' http://127.0.0.1/api/notices</div>
+          <div class="wwhy" data-th="เรียกผ่าน <code>/api/</code> ของ nginx ไม่ใช่พอร์ต 3000 ตรงๆ — พิสูจน์ว่า reverse proxy ทำงาน และ POST ผ่าน API เท่านั้นที่นับว่า “เขียนข้อมูลได้จริง”">Go through nginx's <code>/api/</code>, not port 3000 directly — that's what proves the proxy works. And only a POST through the API counts as proof the app can write.</div>
+        </div></div>
+
+        <div class="wstep"><div class="wnum">27</div><div>
+          <div class="wcmd">sudo reboot</div>
+          <div class="wwhy" data-th="รอสักนาที ssh กลับเข้าไป แล้วทำข้อ 25 กับ 26 ซ้ำอีกรอบ ถ้ามีตัวไหนกลายเป็น inactive แปลว่าตัวนั้นไม่เคยถูก <code>enable</code> จริง — นี่คือข้อแตกต่างระหว่าง “รันอยู่” กับ “deploy แล้ว”">Wait a minute, ssh back in, and run steps 25 and 26 again. Anything that comes back inactive was never really enabled — that gap is the whole difference between running and deployed.</div>
+        </div></div>
+      </div>
+
     </div>
   </section>
 
