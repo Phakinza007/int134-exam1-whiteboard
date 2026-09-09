@@ -853,6 +853,87 @@
     <a class="cta-link" href="https://phakinza007.github.io/int134-exam1-whiteboard/sandbox.html" target="_blank" rel="noopener" data-th="🖥️ ฝึกพิมพ์คำสั่งพวกนี้จริงๆ ใน practice terminal →">🖥️ Try these commands for real in the practice terminal →</a>
   </div>
 
+  <!-- ================= DEPLOYMENT RECIPE ================= -->
+  <section class="band" style="margin-top:44px;">
+    <div class="band-head">
+      <span class="wk-pill">W1–5</span>
+      <h2 data-th="สูตรเดียว ห้าครั้ง — และทำไมต้องทำแต่ละขั้น">One Recipe, Five Times — and why each step matters</h2>
+      <span class="band-tag" data-th="ทุก service ที่แตะมาทั้งเทอม — nginx, MySQL, school-api — ผ่านแปดขั้นตอนเดียวกันหมด นี่คือทั้งหมดเรียงต่อกัน พร้อมเหตุผลของแต่ละขั้น">Every service you touched this term — nginx, MySQL, school-api — went through the same eight moves. Here they are end to end, with the reason for each.</span>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 1060 580" role="img" aria-label="An eight step deployment recipe repeated for every service across the course: install the package, place your own files and settings, test the config, daemon-reload and enable it, open only the firewall rule needed, verify from the inside out, add a reverse proxy once more than one service exists, then re-run the checklist. A feedback loop runs from testing back to placing files, and the flow wraps from step four to step five.">
+        <defs>
+          <marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <!-- column 1 boxes -->
+        <rect x="70" y="20" width="420" height="110" rx="9" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="280" y="48" text-anchor="middle" class="strong" font-size="13.5" data-th="1 · ติดตั้งแพ็กเกจ">1 · Install the package</text>
+        <text x="280" y="72" text-anchor="middle" class="lbl" data-th="อาจต้องเพิ่ม repo เอง">apt install (add the vendor repo first, if</text>
+        <text x="280" y="90" text-anchor="middle" class="lbl" data-th="ถ้าเวอร์ชันสำคัญ (เช่น nginx.org)">the version matters — e.g. nginx.org)</text>
+
+        <line x1="280" y1="130" x2="280" y2="148" stroke="currentColor" stroke-width="1.4" marker-end="url(#a6)"/>
+
+        <rect x="70" y="150" width="420" height="110" rx="9" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="280" y="178" text-anchor="middle" class="strong" font-size="13.5" data-th="2 · ใส่ไฟล์และค่าตั้งค่าของเรา">2 · Put your own files &amp; settings in place</text>
+        <text x="280" y="202" text-anchor="middle" class="lbl" data-th="rsync แอป เขียน .env/config.js เอง">rsync the app, write .env / config.js —</text>
+        <text x="280" y="220" text-anchor="middle" class="lbl" data-th="default ที่ติดมามีแค่ค่าทั่วไป">a fresh install only ships generic defaults</text>
+
+        <line x1="280" y1="260" x2="280" y2="278" stroke="currentColor" stroke-width="1.4" marker-end="url(#a6)"/>
+
+        <rect x="70" y="280" width="420" height="110" rx="9" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="280" y="308" text-anchor="middle" class="strong" font-size="13.5" data-th="3 · ทดสอบ config ก่อนใช้จริง">3 · Test the config before it goes live</text>
+        <text x="280" y="332" text-anchor="middle" class="lbl" data-th="nginx -t ก่อนเสมอ">nginx -t / prisma migrate diff — reload keeps</text>
+        <text x="280" y="350" text-anchor="middle" class="lbl" data-th="reload จะใช้ของเก่าถ้าของใหม่พัง">the OLD config running if the new one is broken</text>
+
+        <line x1="280" y1="390" x2="280" y2="408" stroke="currentColor" stroke-width="1.4" marker-end="url(#a6)"/>
+
+        <rect x="70" y="410" width="420" height="110" rx="9" fill="none" stroke="var(--green)" stroke-width="2"/>
+        <text x="280" y="438" text-anchor="middle" class="strong" font-size="13.5" fill="var(--green)" data-th="4 · daemon-reload แล้ว enable --now">4 · daemon-reload, then enable --now</text>
+        <text x="280" y="462" text-anchor="middle" class="lbl" data-th="enable กับ active คนละสวิตช์">enable (boot) and active (now) are two separate</text>
+        <text x="280" y="480" text-anchor="middle" class="lbl" data-th="reboot ต้องมีทั้งคู่">switches — a reboot needs both set correctly</text>
+
+        <!-- feedback loop: test fails -> fix files -->
+        <path d="M70,335 C20,335 20,205 70,205" fill="none" stroke="var(--rose)" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#a6)"/>
+        <text x="26" y="270" text-anchor="middle" class="lbl" fill="var(--rose)" transform="rotate(-90 26 270)" data-th="พัง → แก้ใหม่">fails → fix, retest</text>
+
+        <!-- column 2 boxes -->
+        <rect x="560" y="20" width="420" height="110" rx="9" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="770" y="48" text-anchor="middle" class="strong" font-size="13.5" data-th="5 · เปิด firewall เท่าที่ต้องใช้">5 · Open exactly the firewall rule you need</text>
+        <text x="770" y="72" text-anchor="middle" class="lbl" data-th="ค่าเริ่มต้นคือปิดหมด">default is deny-all — every open port is a</text>
+        <text x="770" y="90" text-anchor="middle" class="lbl" data-th="เปิดเท่าที่ใช้ ห้ามเปิด 3306">promise to keep watching — never open 3306</text>
+
+        <line x1="770" y1="130" x2="770" y2="148" stroke="currentColor" stroke-width="1.4" marker-end="url(#a6)"/>
+
+        <rect x="560" y="150" width="420" height="110" rx="9" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="770" y="178" text-anchor="middle" class="strong" font-size="13.5" data-th="6 · เช็คจากในสู่นอก">6 · Verify inside-out</text>
+        <text x="770" y="202" text-anchor="middle" class="lbl" data-th="process → listen → localhost → นอก">process → listening → localhost → outside —</text>
+        <text x="770" y="220" text-anchor="middle" class="lbl" data-th="รู้ว่าชั้นไหนพังจริง">this order says which layer is actually broken</text>
+
+        <line x1="770" y1="260" x2="770" y2="278" stroke="currentColor" stroke-width="1.4" marker-end="url(#a6)"/>
+
+        <rect x="560" y="280" width="420" height="110" rx="9" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <text x="770" y="308" text-anchor="middle" class="strong" font-size="13.5" data-th="7 · ทำ proxy เมื่อมี &gt;1 service">7 · Reverse-proxy once &gt;1 service exists</text>
+        <text x="770" y="332" text-anchor="middle" class="lbl" data-th="ที่อยู่เดียว ไม่มี CORS">one address for the outside world, no CORS —</text>
+        <text x="770" y="350" text-anchor="middle" class="lbl" data-th="ปิดพอร์ตทดสอบคืน">then close the port you opened just to test</text>
+
+        <line x1="770" y1="390" x2="770" y2="408" stroke="currentColor" stroke-width="1.4" marker-end="url(#a6)"/>
+
+        <rect x="560" y="410" width="420" height="110" rx="9" fill="none" stroke="var(--accent)" stroke-width="2"/>
+        <text x="770" y="438" text-anchor="middle" class="strong" font-size="13.5" fill="var(--accent)" data-th="8 · เช็ก checklist ใหม่ทุกครั้ง">8 · Re-run the checklist after every change</text>
+        <text x="770" y="462" text-anchor="middle" class="lbl" data-th="รันอยู่ ≠ deploy แล้ว">"it's running" is not "it's deployed" — only</text>
+        <text x="770" y="480" text-anchor="middle" class="lbl" data-th="เช็คเท่านั้นที่พิสูจน์ได้จริง">checking proves it survives a reboot and a crash</text>
+
+        <!-- wrap-around: step 4 -> step 5, routed outside both columns -->
+        <path d="M280,520 L280,552 L1022,552 L1022,75 L982,75" fill="none" stroke="var(--amber)" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#a6)"/>
+      </svg>
+      <figcaption data-th="ลูกศรที่วนจากขั้น 3 กลับไปขั้น 2 ไม่ใช่ความผิดพลาดในไดอะแกรม — มันคืองานจริง: ตั้งค่า ทดสอบ แก้ ทดสอบใหม่ ไปเรื่อยๆ จนกว่า nginx -t (หรือของเทียบเท่า) จะบอกว่าผ่าน">The loop back from step 3 to step 2 is not a mistake in the diagram — it's the actual job: configure, test, fix, test again, until <code>nginx -t</code> (or its equivalent) says yes.</figcaption>
+    </figure>
+  </section>
+
 </div>
 <div class="marker-tray">
   <span class="cap" style="background:#2b2b2b"></span>
