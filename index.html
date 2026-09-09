@@ -570,6 +570,8 @@
   .fbox-lg .lg-a{background:var(--green-soft); color:var(--green);}
   .fbox-lg .lg-c{background:var(--amber-soft); color:var(--amber);}
   .fbox-lg .lg-x{background:var(--surface-2); color:var(--ink-faint);}
+  .cors-fig{transform:none;}
+  .cors-fig svg{min-width:700px;}
 </style>
 
 <div class="board-frame">
@@ -2099,7 +2101,7 @@ curl -s http://127.0.0.1:3000/api/health</div>
     <div class="band-head">
       <span class="wk-pill">theory</span>
       <h2 data-th="สอบทฤษฎี — เอาจากสไลด์และสิ่งที่อาจารย์พูดเอง">Theory paper — from the slides, and from what the lecturer actually said</h2>
-      <span class="band-tag" data-th="ทุกข้อในหน้านี้มาจากสไลด์คาบ 1–5 หรือจากเสียงในคาบ ไม่ได้แต่งเอง · การ์ดเหลืองคือคำพูดของอาจารย์เรื่องข้อสอบโดยตรง">Everything below comes from the class 1–5 slides or from the recordings — none of it is invented. The yellow cards are the lecturer talking about the exam itself.</span>
+      <span class="band-tag" data-th="ทุกข้อในหน้านี้มาจากสไลด์คาบ 1–5 หรือจากเสียงในคาบ ไม่ได้แต่งเอง · การ์ดเหลืองคือคำพูดของอาจารย์เรื่องข้อสอบโดยตรง และใบสุดท้ายปักหมุดว่าขอบเขตจบที่ CORS">Everything below comes from the class 1–5 slides or from the recordings — none of it is invented. The yellow cards are the lecturer talking about the exam itself, and the last of them fixes where the scope ends: <b>CORS</b>.</span>
     </div>
 
     <div class="quote-strip">
@@ -2122,6 +2124,11 @@ curl -s http://127.0.0.1:3000/api/health</div>
         <b data-th="กับดักจากการถาม AI">The AI trap</b>
         <span class="said" data-th="&ldquo;เวลาไปเจอ AI แล้ว AI บอกให้ใช้วิธีนี้ ก็จะได้เอ๊ะ … มันคือ nginx บน Ubuntu ไม่ใช่ nginx แบบที่อาจารย์ให้ใช้&rdquo;">&ldquo;When an AI tells you to do it this way you should think — that's nginx on Ubuntu, not the nginx I told you to use.&rdquo;</span>
         <span class="means" data-th="แปลว่า: คำตอบยอดนิยมบนเน็ตคือ sites-available/sites-enabled ซึ่งผิดสำหรับวิชานี้ ข้อสอบน่าจะใช้จุดนี้แยกคนที่เข้าใจจริงออกจากคนที่ลอกมา">The popular internet answer is <code>sites-available/sites-enabled</code>, which is wrong for this course. Expect the paper to use that to separate understanding from copy-paste.</span>
+      </div>
+      <div class="qs">
+        <b data-th="ขอบเขตข้อสอบ">How far it goes</b>
+        <span class="said" data-th="&ldquo;เนื้อหา ข้อสอบทฤษฎี/ปฏิบัติ จะออกถึงเรื่อง CORS นะครับ&rdquo;">&ldquo;The content — theory paper and practical both — goes as far as CORS.&rdquo;</span>
+        <span class="means" data-th="แปลว่า: ขอบเขตคือคาบ 1 ถึง 5 และ CORS คือหัวข้อสุดท้ายที่อยู่ในนั้น ไม่ใช่หัวข้อที่แถมมาท้ายคาบ · ทั้งกลไกของมันและวิธีแก้สองแบบอยู่ในข่ายทั้งคู่ ส่วนที่เหลือของคาบ 5 อย่าง HTTPS กับ nested path อยู่นอกขอบเขต">So: classes 1 through 5, and CORS is the last thing inside that line rather than a footnote at the end of it. Both the mechanism and the two ways of fixing it are in scope. The rest of class 5 — HTTPS, the nested-path arrangement — is not.</span>
       </div>
     </div>
 
@@ -2296,6 +2303,135 @@ curl -s http://127.0.0.1:3000/api/health</div>
 
     </div>
 
+
+    <div class="sub-h" data-th="CORS — หัวข้อสุดท้ายในขอบเขต">CORS — the last topic inside the line</div>
+
+    <figure class="diagram cors-fig">
+      <svg viewBox="0 0 920 340" role="img" aria-label="The same API request made three ways: from a script in a page served by another origin, from curl on the VM, and from the browser's own address bar. All three reach the API and all three get 200 with the data. Only the first is discarded, by the browser, and the server's journal is identical in all three cases.">
+        <defs>
+          <marker id="ac" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <text x="118" y="24" text-anchor="middle" class="lbl strong" data-th="ใครเป็นคนถาม">who is asking</text>
+        <text x="452" y="24" text-anchor="middle" class="lbl strong" data-th="API ตอบว่าอะไร">what the API answers</text>
+        <text x="795" y="24" text-anchor="middle" class="lbl strong" data-th="คุณได้เห็นอะไร">what you get to see</text>
+
+        <!-- lane 1 -->
+        <rect x="16" y="42" width="205" height="56" rx="8" fill="none" stroke="var(--rose)" stroke-width="1.6"/>
+        <text x="118" y="64" text-anchor="middle" font-size="11.5" data-th="สคริปต์ในหน้าเว็บที่พอร์ต 80">a script in the page on :80</text>
+        <text x="118" y="80" text-anchor="middle" class="mono lbl">fetch("&hellip;:3000/api/notices")</text>
+        <line x1="221" y1="70" x2="328" y2="70" stroke="currentColor" marker-end="url(#ac)"/>
+        <rect x="330" y="42" width="245" height="56" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
+        <text x="452" y="64" text-anchor="middle" font-size="12" fill="var(--green)" class="strong">200 OK</text>
+        <text x="452" y="81" text-anchor="middle" class="mono lbl" data-th="พร้อมข้อมูลครบ">with the data, in full</text>
+        <line x1="575" y1="70" x2="668" y2="70" stroke="currentColor" marker-end="url(#ac)"/>
+        <rect x="670" y="36" width="234" height="68" rx="8" fill="var(--red-soft)" stroke="var(--red)"/>
+        <text x="787" y="58" text-anchor="middle" font-size="11.5" fill="var(--red)" class="strong" data-th="ไม่ได้เห็นเลย">nothing at all</text>
+        <text x="787" y="75" text-anchor="middle" font-size="10.5" data-th="เบราว์เซอร์รับมาแล้วทิ้ง">the browser took it and threw it away</text>
+        <text x="787" y="91" text-anchor="middle" font-size="10.5" data-th="เหลือแค่ข้อความใน Console">a Console message is all that is left</text>
+
+        <!-- lane 2 -->
+        <rect x="16" y="126" width="205" height="56" rx="8" fill="none" stroke="currentColor"/>
+        <text x="118" y="148" text-anchor="middle" font-size="11.5" data-th="curl บน VM">curl, on the VM</text>
+        <text x="118" y="164" text-anchor="middle" class="mono lbl">curl &hellip;:3000/api/notices</text>
+        <line x1="221" y1="154" x2="328" y2="154" stroke="currentColor" marker-end="url(#ac)"/>
+        <rect x="330" y="126" width="245" height="56" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
+        <text x="452" y="148" text-anchor="middle" font-size="12" fill="var(--green)" class="strong">200 OK</text>
+        <text x="452" y="165" text-anchor="middle" class="mono lbl" data-th="ข้อมูลชุดเดียวกันเป๊ะ">exactly the same data</text>
+        <line x1="575" y1="154" x2="668" y2="154" stroke="currentColor" marker-end="url(#ac)"/>
+        <rect x="670" y="126" width="234" height="56" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
+        <text x="787" y="148" text-anchor="middle" font-size="11.5" fill="var(--green)" class="strong" data-th="เห็นข้อมูลครบ">the data, printed</text>
+        <text x="787" y="165" text-anchor="middle" font-size="10.5" data-th="ไม่มีหน้าเว็บไหนเป็นคนถาม">no page was asking on anyone's behalf</text>
+
+        <!-- lane 3 -->
+        <rect x="16" y="210" width="205" height="56" rx="8" fill="none" stroke="currentColor"/>
+        <text x="118" y="232" text-anchor="middle" font-size="11.5" data-th="พิมพ์ URL ลงแถบที่อยู่">typed into the address bar</text>
+        <text x="118" y="248" text-anchor="middle" class="mono lbl" data-th="เบราว์เซอร์ตัวเดิม">the same browser</text>
+        <line x1="221" y1="238" x2="328" y2="238" stroke="currentColor" marker-end="url(#ac)"/>
+        <rect x="330" y="210" width="245" height="56" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
+        <text x="452" y="232" text-anchor="middle" font-size="12" fill="var(--green)" class="strong">200 OK</text>
+        <text x="452" y="249" text-anchor="middle" class="mono lbl" data-th="ข้อมูลชุดเดียวกันอีก">the same data again</text>
+        <line x1="575" y1="238" x2="668" y2="238" stroke="currentColor" marker-end="url(#ac)"/>
+        <rect x="670" y="210" width="234" height="56" rx="8" fill="var(--green-soft)" stroke="var(--green)"/>
+        <text x="787" y="232" text-anchor="middle" font-size="11.5" fill="var(--green)" class="strong" data-th="เห็นข้อมูลครบ">the data, on screen</text>
+        <text x="787" y="249" text-anchor="middle" font-size="10.5" data-th="หน้านี้ไม่ได้ถูกเสิร์ฟมาจากที่อื่น">this page came from nowhere else</text>
+
+        <!-- journal strip -->
+        <rect x="16" y="288" width="888" height="42" rx="8" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="30" y="305" font-size="10.5" class="strong" data-th="journal ของ API ทั้งสามกรณี:">the API's journal, all three times:</text>
+        <text x="205" y="305" class="mono" font-size="10.5" fill="var(--green)">GET /api/notices</text>
+        <text x="340" y="305" class="mono" font-size="10.5" fill="var(--green)">GET /api/notices</text>
+        <text x="475" y="305" class="mono" font-size="10.5" fill="var(--green)">GET /api/notices</text>
+        <text x="30" y="321" font-size="10.5" data-th="เหมือนกันทุกบรรทัด ไม่มีอะไรผิดพลาดที่ฝั่งเซิร์ฟเวอร์เลย">Identical. Nothing went wrong at the server, in any of the three.</text>
+      </svg>
+      <figcaption data-th="คำถามที่ Part 2 ของ lab 5 ตั้งไว้: &ldquo;การที่คำขอล้มเหลว ไม่ได้แปลว่าเซิร์ฟเวอร์ปฏิเสธ เซิร์ฟเวอร์ตอบไปแล้ว มีอย่างอื่นที่ตัดสินว่าคุณอ่านคำตอบนั้นไม่ได้&rdquo; — สิ่งเดียวที่ต่างกันในสามแถวนี้คือ<strong>ใครเป็นคนถาม</strong>">Part 2 of lab 5 states it outright: a request failing does not mean a server refused it. The server answered. Something else decided you could not read the answer. The only thing that differs across these three rows is <strong>who was asking</strong>.</figcaption>
+    </figure>
+
+    <div class="fact-grid">
+
+      <div class="fact r">
+        <h3 data-th="ใครเป็นคนปฏิเสธกันแน่">Who actually refuses</h3>
+        <p class="lede" data-th="ถ้าจำได้ข้อเดียวจากทั้งหัวข้อ ให้จำข้อนี้">If you remember one thing from the whole topic, this is it.</p>
+        <table class="ftab">
+          <tr><td data-th="เซิร์ฟเวอร์">the server</td><td data-th="ตอบ 200 พร้อมข้อมูลครบ ไม่ได้ปฏิเสธอะไรเลย และ log ของมันก็ไม่มีอะไรผิดปกติ">answered <code>200</code> with the data. It refused nothing, and its log shows nothing unusual</td></tr>
+          <tr><td data-th="เบราว์เซอร์">the browser</td><td data-th="รับคำตอบมาแล้ว มองหาสิทธิ์ที่จะยื่นให้หน้านั้น ไม่เจอ แล้วทิ้งคำตอบทิ้ง">fetched the answer, looked for permission to hand it to <em>that page</em>, found none, and threw it away</td></tr>
+          <tr><td data-th="เกิดตอนไหน">when</td><td data-th="หลังจากได้คำตอบที่สำเร็จแล้ว ไม่ใช่ก่อนส่งคำขอ">after a successful response — not before the request went out</td></tr>
+          <tr><td data-th="กับใคร">against whom</td><td data-th="เฉพาะหน้าที่ถามเท่านั้น คนอื่นที่ถาม URL เดียวกันไม่โดน">only the page that asked. Anyone else asking the same URL is unaffected</td></tr>
+        </table>
+        <div class="fnote" data-th="<b>ผลที่ตามมาที่ใช้ตอบข้อสอบได้เลย</b> การเห็น 200 พร้อม body ครบใน Network tab แต่หน้าเว็บว่างเปล่า ไม่ใช่ความขัดแย้ง มันคือลายเซ็นของ CORS · และมันคือเหตุผลที่ curl ทำซ้ำอาการนี้ไม่ได้เลย"><b>The consequence you can answer with.</b> Seeing <code>200</code> with a full body in the Network tab while the page shows nothing is not a contradiction — it is the signature of CORS. It is also why <code>curl</code> cannot reproduce the failure at all.</div>
+      </div>
+
+      <div class="fact v">
+        <h3 data-th="ถาม URL เดียวกันสี่ทาง">The same URL, asked four ways</h3>
+        <p class="lede" data-th="lab 5 ให้ไล่ดูสี่จุดนี้ตามลำดับ เพราะแต่ละจุดตัดความเป็นไปได้ออกไปหนึ่งข้อ">Lab 5 walks these in order, because each one rules something out.</p>
+        <table class="ftab">
+          <tr><td data-th="Console">Console</td><td data-th="บอกว่าทำไมเบราว์เซอร์ถึงหยุดมัน — อ่านให้จบ ไม่ใช่แค่บรรทัดแรก มันบอกสองที่อยู่และชื่อ header ที่หาไม่เจอ">says why the browser stopped it. Read the whole message, not the first line: it names two addresses and the header it could not find</td></tr>
+          <tr><td data-th="Network">Network</td><td data-th="บอกว่าคำขอถูกส่งออกไปจริงไหม และอะไรกลับมา — คำตอบคือส่งไปจริง และ 200 กลับมาจริง">says whether the request was made at all, and what came back. It was, and 200 did</td></tr>
+          <tr><td>curl</td><td data-th="ได้ข้อมูล เพราะไม่มีหน้าเว็บไหนเป็นคนถาม ถ้าใช้ curl ไล่ปัญหา CORS แปลว่ากำลังทดสอบผิดเรื่อง">gets the data, because no page is asking on anyone's behalf. Debugging CORS with curl is testing the wrong thing</td></tr>
+          <tr><td data-th="แถบที่อยู่">address bar</td><td data-th="ได้ข้อมูล เบราว์เซอร์ตัวเดิม URL เดิม สิ่งที่ต่างคือคราวนี้ไม่มีหน้าจากที่อื่นเป็นคนขอ">gets the data. Same browser, same URL — this time no page from elsewhere is doing the asking</td></tr>
+        </table>
+        <div class="fnote" data-th="ระวังตอนทดสอบ: ต้องใช้ <b>ที่อยู่เดียวกับที่หน้าเว็บเรียก</b> ไม่ใช่ 127.0.0.1 ไม่งั้นเปลี่ยนสองอย่างพร้อมกันแล้วผลลัพธ์ไม่ได้พิสูจน์อะไร">When you test, ask for <b>the same address the page asked for</b>, not the loopback — otherwise you changed two things at once and the result proves nothing.</div>
+      </div>
+
+      <div class="fact a">
+        <h3 data-th="อะไรทำให้เป็นคนละ origin">What makes two URLs different origins</h3>
+        <p class="lede" data-th="scheme + host + port ต้องตรงครบทั้งสาม ตัวอย่างเทียบกับหน้าเว็บที่ http://lvm68xxx.sit.kmutt.ac.th">Scheme, host and port — all three must match. Compared against a page served from <code>http://lvm68xxx.sit.kmutt.ac.th</code>.</p>
+        <table class="ftab">
+          <tr><td>&hellip;:3000</td><td data-th="คนละ origin — พอร์ตต่างกัน นี่คือกรณีของเราทั้งคาบ">different — the port. This is our case all class</td></tr>
+          <tr><td>https://&hellip;</td><td data-th="คนละ origin — scheme ต่างกัน">different — the scheme</td></tr>
+          <tr><td>http://lvm68xxx</td><td data-th="คนละ origin — host ต่างกัน แม้จะเป็นเครื่องเดียวกันแท้ๆ ก็ตาม">different — the host, even though it is literally the same machine</td></tr>
+          <tr><td>http://127.0.0.1</td><td data-th="คนละ origin — host ต่างกันอีกเหมือนกัน">different — the host again</td></tr>
+          <tr><td>&hellip;/api/notices</td><td data-th="origin เดียวกัน — path ไม่ได้เป็นส่วนหนึ่งของ origin"><b>same</b> — a path is not part of an origin</td></tr>
+        </table>
+        <div class="fnote" data-th="<b>แถวสุดท้ายคือทั้งหมดของ reverse proxy</b> เพราะ path ไม่นับเป็น origin การย้าย API มาอยู่ใต้ /api/ ของที่อยู่เดิมจึงลบ origin ที่สองทิ้งไปเลย ไม่ใช่การตั้งค่าให้มันผ่าน"><b>That last row is the whole of the reverse proxy.</b> Because a path is not part of an origin, moving the API under <code>/api/</code> of the address you already have deletes the second origin rather than configuring around it.</div>
+      </div>
+
+      <div class="fact">
+        <h3 data-th="header ที่หาไม่เจอ และค่าที่ไปตั้ง">The missing header, and the setting</h3>
+        <table class="ftab">
+          <tr><td>Access-Control-<br>Allow-Origin</td><td data-th="header ที่เบราว์เซอร์มองหาแล้วไม่เจอในคำตอบ ชื่อนี้ปรากฏอยู่ในข้อความ Console ด้วย">the header the browser looks for in the reply and does not find. Its name is in the Console message too</td></tr>
+          <tr><td>CORS_ORIGIN</td><td data-th="อยู่ใน .env ของ backend ตั้งเป็นที่อยู่ที่หน้าเว็บถูกเสิร์ฟมา ครบ scheme host port">lives in the backend's <code>.env</code>. Set it to the address the page is served from — scheme, host and port</td></tr>
+          <tr><td data-th="เทียบแบบสตริง">string compare</td><td data-th="เทียบตรงตัว มีสแลชท้ายก็ไม่ตรง ขาดพอร์ตก็ไม่ตรง ค่าที่เกือบถูกจะพังในแบบที่ดูเหมือนโค้ดเสีย">compared literally. A trailing slash does not match; the host without the port does not match. A nearly-right value fails in a way that looks like broken code</td></tr>
+          <tr><td>restart</td><td data-th="ไม่ใช่ reload เพราะ EnvironmentFile ถูกอ่านครั้งเดียวตอน process เริ่ม">not reload — an environment file is read once, when the process starts</td></tr>
+          <tr><td data-th="บรรทัดใน journal">the journal line</td><td data-th="แอปพิมพ์บอกตอนขึ้นว่า cors: allowing ตามด้วยที่อยู่ หรือ cors: disabled (CORS_ORIGIN is not set) — อ่านบรรทัดนี้ก่อนไปทำอย่างอื่น">the app says on startup: <code>cors: allowing &hellip;</code> or <code>cors: disabled (CORS_ORIGIN is not set)</code>. Read it before you go on</td></tr>
+        </table>
+        <div class="fnote" data-th="รูปแบบเดียวกับบทเรียน percent-encoding ในคาบ 4 เป๊ะ: ค่าที่ผิดนิดเดียวไม่ได้ฟ้องว่าผิด มันแค่ไม่ทำงาน แล้วส่งเราไปไล่หาที่อื่น">Exactly the shape of class 4's percent-encoding lesson: a value that is very nearly right does not announce itself as wrong, it simply does not work, and it sends you looking somewhere else.</div>
+      </div>
+
+      <div class="fact g">
+        <h3 data-th="สองวิธีแก้ และทำไมวิชานี้เลือกวิธีที่สอง">Two fixes, and why the course prefers the second</h3>
+        <table class="ftab">
+          <tr><td data-th="ตั้ง CORS_ORIGIN">set CORS_ORIGIN</td><td data-th="ใช้ได้จริง แต่ตอนนี้ config ของ API ถือที่อยู่ของหน้าเว็บไว้ ย้ายพอร์ตหน้าเว็บเมื่อไหร่ ต้องไปแก้ .env ของ API แล้ว restart ตามด้วย — มีสองที่ต้องคอยให้ตรงกัน">it works. But the API's configuration now holds the page's address: move the page's port and you must edit the API's <code>.env</code> and restart it too. Two things to keep in step</td></tr>
+          <tr><td data-th="reverse proxy">reverse proxy</td><td data-th="ลบ origin ที่สองทิ้งไปเลย ไม่มีอะไรต้องตั้งค่า ไม่มีอะไรต้องคอยให้ตรงกัน และยังปิดพอร์ตส่วนเกินได้ด้วย">removes the second origin. Nothing to configure, nothing to keep in step, and it lets you close the extra port as well</td></tr>
+          <tr><td data-th="lab 5 ตรวจว่า">lab 5 asks</td><td data-th="ตั้ง origin ของ API ไว้แล้ว หรือ proxy จาก Part 4 ทำให้ไม่จำเป็นไปแล้ว — รับทั้งสองทาง">the API's origin rule is set — <em>or</em> the proxy has made it unnecessary. Either answer passes</td></tr>
+        </table>
+        <div class="fnote" data-th="คำถามที่ lab ตั้งไว้ตรงนี้คือ &ldquo;สมมติพรุ่งนี้ต้องย้ายหน้าเว็บไปพอร์ตอื่น ต้องตามแก้อะไรอีกบ้าง และแต่ละอันอยู่ที่ไหน&rdquo; · ไม่มีอะไรผิดในวิธีแรก มันแค่มีของให้ดูแลมากกว่าที่จำเป็น — และนั่นคือคำตอบที่ข้อสอบอยากได้">The lab's own question at this point: suppose you had to move the page to a different port tomorrow — what else would you have to change, and where does each of those live? Nothing in the first fix is wrong; there is simply more of it than there needs to be. That is the answer the paper is after.</div>
+      </div>
+
+    </div>
+
     <div class="sub-h" data-th="ข้อที่คนพลาดบ่อย — จากที่อาจารย์พูดในคาบ">The ones people actually get wrong — said out loud in class</div>
 
     <div class="traps">
@@ -2330,6 +2466,18 @@ curl -s http://127.0.0.1:3000/api/health</div>
       <div class="trap">
         <b data-th="ลบกฎพอร์ต 22 ใน ufw">Deleting the ufw rule for 22</b>
         <span data-th="นี่คือจุดจบของ VM ในคาบสอบ ไม่มีใครกู้ให้ได้ทันเวลา ก่อนกด ufw delete ให้อ่านหมายเลขซ้ำอีกรอบเสมอ">In an exam this ends your VM, and nobody can restore it in time. Re-read the number before every <code>ufw delete</code>.</span>
+      </div>
+      <div class="trap">
+        <b data-th="ไล่ปัญหา CORS ด้วย curl">Debugging CORS with curl</b>
+        <span data-th="curl จะได้ข้อมูลเสมอ เพราะไม่มีหน้าเว็บไหนเป็นคนถาม ถ้ามันใช้ได้แล้วสรุปว่า API ปกติดี ก็จะไปไล่หาปัญหาผิดที่ทั้งวัน · CORS ทำซ้ำได้ในเบราว์เซอร์เท่านั้น และดูที่ Console"><code>curl</code> always gets the data, because no page is asking on its behalf. Concluding from that that the API is fine sends you hunting in the wrong place all afternoon. CORS is only reproducible in a browser, and only visible in the Console.</span>
+      </div>
+      <div class="trap">
+        <b data-th="สแลชท้ายใน CORS_ORIGIN">A trailing slash in CORS_ORIGIN</b>
+        <span data-th="ค่านี้ถูกเทียบแบบสตริงตรงตัวกับ origin ที่เบราว์เซอร์ส่งมา ลงท้ายด้วยสแลชก็ไม่ตรง ลืมใส่พอร์ตก็ไม่ตรง และไม่มีอะไรฟ้องว่าผิด หน้าเว็บก็แค่ยังว่างเหมือนเดิม">The value is compared literally against the origin the browser sends. Ending it with a slash does not match; leaving the port off does not match. Nothing reports an error — the page simply stays as empty as before.</span>
+      </div>
+      <div class="trap">
+        <b data-th="reload แทน restart หลังแก้ .env">reload instead of restart after editing .env</b>
+        <span data-th="environment file ถูกอ่านครั้งเดียวตอน process เริ่ม reload อ่าน unit ใหม่แต่ไม่ได้อ่านไฟล์นั้นใหม่ · เป็นสาเหตุอันดับหนึ่งที่การแก้ .env ดูเหมือนไม่มีผล และแก้ได้ด้วยการอ่าน journal ตอนมันขึ้น">An environment file is read once, when the process starts; a reload re-reads the unit but not that file. It is the commonest reason a change to <code>.env</code> appears to do nothing — and reading the journal as the service comes up catches it immediately.</span>
       </div>
     </div>
 
@@ -2391,6 +2539,26 @@ curl -s http://127.0.0.1:3000/api/health</div>
 
       <details class="q"><summary data-th="โจทย์บอกว่า &ldquo;ต้องกลับมาทำงานเองหลังเครื่อง reboot&rdquo; ต้องทำอะไร">A question says &ldquo;it must come back by itself after a reboot&rdquo;. What does it want?</summary>
         <div class="qa"><span class="ans" data-th="unit file บวก systemctl enable แล้วจึง reboot เพื่อพิสูจน์">A unit file plus <code>systemctl enable</code> — then a reboot to prove it.</span><span data-th="นี่คือรูปแบบโจทย์ที่อาจารย์บอกเองว่าข้อสอบจะเขียนแบบนี้ คือบอกผลลัพธ์แต่ไม่บอกคำสั่ง · &ldquo;อยู่รอดหลัง logout&rdquo; ตอบ nohup ได้ · แต่ &ldquo;อยู่รอดหลัง reboot&rdquo; หรือ &ldquo;ล้มแล้วขึ้นเอง&rdquo; nohup ทำไม่ได้ ต้องเป็น unit file เท่านั้น และเป็น Restart กับ WantedBy ที่ทำให้เกิดขึ้น">This is the wording he described: it names the outcome, not the command. &ldquo;Survives a logout&rdquo; can be <code>nohup</code>. &ldquo;Survives a reboot&rdquo; or &ldquo;restarts itself when it crashes&rdquo; cannot — only a unit file, and it is <code>Restart=</code> and <code>WantedBy=</code> that do it.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="หน้าเว็บเรียก API ไม่ได้ แต่ curl บน VM เรียกที่อยู่เดียวกันได้ บอกอะไรเรา">The page cannot reach the API, but <code>curl</code> on the VM reaches the same address fine. What does that tell you?</summary>
+        <div class="qa"><span class="ans" data-th="API ปกติ เครือข่ายปกติ — สิ่งที่ต่างคือใครเป็นคนถาม">The API is fine and so is the network. What differs is who was asking.</span><span data-th="curl ไม่ได้ถามแทนหน้าเว็บไหน จึงไม่มีใครต้องถูกหวงคำตอบ · ลองพิมพ์ URL เดิมลงแถบที่อยู่ก็จะได้ข้อมูลเหมือนกัน ซึ่งตัดเรื่อง API เครือข่าย และตัวเบราว์เซอร์ออกไปหมด เหลือข้อเดียวคือคำขอนั้นมาจากสคริปต์ในหน้าที่ถูกเสิร์ฟมาจาก origin อื่น"><code>curl</code> is not asking on behalf of any page, so there is nobody to withhold the answer from. Typing the same URL into the address bar gets the data too, which rules out the API, the network and the browser itself — leaving only that the request came from a script in a page served by another origin.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="Network tab เห็น 200 พร้อม JSON ครบ แต่หน้าเว็บว่างเปล่า ปัญหาอยู่ที่ไหน">The Network tab shows <code>200</code> with the full JSON body, but the page renders nothing. Where is the problem?</summary>
+        <div class="qa"><span class="ans" data-th="อยู่ที่เบราว์เซอร์ หลังจากคำตอบมาถึงแล้ว ไม่ได้อยู่ที่เซิร์ฟเวอร์เลย">In the browser, after the response arrived. Not at the server at all.</span><span data-th="เบราว์เซอร์ดึงคำตอบมาแล้ว มองหา Access-Control-Allow-Origin ในหัวคำตอบ ไม่เจอ เลยไม่ยอมส่งต่อให้สคริปต์ · นี่ไม่ใช่ความขัดแย้ง มันคือลายเซ็นของ CORS และเป็นเหตุผลที่ log ของเซิร์ฟเวอร์ดูปกติทุกประการ">The browser fetched the response, looked for <code>Access-Control-Allow-Origin</code> among its headers, did not find one, and refused to hand it to the script. That is not a contradiction — it is the signature of CORS, and it is why the server's log looks entirely normal.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="หน้าเว็บอยู่พอร์ต 80 API อยู่พอร์ต 3000 ชื่อโฮสต์เดียวกัน เครื่องเดียวกัน เป็น origin เดียวกันไหม">The page is on :80 and the API on :3000, same hostname, same machine. Same origin?</summary>
+        <div class="qa"><span class="ans" data-th="ไม่ใช่ พอร์ตต่างกันคือคนละ origin">No. A different port is a different origin.</span><span data-th="origin คือ scheme + host + port และต้องตรงครบทั้งสาม การอยู่บนเครื่องเดียวกันไม่เกี่ยวเลย · แต่ path ไม่ได้เป็นส่วนหนึ่งของ origin ดังนั้น /api/notices บนพอร์ต 80 เดิมจึงเป็น origin เดียวกัน และนั่นคือเหตุผลทั้งหมดที่ reverse proxy ใช้ได้">An origin is scheme + host + port, and all three must match; being on the same machine is irrelevant. A path, however, is <em>not</em> part of an origin — so <code>/api/notices</code> on that same port 80 <em>is</em> the same origin, and that is the entire reason a reverse proxy works.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="ตั้ง CORS_ORIGIN แล้ว restart แล้ว แต่หน้าเว็บยังว่าง ตรวจอะไรก่อน">You set CORS_ORIGIN, restarted, and the page is still empty. What do you check first?</summary>
+        <div class="qa"><span class="ans" data-th="บรรทัด cors: ใน journal ตอน service เริ่ม แล้วค่อยดูว่าค่าตรงตัวอักษรกับที่ Console บอกไหม">The <code>cors:</code> line in the journal as the service came up — then whether the value matches character for character.</span><span data-th="แอปพิมพ์ cors: allowing ตามด้วยที่อยู่ หรือ cors: disabled (CORS_ORIGIN is not set) ตอนขึ้น ถ้าเห็น disabled แปลว่ามันไม่ได้อ่านค่าที่เราตั้ง · ถ้าเห็น allowing แล้วยังไม่ผ่าน ให้เทียบทีละตัวอักษรกับที่อยู่ที่ Console พิมพ์ไว้ — สแลชท้ายเกินมา หรือลืมพอร์ต คือสองอันที่เจอบ่อยที่สุด และไม่มีอะไรฟ้องเลย">The app prints <code>cors: allowing …</code> or <code>cors: disabled (CORS_ORIGIN is not set)</code> on startup. <em>disabled</em> means it never read your value — did you reload instead of restart? <em>allowing</em> and still failing means comparing it character by character with the address the Console printed: a stray trailing slash and a missing port are the two usual culprits, and neither announces itself.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="ถ้าใช้ reverse proxy แล้ว ทำไม CORS_ORIGIN ถึงไม่จำเป็นอีกต่อไป">With a reverse proxy in place, why is CORS_ORIGIN no longer needed?</summary>
+        <div class="qa"><span class="ans" data-th="เพราะไม่เหลือคำขอข้าม origin ให้ต้องอนุญาตแล้ว">Because there is no cross-origin request left to permit.</span><span data-th="CORS_ORIGIN เป็นวิธีขออนุญาตข้าม<em>ขอบ</em> ส่วน proxy เป็นการเอาขอบนั้นออกไปเลย · หน้าเว็บเรียก /api/notices บน origin เดียวกับที่มันถูกเสิร์ฟมา เบราว์เซอร์จึงไม่มีเหตุให้ต้องตรวจอะไร · ข้อดีที่ตามมาคือไม่มีค่าที่ต้องคอยให้ตรงกันสองที่ และปิดพอร์ต 3000 ได้ ซึ่งเป็นสิ่งที่ lab 5 ตรวจจริง"><code>CORS_ORIGIN</code> is a way of asking permission to cross a boundary; the proxy removes the boundary. The page asks <code>/api/notices</code> on the very origin it was served from, so the browser has nothing to check. The knock-on benefits are that no value has to be kept in step in two places, and that port 3000 can be closed — which is what lab 5 actually tests.</span></div>
       </details>
 
     </div>
