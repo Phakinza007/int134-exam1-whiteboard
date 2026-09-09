@@ -1313,9 +1313,9 @@ nginx -v</div>
 Get:5 http://nginx.org/packages/ubuntu noble/nginx amd64 Packages [10.8 kB]
 Fetched 14.4 kB in 1s (11.2 kB/s)
 ...
-Setting up nginx (<u>1.30.1-1~noble</u>) ...
+Setting up nginx (<u>1.30.4-1~noble</u>) ...
 <b>sysadmin@lvm68xxx:~$</b> nginx -v
-<u>nginx version: nginx/1.30.1</u></pre>
+<u>nginx version: nginx/1.30.4</u></pre>
             <div class="wok-note" data-th="เวอร์ชันคือเหตุผลทั้งหมดของข้อ 2–4 · ได้ 1.30.x แปลว่า repo ของ nginx.org ติดแล้ว · ได้ 1.24.x แปลว่าไม่ติด และกำลังจะเสียเวลาเป็นชั่วโมงตามหา sites-enabled ที่ไม่มีวันมี">The version is the whole point of steps 2–4. <b>1.30.x</b> means the nginx.org repo took. <b>1.24.x</b> means it didn't, and you are about to spend an hour looking for a <code>sites-enabled</code> that will never exist.</div>
           </div>
         </div></div>
@@ -1377,7 +1377,7 @@ find /srv/noticeboard -perm -u+w -exec chmod g+w {} +</div>
 total 16
 drwxrw<u>s</u>r-x 4 sysadmin sysadmin 4096 Sep  9 09:22 backend
 drwxrw<u>s</u>r-x 3 sysadmin sysadmin 4096 Sep  9 09:22 frontend
--rw-rw-r-- 1 sysadmin sysadmin 1204 Aug 19 14:00 README.md</pre>
+-rw-rw-r-- 1 sysadmin sysadmin 1556 Aug 19 23:22 README.md</pre>
             <div class="wok-note" data-th="ให้มองหาตัว s ในตำแหน่งที่ควรเป็น x ของกลุ่ม นั่นคือ setgid หรือเลข 2 ใน 2775 และเป็นอักขระตัวเดียวที่พิสูจน์ว่าข้อ 7 สำเร็จ · ถ้าเห็นเป็น drwxrwxr-x เฉยๆ แปลว่า tar รันด้วย sudo แล้วทับสิทธิ์ที่เพิ่งตั้งไป">Look for the <b>s</b> where the group's <code>x</code> should be — that is setgid, the 2 in 2775, and it is the single character that proves step 7 worked. A plain <code>drwxrwxr-x</code> means the <code>tar</code> ran with sudo and flattened what you set.</div>
           </div>
           <details class="anat">
@@ -1482,7 +1482,7 @@ micro /var/www/noticeboard/config.js</div>
 }</pre>
             <ul class="fbox-n">
               <li data-th="<b>อย่าเขียนขึ้นมาเองจากศูนย์</b> ไฟล์ /etc/nginx/conf.d/default.conf มากับแพ็กเกจและเป็น server block ที่ใช้งานได้จริง เปิดอ่าน ก็อปมาแก้ · การเอา config ของคนอื่นมาปรับคืองานส่วนใหญ่ของอาชีพนี้ และเป็นสิ่งที่ข้อสอบให้ทำ"><b>Don't write this from nothing.</b> <code>/etc/nginx/conf.d/default.conf</code> came with the package and is a working server block — open it, read it, copy it, edit it. Adapting somebody else's configuration is most of this job, and it is what the exam asks you to do.</li>
-              <li data-th="<b>บนพอร์ต 80 มี default_server ได้แค่บล็อกเดียว</b> ไฟล์ default.conf ของแพ็กเกจจองไว้อยู่แล้ว ต้องเอาออกจากไฟล์นั้นก่อน ไม่งั้น nginx ไม่ยอมโหลดและ nginx -t จะบอกว่ามี default server ซ้ำ · ที่ต้องเป็น default เพราะ checker จะยิงด้วยชื่อโฮสต์ที่มันสุ่มขึ้นมาตอนรัน การเป็น default ทำให้ผ่านทุกชื่อในคราวเดียว"><b>Only one block on port 80 may be <code>default_server</code>.</b> The package's <code>default.conf</code> already claims it — take it out of that file first, or nginx refuses to load and <code>nginx -t</code> tells you a duplicate default server exists. You want the default because the checker probes with a hostname it invents while it runs: being the default passes every name at once.</li>
+              <li data-th="<b>บนพอร์ต 80 มี default_server ได้แค่บล็อกเดียว</b> ไฟล์ default.conf ของแพ็กเกจขวางอยู่ และ lab03 ตรวจว่ามันต้อง <b>ถูกปลดจากการใช้งานแต่ยังอยู่บนเครื่อง</b> ดังนั้นให้เปลี่ยนชื่อ ไม่ใช่ลบทิ้งหรือรื้อข้างใน: sudo mv default.conf default.conf.disabled · เพราะอ่านเฉพาะไฟล์ที่ลงท้าย .conf การเปลี่ยนชื่อจึงเป็นสวิตช์ปิดในตัวมันเอง · ที่เราต้องเป็น default เองเพราะ checker จะยิงด้วยชื่อโฮสต์ที่มันสุ่มขึ้นตอนรัน การเป็น default ทำให้ผ่านทุกชื่อในคราวเดียว"><b>Only one block on port 80 may be <code>default_server</code>.</b> The package's <code>default.conf</code> is in the way, and lab03 checks for it being <b>out of service and still on the machine</b> — so rename it rather than deleting or gutting it: <code>sudo mv default.conf default.conf.disabled</code>. Only <code>*.conf</code> is read, so the rename <em>is</em> the off switch. You want the default yourself because the checker probes with a hostname it invents while it runs, and being the default passes every name at once.</li>
               <li data-th="<b>สองบรรทัด log รับอาร์กิวเมนต์ตัวที่สองคนละแบบ</b> access_log รับ format ชื่อ main ซึ่งนิยามไว้ใน nginx.conf ลองเปิดไปอ่าน · error_log รับ level เช่น warn หรือ notice คือเรื่องต้องแย่แค่ไหนถึงจะถูกบันทึก · สลับกันคือความผิดพลาดแรกที่คนทำกันประจำ และ nginx -t จะฟ้อง"><b>The two log lines do not take the same second argument.</b> <code>access_log</code> takes a <em>format</em> — <code>main</code>, which is defined in <code>nginx.conf</code>; go and read it. <code>error_log</code> takes a <em>level</em>, like <code>warn</code> or <code>notice</code>: how bad a thing has to be before it gets written down. Swapping them is the usual first mistake, and <code>nginx -t</code> will say so.</li>
               <li data-th="<b>ไฟล์ log ต้องอยู่ใน /var/log/nginx/ ตรงๆ และลงท้ายด้วย .log</b> ไม่ใช่เรื่องความเป็นระเบียบ แต่ /etc/logrotate.d/nginx หมุนไฟล์ตามแพตเทิร์น /var/log/nginx/ดอกจันจุด log ซึ่งไม่มองเข้าไปในโฟลเดอร์ย่อยและไม่ตรงกับชื่ออื่น · log ที่ไม่มีใครหมุนจะโตจนดิสก์เต็ม และดิสก์เต็มทำให้ทุก service บนเครื่องล่ม ไม่ใช่แค่ตัวนี้"><b>Logs go directly in <code>/var/log/nginx/</code> and must end in <code>.log</code>.</b> Not tidiness: <code>/etc/logrotate.d/nginx</code> rotates <code>/var/log/nginx/*.log</code>, a pattern that does not look inside subdirectories and does not match any other name. A log nothing rotates grows until it fills the disk, and a full disk takes down every service on the machine, not just this one.</li>
               <li data-th="try_files $uri $uri/ =404 แปลว่า: เอาไฟล์ถ้ามี ถ้าไม่มีลองเป็นโฟลเดอร์แล้วหา index ถ้ายังไม่มีให้ตอบตรงๆ ว่าไม่มี · ถ้าไม่ใส่ ไฟล์ที่หายไปจะให้ผลลัพธ์ที่ซื่อสัตย์น้อยกว่านั้น"><code>try_files $uri $uri/ =404</code> says: the file if it exists, then the directory index, and otherwise say plainly that there is nothing there. Without it a missing file produces something less honest.</li>
@@ -1546,7 +1546,7 @@ systemctl is-enabled mysql ; systemctl is-active mysql</div>
           <div class="wwhy" data-th="อันนี้ต่างจาก nginx — MySQL เปิดและ enable ให้เองตั้งแต่ติดตั้งเสร็จ ไม่ต้องสั่ง start">Unlike nginx, MySQL enables and starts itself on install. You don't run <code>enable --now</code> here.</div>
           <div class="wok">
             <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
-            <pre>Setting up mysql-server (8.0.43-0ubuntu0.24.04.1) ...
+            <pre>Setting up mysql-server (8.0.46-0ubuntu0.24.04.3) ...
 <b>sysadmin@lvm68xxx:~$</b> systemctl is-enabled mysql ; systemctl is-active mysql
 <u>enabled</u>
 <u>active</u></pre>
@@ -1561,7 +1561,7 @@ systemctl is-enabled mysql ; systemctl is-active mysql</div>
             <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
             <pre>Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 8
-Server version: 8.0.43-0ubuntu0.24.04.1 (Ubuntu)
+Server version: 8.0.46-0ubuntu0.24.04.3 (Ubuntu)
 <b>mysql&gt;</b></pre>
             <div class="wok-note" data-th="เข้าได้โดยไม่ต้องพิมพ์รหัสผ่านเลย · ลองแบบที่คิดว่าน่าจะถูกดูแล้วจะเห็นมันพัง: mysql -u root -p จะได้ ERROR 1045 (28000) Access denied · ไม่มีอะไรเสีย บัญชีนั้นยืนยันตัวตนด้วย auth_socket คือดูว่าเราเป็นใครบนเครื่อง ไม่ได้ดูว่าเรารู้อะไร">You are in without ever typing a password. Now try it the way you expect to and watch it fail: <code>mysql -u root -p</code> gives <b>ERROR 1045 (28000): Access denied</b>. Nothing is broken — that account authenticates by <code>auth_socket</code>, meaning it checks who you are on the machine, not what you know.</div>
           </div>
@@ -1577,11 +1577,11 @@ exit</div>
             <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
             <pre>Query OK, 1 row affected (0.01 sec)
 
-+--------------+---------------+----------------------+
-| user         | host          | generated password   |
-+--------------+---------------+----------------------+
-| noticeboard  | localhost     | <u>}Kq3!vX8sN/wQ2rT-mZ4</u> |
-+--------------+---------------+----------------------+
++-------------+-----------+----------------------+-------------+
+| user        | host      | generated password   | auth_factor |
++-------------+-----------+----------------------+-------------+
+| noticeboard | localhost | <u>}Kq3!vX8sN/wQ2rT-mZ4</u> |           1 |
++-------------+-----------+----------------------+-------------+
 1 row in set (0.00 sec)
 
 Query OK, 0 rows affected (0.01 sec)</pre>
@@ -1629,13 +1629,14 @@ echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.
   | sudo tee /etc/apt/sources.list.d/nodesource.list
 sudo apt update &amp;&amp; sudo apt install nodejs -y
 node -v</div>
-          <div class="wwhy" data-th="รูปแบบเดียวกับ nginx เป๊ะ: กุญแจ → ไฟล์ repo → update → install ต้องได้ Node 24 เพราะของ Ubuntu เองเป็น v18 ที่หมดอายุไปแล้ว">Exactly the same shape as nginx: key → repo file → update → install. You need Node 24; Ubuntu's own package is the dead v18.</div>
+          <div class="wwhy" data-th="รูปแบบเดียวกับ nginx เป๊ะ: กุญแจ → ไฟล์ repo → update → install · วิชานี้ให้ลง Node 24 (checker ของ lab04 รับ 22 ขึ้นไป) ส่วนของ Ubuntu เองเป็น v18 ซึ่งหมดการซัพพอร์ตด้านความปลอดภัยไปตั้งแต่เมษายน 2025">Exactly the same shape as nginx: key → repo file → update → install. The course installs Node 24 (lab04's checker accepts 22 or newer); Ubuntu's own package is v18, which stopped getting security fixes in April 2025.</div>
           <div class="wok">
             <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
-            <pre>Setting up nodejs (24.8.0-1nodesource1) ...
-<b>sysadmin@lvm68xxx:~$</b> node -v
-<u>v24.8.0</u></pre>
-            <div class="wok-note" data-th="ต้องได้ v24.x · ถ้า node -v ตอบ v18.x แปลว่าลงแพ็กเกจของ Ubuntu ไม่ใช่ของ NodeSource เป็นความพลาดแบบเดียวกับตอนได้ nginx 1.24 สาเหตุเดียวกัน วิธีแก้เดียวกัน"><b>v24.x</b>. If <code>node -v</code> answers <b>v18.x</b> you installed Ubuntu's package instead of NodeSource's — same failure as getting nginx 1.24, same cause, same fix.</div>
+            <pre>Setting up nodejs (24.19.0-1nodesource1) ...
+<b>sysadmin@lvm68xxx:~$</b> node --version ; npm --version
+<u>v24.19.0</u>
+<u>11.17.0</u></pre>
+            <div class="wok-note" data-th="ต้องได้ v24.19.0 กับ npm 11.17.0 ตามที่ชีตในคาบพิมพ์ไว้ · ถ้า node --version ตอบ v18.x แปลว่าลงแพ็กเกจของ Ubuntu ไม่ใช่ของ NodeSource เป็นความพลาดแบบเดียวกับตอนได้ nginx 1.24 สาเหตุเดียวกัน วิธีแก้เดียวกัน"><b>v24.19.0 and npm 11.17.0</b> — the versions the class sheet prints. If <code>node --version</code> answers <b>v18.x</b> you installed Ubuntu's package instead of NodeSource's: same failure as getting nginx 1.24, same cause, same fix.</div>
           </div>
         </div></div>
 
@@ -1645,7 +1646,7 @@ npm ci</div>
           <div class="wwhy" data-th="<code>npm ci</code> ไม่ใช่ <code>npm install</code> — ci ลงเวอร์ชันตรงตาม <span class='path'>package-lock.json</span> เป๊ะ ไม่เดาเวอร์ชันใหม่ให้">Use <code>npm ci</code>, not <code>npm install</code> — ci installs exactly what <span class="path">package-lock.json</span> records instead of quietly picking newer versions.</div>
           <div class="wok">
             <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
-            <pre>added 112 packages, and audited 113 packages in 6s
+            <pre>added 105 packages, and audited 106 packages in 6s
 <u>found 0 vulnerabilities</u></pre>
             <div class="wok-note" data-th="npm ci จะไม่มีวันพิมพ์ว่า changed N packages เพราะมันลบ node_modules ทิ้งแล้วสร้างใหม่จาก lockfile จำนวนจึงเท่ากันทุกเครื่องทุกครั้ง · ถ้าเห็นว่ามันแก้ lockfile แปลว่าพิมพ์ npm install ไปแล้ว"><code>npm ci</code> never prints “changed N packages” — it deletes <code>node_modules</code> and rebuilds it from the lockfile, so the count is the same on every machine, every time. If you see the lockfile being rewritten, you typed <code>npm install</code>.</div>
           </div>
@@ -1684,9 +1685,9 @@ CORS_ORIGIN=""
             <ul class="fbox-n">
               <li data-th="<b>เข้ารหัสรหัสผ่านแบบ percent-encoding และทำเฉพาะใน URL นี้เท่านั้น</b> DATABASE_URL เป็น URL ซึ่งมีไวยากรณ์: / จบส่วนโฮสต์, @ จบส่วนรหัส, ? เริ่ม query, # เริ่ม fragment · ดังนั้น / เป็น %2F, @ เป็น %40, ? เป็น %3F, # เป็น %23, : เป็น %3A และตัว % เองเป็น %25 · ในตัวอย่างข้างบนรหัสที่สุ่มมามี / ปนอยู่ · <b>เข้ารหัสรอบเดียว</b> ถ้าเข้าซ้ำสองรอบ %40 จะกลายเป็น %2540 แล้วจะได้ Access denied ทั้งที่ GRANT ถูกต้องทุกอย่าง"><b>Percent-encode the password, and only inside this URL.</b> A <code>DATABASE_URL</code> is a URL and has a grammar: <code>/</code> ends the host, <code>@</code> ends the credentials, <code>?</code> starts a query, <code>#</code> starts a fragment. So <code>/</code>&rarr;<code>%2F</code>, <code>@</code>&rarr;<code>%40</code>, <code>?</code>&rarr;<code>%3F</code>, <code>#</code>&rarr;<code>%23</code>, <code>:</code>&rarr;<code>%3A</code>, and <code>%</code> itself&rarr;<code>%25</code>. In the example above the generated password contained a <code>/</code>. <b>Encode once.</b> Encoding twice turns <code>%40</code> into <code>%2540</code> and you get Access denied while the GRANT is perfectly fine.</li>
               <li data-th="<b>ห้ามเขียน ${VAR} ในไฟล์นี้เด็ดขาด</b> มีสองโปรแกรมที่อ่านไฟล์นี้และตีความไม่ตรงกัน: Prisma CLI ขยาย ${...} ให้ ส่วน systemd ตรง EnvironmentFile= ไม่ขยาย มันส่งอักขระตรงตัวไปเลย · แปลว่ามันจะทำงานได้ทุกวิธีที่เราทดสอบในบ่ายวันนั้น แล้วไปพังในวิธีเดียวที่แอปถูกรันจริง คือข้อ 21 โดยไม่มีอะไรบนจอบอกสาเหตุ · และยังมีเหตุผลที่สองที่ยืนได้ด้วยตัวเอง: การแทนค่าตัวแปรทำ percent-encoding ให้ไม่ได้"><b>Never write <code>${VAR}</code> in here.</b> Two programs read this file and they disagree: the Prisma CLI expands <code>${...}</code>, and systemd at <code>EnvironmentFile=</code> does not — it hands over the literal characters. So it works every way you are likely to test it this afternoon, and fails the one way the application is actually run, at step 21, with nothing on screen to suggest why. A second reason stands on its own: substitution cannot percent-encode.</li>
-              <li data-th="<b>ตอนนี้ใส่ HOST=0.0.0.0 แล้วไปเปลี่ยนเป็น 127.0.0.1 ในข้อ 24</b> checker ของ lab04 ยิง API จากนอกเครื่อง มันจึงต้องฟังทุก interface · พอ nginx มายืนหน้าให้ในข้อ 22 แล้ว มันต้องการแค่ loopback และค่าที่แคบกว่าคือปลายทางที่ถูกต้อง"><b><code>HOST=0.0.0.0</code> for now, <code>127.0.0.1</code> at step 24.</b> Lab04's checker probes the API from outside the machine, so it must listen on every interface. Once nginx sits in front of it at step 22, it only ever needs loopback — and the narrower value is the right end state.</li>
+              <li data-th="<b>ตอนนี้ใส่ HOST=0.0.0.0 แล้วไปเปลี่ยนเป็น 127.0.0.1 ในข้อ 24</b> ในช่วงนี้ยังไม่มีอะไรมายืนหน้า API ข้อ 7 ของ lab04 จึงให้ใส่ 0.0.0.0 และการยิงทดสอบเข้าถึงมันตรงๆ ทางพอร์ต 3000 · พอ nginx มายืนหน้าในข้อ 22 แล้ว มันต้องการแค่ loopback และชีตของ lab04 ระบุชัดว่าการหรี่ค่านี้ลงในคาบ 5 ไม่ทำให้การตรวจข้อไหนพังเลย"><b><code>HOST=0.0.0.0</code> for now, <code>127.0.0.1</code> at step 24.</b> At this stage nothing fronts the API, so lab04's step 7 asks for <code>0.0.0.0</code> and its probes reach it directly on port 3000. Once nginx sits in front at step 22 it only ever needs loopback, and lab04's sheet says explicitly that narrowing it in class 5 breaks none of its checks.</li>
               <li data-th="CORS_ORIGIN ปล่อยว่างไว้ · ปล่อยว่างแล้วคำขอข้าม origin จะถูกปฏิเสธ ซึ่งถูกต้อง เพราะหลังข้อ 22 จะไม่เหลือคำขอข้าม origin ให้ต้องอนุญาตอีกแล้ว"><code>CORS_ORIGIN=""</code> stays empty here. Leave it empty and cross-origin requests are refused — which is correct, because after step 22 there is no cross-origin request left to allow.</li>
-              <li data-th="ไฟล์ต้องเป็นโหมด 600 ซึ่งคำสั่ง install -m 600 ข้างบนตั้งให้แล้ว · มี .gitignore วางอยู่ข้างๆ ที่ระบุชื่อไฟล์นี้ไว้ เพราะตั้งแต่คาบ 6 โฟลเดอร์นี้จะกลายเป็น repository และรหัสผ่านที่ commit ลงไปแล้วจะเป็นสาธารณะตลอดกาล ต่อให้ลบทีหลังก็ตาม">The file must be mode <code>600</code>, which <code>install -m 600</code> in the command above already set. There is a <code>.gitignore</code> beside it naming this very file: from class 6 this directory becomes a repository, and a password committed to one is public for ever — even after you delete it.</li>
+              <li data-th="ไฟล์ต้องเป็นโหมด 600 ซึ่งคำสั่ง install -m 600 ข้างบนตั้งให้แล้ว · ไฟล์ .gitignore ที่มากับ archive อยู่ที่ /srv/noticeboard/.gitignore ระบุชื่อ backend/.env กับ frontend/config.js ไว้แล้ว ซึ่งคือสองไฟล์ที่เราต้องเขียนเองพอดี และไม่ถูก commit ทั้งคู่ · ตั้งแต่คาบ 6 โฟลเดอร์นี้จะกลายเป็น repository และรหัสผ่านที่ commit ลงไปแล้วจะเป็นสาธารณะตลอดกาล ต่อให้ลบทีหลังก็ตาม">The file must be mode <code>600</code>, which <code>install -m 600</code> in the command above already set. The archive's own <code>.gitignore</code>, at <span class="path">/srv/noticeboard/.gitignore</span>, already names <code>backend/.env</code> and <code>frontend/config.js</code> — both of the files you have to write yourself, and neither of them committed. From class 6 this directory becomes a repository, and a password committed to one is public for ever, even after you delete it.</li>
             </ul>
           </div>
         </div></div>
@@ -1845,7 +1846,7 @@ sudo nginx -t &amp;&amp; sudo systemctl reload nginx</div>
           <div class="wcmd">sudo micro /srv/noticeboard/backend/.env
 sudo systemctl restart noticeboard-api
 sudo ufw delete allow 3000/tcp</div>
-          <div class="wwhy" data-th="แก้ <code>HOST</code> เป็น <code>127.0.0.1</code> ให้ backend ฟังเฉพาะในเครื่อง (nginx เรียกผ่าน loopback อยู่แล้ว) ต้อง <code>restart</code> ไม่ใช่ <code>reload</code> เพราะ EnvironmentFile อ่านตอน start เท่านั้น แล้วปิดพอร์ต 3000 ที่เปิดไว้ข้อ 21 ⚠️ <strong>ข้อนี้คือปลายทางของสัปดาห์ 5</strong> — ถ้ากำลังส่ง lab04 อยู่ ให้หยุดที่ข้อ 21 เพราะ checker ของ lab04 ต้องการ <code>HOST=0.0.0.0</code> และต้องยิง API จากข้างนอกได้">Set <code>HOST</code> to <code>127.0.0.1</code> so the API only listens locally — nginx reaches it over loopback anyway. Use <code>restart</code>, not reload: EnvironmentFile is read only at start. Then close the port you opened in step 21. ⚠️ <strong>This is the week-5 end state.</strong> If you're submitting lab04, stop at step 21 — that checker wants <code>HOST=0.0.0.0</code> and probes the API from outside.</div>
+          <div class="wwhy" data-th="แก้ <code>HOST</code> เป็น <code>127.0.0.1</code> ให้ backend ฟังเฉพาะในเครื่อง (nginx เรียกผ่าน loopback อยู่แล้ว) ต้อง <code>restart</code> ไม่ใช่ <code>reload</code> เพราะ EnvironmentFile อ่านตอน start เท่านั้น แล้วปิดพอร์ต 3000 ที่เปิดไว้ข้อ 21 · <strong>ทำข้อนี้แล้วปลอดภัยกับ lab04 ด้วย</strong> ชีตของ lab04 เขียนไว้ตรงๆ ว่าคาบ 5 จะผูก API ไว้กับเครื่องนี้และปิดพอร์ต 3000 และการยิงทดสอบของอาจารย์รับทั้งทางพอร์ต 3000 และทางผ่าน reverse proxy · ส่วน lab05 ไปไกลกว่านั้นคือ <em>บังคับ</em> ให้ทำ: มันตรวจว่า API ฟังแค่ 127.0.0.1 และพอร์ตของมันเองต้องถูกปฏิเสธจากข้างนอก">Set <code>HOST</code> to <code>127.0.0.1</code> so the API only listens locally — nginx reaches it over loopback anyway. Use <code>restart</code>, not reload: EnvironmentFile is read only at start. Then close the port you opened in step 21. <strong>This is safe for lab04 too</strong> — its sheet says so in as many words: class 5 rebinds the API to this machine and closes 3000, and its probes accept your API on port 3000 <em>or</em> through the reverse proxy. lab05 goes further and <em>requires</em> this: it checks that the API listens on 127.0.0.1 only and that its own port refuses from outside.</div>
           <div class="wok">
             <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
             <pre><b>sysadmin@lvm68xxx:~$</b> sudo ufw status
@@ -1868,7 +1869,7 @@ LISTEN 0  511  <u>127.0.0.1:3000</u>  0.0.0.0:*</pre>
             <ul class="fbox-n">
               <li data-th="<b>ต้อง restart ไม่ใช่ reload</b> EnvironmentFile= ถูกอ่านครั้งเดียวตอน service เริ่ม · reload อ่าน unit ใหม่ ไม่ได้อ่าน environment file ใหม่ API จึงยังรันด้วยค่าเดิมอยู่ แล้วเราจะสรุปว่าที่แก้ไปไม่มีผลอะไร"><b><code>restart</code>, not <code>reload</code>.</b> <code>EnvironmentFile=</code> is read once, when the service starts. A reload re-reads the <em>unit</em>, not the environment file, so the API would keep running with the old value and you would conclude the edit did nothing.</li>
               <li data-th="ยืนยันด้วย ss -tln | grep 3000 · ที่อยู่ที่ฟังต้องกลายเป็น 127.0.0.1:3000 ไม่ใช่ 0.0.0.0:3000 · การเปลี่ยนตรงนี้กับคำสั่ง ufw delete ข้างๆ คือกุญแจสองดอกที่อิสระต่อกันบนประตูบานเดียวกัน">Confirm with <code>ss -tln | grep 3000</code>: the listen address must now read <code>127.0.0.1:3000</code> and not <code>0.0.0.0:3000</code>. That change, and the <code>ufw delete</code> beside it, are two independent locks on the same door.</li>
-              <li data-th="<b>ถ้ากำลังส่ง lab04 ให้หยุดตรงนี้</b> checker ตัวนั้นยิง API จากนอกเครื่องและต้องการ HOST=0.0.0.0 พร้อมพอร์ต 3000 เปิดอยู่ · ค่าที่แคบลงนี้คือปลายทางของสัปดาห์ที่ 5"><b>Stop here if you are submitting lab04.</b> That checker probes the API from outside the machine and needs <code>HOST=0.0.0.0</code> with port 3000 open. This narrower setting is the week-5 end state.</li>
+              <li data-th="<b>ทำข้อนี้ไม่ได้ทำให้เสีย lab04 เลย</b> ชีตของมันเขียนไว้ตรงๆ ว่าไม่มีอะไรในนั้นพังในคาบ 5 เพราะการยิงทดสอบรับทั้งทางพอร์ต 3000 และทางผ่าน proxy · และ lab05 ก็บังคับให้ทำ เพราะมันตรวจว่า API ฟังแค่ 127.0.0.1 และพอร์ต 3000 ต้องถูกปฏิเสธจากข้างนอก · การใส่ HOST=0.0.0.0 ในข้อ 18 เป็นค่าสำหรับช่วงก่อนหน้า ไม่ใช่ค่าที่ต้องเก็บไว้"><b>This does not cost you anything on lab04.</b> Its sheet says outright that nothing there breaks in class 5 — the probes accept the API on port 3000 <em>or</em> through the proxy. And lab05 requires it: it checks that the API listens on 127.0.0.1 only and that port 3000 refuses from outside. Setting <code>HOST=0.0.0.0</code> at step 18 was for the earlier stage, not a value to keep.</li>
             </ul>
           </div>
         </div></div>
@@ -2226,7 +2227,7 @@ curl -s http://127.0.0.1:3000/api/health</div>
           <tr><td>2</td><td data-th="จับคู่ IP และพอร์ตก่อน แล้วค่อยดู server_name">match IP and port first, only then look at <code>server_name</code></td></tr>
           <tr><td>3</td><td data-th="ลำดับของ server_name: ตรงเป๊ะ ก่อน ขึ้นต้นด้วยดอกจัน ก่อน ลงท้ายด้วยดอกจัน ก่อน regex">name order: exact, then leading wildcard, then trailing wildcard, then regex</td></tr>
           <tr><td>4</td><td data-th="ไม่เข้าเงื่อนไขไหนเลย ไปที่ default_server">nothing matched? the <code>default_server</code> takes it</td></tr>
-          <tr><td>5</td><td data-th="ไม่มีใครประกาศ default_server เลย บล็อกแรกที่ถูกอ่านจะได้ไปโดยปริยาย">nobody declared one? the first block read wins by default</td></tr>
+          <tr><td>5</td><td data-th="ไม่มีใครประกาศ default_server เลย บล็อกแรกที่ถูกอ่านจะได้ไปโดยปริยาย — และลำดับการอ่านคือลำดับการเรียงชื่อไฟล์ ไม่ใช่ลำดับที่เราสร้าง">nobody declared one? the first block read wins — and files are read in <b>filename sort order</b>, not the order you created them</td></tr>
           <tr><td>6</td><td data-th="มี server block เดียว จะไม่ตรวจ server_name เลย ทุก request เข้าหมด">with only one block, <code>server_name</code> is never checked — everything lands there</td></tr>
         </table>
         <div class="fnote" data-th="ชื่อชนกัน: บล็อกที่อ่านทีหลังจะถูกเมิน และการใส่ default_server ไม่ช่วย เพราะปัญหาอยู่ที่ชื่อซ้ำ ไม่ใช่ลำดับ · listen วงเล็บก้ามปูสองโคลอน 80 คือ IPv6 · server_name เป็นสตริงว่างคู่หนึ่งหมายถึงจับ request ที่ไม่มี Host header">Name conflict: the later file is ignored, and adding <code>default_server</code> does not fix it — the problem is the duplicate name, not the order. <code>listen [::]:80</code> is IPv6. A <code>server_name</code> of <code>""</code> matches requests with no Host header.</div>
