@@ -314,6 +314,7 @@
   .phase-why b{color:var(--ink); font-weight:600;}
   .phase-sub{font-size:12.5px; color:var(--ink-faint); margin-bottom:14px;}
   .wstep{display:grid; grid-template-columns:24px 1fr; gap:10px; margin-bottom:15px;}
+  .wstep > *{min-width:0;}
   .wnum{font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--ink-faint); padding-top:8px;}
   .wcmd{font-family:var(--font-mono); font-size:12.2px; background:var(--surface-2); border:1px solid var(--line); border-radius:6px; padding:8px 11px; overflow-x:auto; white-space:pre; color:var(--ink); line-height:1.6;}
   .wwhy{font-size:12.8px; color:var(--ink-soft); margin-top:6px; line-height:1.55;}
@@ -330,6 +331,157 @@
     font-family:var(--font-mono); font-size:13px; font-weight:600; color:var(--accent); text-decoration:none;
   }
   .cta-link:hover{text-decoration:underline;}
+  /* ---- theory-exam section ---- */
+  .quote-strip{
+    display:grid; gap:12px; margin:0 0 22px;
+    grid-template-columns:repeat(auto-fit,minmax(258px,1fr));
+  }
+  .qs{
+    background:var(--note-yellow); color:var(--ink); border:1px solid var(--line);
+    border-radius:9px; padding:13px 14px 12px;
+    box-shadow:var(--shadow); font-size:13px; line-height:1.62;
+  }
+  .qs b{display:block; font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:5px;}
+  .qs .said{font-family:var(--font-marker); font-size:14.5px; line-height:1.5; display:block; margin-bottom:7px;}
+  .qs .means{display:block; padding-top:7px; border-top:1px dashed var(--line-strong); font-size:12.4px; color:var(--ink-soft);}
+
+  .fact-grid{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr));}
+  .fact{
+    background:var(--surface); border:1px solid var(--line); border-radius:11px;
+    padding:14px 15px 13px; box-shadow:var(--shadow);
+  }
+  .fact > h3{
+    margin:0 0 4px; font-size:14px; letter-spacing:-.01em; color:var(--ink);
+    display:flex; align-items:center; gap:7px;
+  }
+  .fact > h3::before{
+    content:""; width:9px; height:9px; border-radius:2px; background:var(--accent); flex:none;
+  }
+  .fact.v > h3::before{background:var(--violet);}
+  .fact.a > h3::before{background:var(--amber);}
+  .fact.r > h3::before{background:var(--rose);}
+  .fact.g > h3::before{background:var(--green);}
+  .fact > p.lede{margin:0 0 10px; font-size:12.5px; color:var(--ink-faint); line-height:1.65;}
+  .ftab{width:100%; border-collapse:collapse; font-size:12.6px;}
+  .ftab td{padding:7px 8px 7px 0; border-top:1px solid var(--line); vertical-align:top; line-height:1.65;}
+  .ftab tr:first-child td{border-top:none;}
+  .ftab td:first-child{
+    font-family:var(--font-mono); font-size:12px; color:var(--ink); white-space:nowrap;
+    padding-right:14px; font-weight:600; width:1%;
+  }
+  .ftab td:last-child{color:var(--ink-soft);}
+  .fact code{font-family:var(--font-mono); font-size:.94em; background:var(--surface-2); padding:1px 4px; border-radius:3px;}
+  .fnote{
+    margin-top:11px; padding-top:9px; border-top:1px dashed var(--line);
+    font-size:12.2px; color:var(--ink-soft); line-height:1.72;
+  }
+  .fnote b{color:var(--rose);}
+
+  .traps{display:grid; gap:11px; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); margin-top:6px;}
+  .trap{
+    background:var(--red-soft); border-left:3px solid var(--red); border-radius:0 9px 9px 0;
+    padding:11px 13px; font-size:12.7px; line-height:1.68; color:var(--ink);
+  }
+  .trap b{display:block; color:var(--red); font-size:13px; margin-bottom:3px;}
+  .trap code{font-family:var(--font-mono); font-size:.93em;}
+
+  .quiz{display:grid; gap:9px;}
+  .q{
+    background:var(--surface); border:1px solid var(--line); border-radius:9px;
+    padding:0; overflow:hidden;
+  }
+  .q > summary{
+    cursor:pointer; list-style:none; padding:12px 14px; font-size:13.2px; line-height:1.65;
+    color:var(--ink); display:flex; gap:9px; align-items:flex-start;
+  }
+  .q > summary::-webkit-details-marker{display:none;}
+  .q > summary::before{
+    content:"?"; flex:none; width:19px; height:19px; border-radius:50%;
+    background:var(--accent-soft); color:var(--accent); font-family:var(--font-mono);
+    font-size:11.5px; font-weight:700; display:grid; place-items:center; margin-top:1px;
+  }
+  .q[open] > summary::before{content:"\2713"; background:var(--green-soft); color:var(--green);}
+  .q > summary:hover{background:var(--surface-2);}
+  .qa{padding:0 14px 13px 42px; font-size:12.7px; line-height:1.72; color:var(--ink-soft);}
+  .qa .ans{display:block; color:var(--green); font-weight:600; margin-bottom:4px; font-size:13px;}
+  .qa code{font-family:var(--font-mono); font-size:.94em; background:var(--surface-2); padding:1px 4px; border-radius:3px;}
+  .sub-h{
+    margin:30px 0 13px; font-size:12px; letter-spacing:.11em; text-transform:uppercase;
+    color:var(--ink-faint); font-weight:700; display:flex; align-items:center; gap:9px;
+  }
+  .sub-h::after{content:""; flex:1; height:1px; background:var(--line);}
+  /* ---- "what success looks like" ---- */
+  .wok{margin-top:10px; border:1px solid var(--line); border-radius:8px; overflow:hidden; min-width:0;}
+  .wok-h{
+    font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; font-weight:700;
+    color:var(--green); background:var(--green-soft); padding:5px 10px;
+    display:flex; gap:6px; align-items:center;
+  }
+  .wok-h::before{content:"\2713"; font-size:11px;}
+  .wok pre{
+    margin:0; padding:9px 11px; background:var(--surface-2);
+    font-family:var(--font-mono); font-size:11.5px; line-height:1.62;
+    color:var(--ink-soft); white-space:pre; overflow-x:auto;
+  }
+  .wok pre b{color:var(--ink); font-weight:600;}
+  .wok pre i{color:var(--ink-faint); font-style:normal; opacity:.8;}
+  .wok pre u{color:var(--green); text-decoration:none; font-weight:600;}
+  .wok pre s{color:var(--red); text-decoration:none; font-weight:600;}
+  .wok-note{
+    padding:8px 11px; background:var(--surface); border-top:1px solid var(--line);
+    font-size:12px; line-height:1.68; color:var(--ink-soft);
+  }
+  .wok-note b{color:var(--ink);}
+
+  .mock{
+    margin:16px 0 4px; border:1px solid var(--line-strong); border-radius:10px;
+    overflow:hidden; box-shadow:var(--shadow); background:var(--surface);
+    max-width:560px;
+  }
+  .mock-bar{
+    display:flex; align-items:center; gap:6px; padding:7px 10px;
+    background:var(--surface-2); border-bottom:1px solid var(--line);
+  }
+  .mock-bar .dot{width:8px; height:8px; border-radius:50%; background:var(--line-strong); flex:none;}
+  .mock-url{
+    flex:1; margin-left:5px; background:var(--surface); border:1px solid var(--line);
+    border-radius:20px; padding:3px 10px; font-family:var(--font-mono);
+    font-size:10.8px; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .mock-body{padding:16px 18px 18px;}
+  .mock-body h4{margin:0 0 2px; font-size:16px; color:var(--ink); letter-spacing:-.01em;}
+  .mock-body .by{margin:0 0 13px; font-size:11.5px; color:var(--ink-faint);}
+  .mock-body h5{
+    margin:14px 0 7px; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-faint); font-weight:700;
+  }
+  .mock-body h5:first-child{margin-top:0;}
+  .mnote{
+    border-left:2px solid var(--line-strong); padding:5px 0 5px 10px; margin-bottom:8px;
+    font-size:12px; line-height:1.5; color:var(--ink-soft);
+  }
+  .mnote b{display:block; color:var(--ink); font-size:11.5px; font-family:var(--font-mono);}
+  .mbtn{
+    display:inline-block; background:var(--accent); color:var(--accent-ink);
+    border-radius:6px; padding:5px 12px; font-size:12px; font-weight:600;
+  }
+  .mfield{
+    border:1px solid var(--line); border-radius:6px; padding:6px 9px; margin-bottom:7px;
+    font-size:12px; color:var(--ink-faint); background:var(--surface-2);
+  }
+  .merr{
+    background:var(--red-soft); color:var(--red); border-radius:6px;
+    padding:7px 10px; font-size:12px; margin-top:9px; font-weight:600;
+  }
+  .mempty{color:var(--ink-faint); font-size:12.5px; font-style:italic;}
+  .mock-cap{
+    font-size:12px; color:var(--ink-soft); line-height:1.7;
+    margin:8px 0 0; max-width:560px;
+  }
+  .mock-cap b{color:var(--ink);}
+  .nginx-welcome{text-align:center; padding:14px 0 6px;}
+  .nginx-welcome h4{font-size:17px; margin-bottom:9px;}
+  .nginx-welcome p{margin:0 0 8px; font-size:12.5px; color:var(--ink-soft); line-height:1.6;}
 </style>
 
 <div class="board-frame">
@@ -1029,37 +1181,97 @@
         <div class="wstep"><div class="wnum">1</div><div>
           <div class="wcmd">ssh sysadmin@lvm68xxx.sit.kmutt.ac.th</div>
           <div class="wwhy" data-th="ใส่รหัสผ่านที่ได้จากอีเมล พอเข้ามาแล้วจะอยู่ที่ <span class='path'>/home/sysadmin</span> เช็กด้วย <code>pwd</code> ได้">Password comes from your @ad.sit.kmutt.ac.th email. You land in <span class="path">/home/sysadmin</span> — confirm with <code>pwd</code>.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><i>sysadmin@lvm68xxx.sit.kmutt.ac.th's password:</i>
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.8.0-79-generic x86_64)
+Last login: Wed Sep  9 09:12:04 2026 from 10.4.12.31
+<b>sysadmin@lvm68xxx:~$</b> pwd
+<u>/home/sysadmin</u></pre>
+            <div class="wok-note" data-th="สัญญาณเดียวที่ต้องดูคือ prompt เปลี่ยนเป็น sysadmin@lvm68xxx · ตอนพิมพ์รหัสผ่านจะไม่มีอะไรขึ้นบนจอเลย เป็นเรื่องปกติ ไม่ใช่เครื่องค้าง">The prompt changing from your laptop's to <b>sysadmin@lvm68xxx</b> is the only proof you needed. Nothing is echoed while you type the password — that is normal, not a frozen terminal.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">2</div><div>
           <div class="wcmd">curl -fsSL https://nginx.org/keys/nginx_signing.key \
   | sudo gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg</div>
           <div class="wwhy" data-th="กุญแจไปอยู่ที่ <span class='path'>/usr/share/keyrings/nginx-archive-keyring.gpg</span> — เอาไว้ยืนยันว่าแพ็กเกจที่โหลดมาเป็นของ nginx.org จริง">The key lands at <span class="path">/usr/share/keyrings/nginx-archive-keyring.gpg</span> — it's what proves the packages really came from nginx.org.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><i>(gpg prints nothing at all when it works)</i>
+<b>sysadmin@lvm68xxx:~$</b> ls -l /usr/share/keyrings/nginx-archive-keyring.gpg
+<u>-rw-r--r-- 1 root root 1141 Sep  9 09:14 /usr/share/keyrings/nginx-archive-keyring.gpg</u></pre>
+            <div class="wok-note" data-th="เงียบ คือสำเร็จ · ถ้าเห็น gpg: no valid OpenPGP data found แปลว่าโหลดไม่สำเร็จและเขียนไฟล์เปล่าไว้ ให้ลบไฟล์แล้วรันใหม่">Silence is the success case here. If you see <b>gpg: no valid OpenPGP data found</b>, the download failed and you wrote an empty file — delete it and run the line again.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">3</div><div>
           <div class="wcmd">echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu $(lsb_release -cs) nginx" \
   | sudo tee /etc/apt/sources.list.d/nginx.list</div>
           <div class="wwhy" data-th="ไฟล์ repo อยู่ที่ <span class='path'>/etc/apt/sources.list.d/nginx.list</span> ต้องเป็นบรรทัดเดียว ถ้าวางแล้วมันตัดบรรทัด apt จะฟ้อง malformed entry">The repo file is <span class="path">/etc/apt/sources.list.d/nginx.list</span> and must stay one single line — if pasting breaks it in two, apt reports a malformed entry.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><u>deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/ubuntu noble nginx</u></pre>
+            <div class="wok-note" data-th="tee จะพิมพ์สิ่งที่มันเขียนกลับมาให้ดู ต้องได้เป็นบรรทัดเดียวที่ลงท้ายด้วย noble nginx ถ้ามันตัดเป็นสองบรรทัด apt จะฟ้อง malformed entry ตอน update"><code>tee</code> echoes back exactly what it wrote. Check it came out as <b>one single line</b> ending in <code>noble nginx</code> — if it wrapped into two, apt will report a malformed entry at the next update.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">4</div><div>
           <div class="wcmd">sudo apt update &amp;&amp; sudo apt install nginx -y
 nginx -v</div>
           <div class="wwhy" data-th="ต้องได้ <code>1.30.x</code> ถ้าได้ 1.24 แปลว่า repo ยังไม่ติด — ย้อนกลับไปทำข้อ 2–3 ใหม่">You must see <code>1.30.x</code>. If you got 1.24, the repo didn't take — redo steps 2–3 and install again.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>Get:4 http://nginx.org/packages/ubuntu noble InRelease [3,634 B]
+Get:5 http://nginx.org/packages/ubuntu noble/nginx amd64 Packages [10.8 kB]
+Fetched 14.4 kB in 1s (11.2 kB/s)
+...
+Setting up nginx (<u>1.30.1-1~noble</u>) ...
+<b>sysadmin@lvm68xxx:~$</b> nginx -v
+<u>nginx version: nginx/1.30.1</u></pre>
+            <div class="wok-note" data-th="เวอร์ชันคือเหตุผลทั้งหมดของข้อ 2–4 · ได้ 1.30.x แปลว่า repo ของ nginx.org ติดแล้ว · ได้ 1.24.x แปลว่าไม่ติด และกำลังจะเสียเวลาเป็นชั่วโมงตามหา sites-enabled ที่ไม่มีวันมี">The version is the whole point of steps 2–4. <b>1.30.x</b> means the nginx.org repo took. <b>1.24.x</b> means it didn't, and you are about to spend an hour looking for a <code>sites-enabled</code> that will never exist.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">5</div><div>
           <div class="wcmd">sudo systemctl enable --now nginx
 systemctl is-enabled nginx ; systemctl is-active nginx</div>
           <div class="wwhy" data-th="ติดตั้ง nginx เสร็จมันไม่ start ให้เอง ต้องสั่งเอง สองคำสั่งท้ายต้องตอบ <code>enabled</code> กับ <code>active</code>">Installing nginx does not start it — you have to. Those last two commands must answer <code>enabled</code> and <code>active</code>.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service &rarr; /lib/systemd/system/nginx.service.
+<b>sysadmin@lvm68xxx:~$</b> systemctl is-enabled nginx ; systemctl is-active nginx
+<u>enabled</u>
+<u>active</u></pre>
+            <div class="wok-note" data-th="บรรทัด symlink นั้นคือความหมายทั้งหมดของคำว่า enabled ไม่มีอย่างอื่นเกิดขึ้นเลย · ได้สองคำตามลำดับ: enabled ตอบว่าขึ้นตอน boot ไหม, active ตอบว่าตอนนี้รันอยู่ไหม">That symlink line <em>is</em> what “enabled” means — nothing else happens. Two words back, in that order: <b>enabled</b> answers “at boot?” and <b>active</b> answers “right now?”</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">6</div><div>
           <div class="wcmd">sudo ufw allow 80/tcp
 curl -s http://localhost/ | head -3</div>
           <div class="wwhy" data-th="curl จากในเครื่องผ่าน loopback ไม่สนใจ firewall อยู่แล้ว ส่วน rule 80 คือทำให้เปิดจากเครื่องตัวเองได้">The curl goes over loopback and ignores the firewall entirely; the port-80 rule is what lets your own laptop reach it.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>Rule added
+Rule added (v6)
+<b>sysadmin@lvm68xxx:~$</b> curl -s http://localhost/ | head -3
+<u>&lt;!DOCTYPE html&gt;</u>
+<u>&lt;html&gt;</u>
+<u>&lt;head&gt;</u></pre>
+            <div class="wok-note" data-th="ได้ Rule added สองบรรทัดไม่ใช่บรรทัดเดียว เพราะ ufw เขียนกฎทั้ง IPv4 และ IPv6 · curl ได้ HTML กลับมาพิสูจน์แค่ว่า nginx เสิร์ฟอยู่ ไม่ได้พิสูจน์เรื่อง firewall เลย เพราะ loopback ไม่ผ่าน ufw อยู่แล้ว · เบราว์เซอร์บนเครื่องตัวเองเท่านั้นที่พิสูจน์ข้อนั้นได้">Two “Rule added” lines, not one — ufw writes an IPv4 rule and an IPv6 rule. Getting HTML back from curl proves nginx is serving; it does <em>not</em> prove the firewall is right, because loopback never passes through ufw. Only your own laptop's browser can prove that.</div>
+          </div>
         </div></div>
+
+        <div class="mock">
+          <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mock-url">http://lvm68xxx.sit.kmutt.ac.th/</span></div>
+          <div class="mock-body nginx-welcome">
+            <h4>Welcome to nginx!</h4>
+            <p>If you see this page, the nginx web server is successfully installed and working. Further configuration is required.</p>
+            <p>Thank you for using nginx.</p>
+          </div>
+        </div>
+        <p class="mock-cap" data-th="เปิดจากเบราว์เซอร์บนเครื่องตัวเอง ไม่ใช่ curl ในเครื่อง — หน้านี้พิสูจน์สามอย่างพร้อมกัน: DNS แปลชื่อเครื่องได้, ufw ยอมให้พอร์ต 80 ผ่าน, และ nginx กำลังฟังอยู่ · ถ้าเบราว์เซอร์ค้างแล้วขึ้น timeout ปัญหาอยู่ที่ firewall · ถ้าขึ้น connection refused nginx ไม่ได้รัน · สองอาการนี้คนละสาเหตุกัน อย่าไปแก้สลับกัน">Open this from the browser <b>on your own laptop</b>, not with curl on the VM — this page proves three things at once: DNS resolves your VM's name, ufw lets port 80 through, and nginx is listening. A browser that hangs and times out is a firewall problem; <b>connection refused</b> means nginx isn't running. Different causes — don't fix one while chasing the other.</p>
       </div>
 
       <div class="phase p2">
@@ -1072,6 +1284,15 @@ curl -s http://localhost/ | head -3</div>
 tar -xzf /home/public/labs/lab03/noticeboard.tar.gz -C /srv/noticeboard --strip-components=1
 find /srv/noticeboard -perm -u+w -exec chmod g+w {} +</div>
           <div class="wwhy" data-th="ซอร์สอยู่ที่ <span class='path'>/srv/noticeboard</span> — <code>tar</code> ห้ามใส่ sudo เพราะจะทับสิทธิ์ที่เพิ่งตั้ง ส่วน <code>--strip-components=1</code> ตัดโฟลเดอร์ชั้นนอกออก บรรทัด <code>find</code> ห้ามลืม: setgid (เลข 2 ใน 2775) ส่งต่อแค่ <em>กลุ่ม</em> ไม่ได้ส่งต่อสิทธิ์เขียน — checker ของ lab03 เช็กข้อนี้ด้วย">Source lives at <span class="path">/srv/noticeboard</span>. No sudo on <code>tar</code> — it would overwrite the permissions you just set. Don't skip the <code>find</code> line: setgid (the 2 in 2775) hands down the <em>group</em> but never the write bit, and lab03's checker tests for it.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><b>sysadmin@lvm68xxx:~$</b> ls -l /srv/noticeboard
+total 16
+drwxrw<u>s</u>r-x 4 sysadmin sysadmin 4096 Sep  9 09:22 backend
+drwxrw<u>s</u>r-x 3 sysadmin sysadmin 4096 Sep  9 09:22 frontend
+-rw-rw-r-- 1 sysadmin sysadmin 1204 Aug 19 14:00 README.md</pre>
+            <div class="wok-note" data-th="ให้มองหาตัว s ในตำแหน่งที่ควรเป็น x ของกลุ่ม นั่นคือ setgid หรือเลข 2 ใน 2775 และเป็นอักขระตัวเดียวที่พิสูจน์ว่าข้อ 7 สำเร็จ · ถ้าเห็นเป็น drwxrwxr-x เฉยๆ แปลว่า tar รันด้วย sudo แล้วทับสิทธิ์ที่เพิ่งตั้งไป">Look for the <b>s</b> where the group's <code>x</code> should be — that is setgid, the 2 in 2775, and it is the single character that proves step 7 worked. A plain <code>drwxrwxr-x</code> means the <code>tar</code> ran with sudo and flattened what you set.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">8</div><div>
@@ -1079,24 +1300,73 @@ find /srv/noticeboard -perm -u+w -exec chmod g+w {} +</div>
 sudo rsync -a --chmod=D755,F644 --delete --exclude config.js \
   /srv/noticeboard/frontend/ /var/www/noticeboard/</div>
           <div class="wwhy" data-th="เว็บเสิร์ฟจาก <span class='path'>/var/www/noticeboard</span> เท่านั้น ห้ามชี้ nginx ไปที่ <span class='path'>/srv/noticeboard</span> เพราะในนั้นมี backend, README และ .git ที่คนนอกไม่ควรเห็น">nginx serves <span class="path">/var/www/noticeboard</span> only. Never point it at <span class="path">/srv/noticeboard</span> — that folder also holds the backend, the README, and later a .git directory.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><i>(rsync -a prints nothing when it succeeds)</i>
+<b>sysadmin@lvm68xxx:~$</b> ls /var/www/noticeboard
+<u>app.js  config.example.js  data  index.html  store.js  style.css</u></pre>
+            <div class="wok-note" data-th="ได้หกรายการ และต้อง ไม่มี backend ไม่มี README.md ไม่มี .env · การไม่มีของพวกนี้คือเหตุผลทั้งหมดที่ต้องคัดลอกแทนการชี้ nginx ไปที่ /srv โดยตรง ทุกอย่างในโฟลเดอร์นี้คือของที่เรายอมให้ทั้งอินเทอร์เน็ตโหลดไปได้">Six entries, and <b>no <code>backend</code>, no <code>README.md</code>, no <code>.env</code></b>. That absence is the point of copying instead of pointing nginx at /srv — everything in this folder is something you are happy for the whole internet to download.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">9</div><div>
           <div class="wcmd">cp /srv/noticeboard/frontend/config.example.js /var/www/noticeboard/config.js
 micro /var/www/noticeboard/config.js</div>
           <div class="wwhy" data-th="ใส่รหัสนักศึกษา 11 หลักของตัวเองใน <span class='path'>/var/www/noticeboard/config.js</span> — checker ดูค่านี้ ส่วน noticesUrl ยังไม่ต้องแตะ">Put your own 11-digit student ID into <span class="path">/var/www/noticeboard/config.js</span> — the checker reads it. Leave <code>noticesUrl</code> alone for now.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><b>sysadmin@lvm68xxx:~$</b> grep -E 'studentId|noticesUrl' /var/www/noticeboard/config.js
+<u>  studentId: "68130500123",</u>
+  noticesUrl: "/data/notices.json",</pre>
+            <div class="wok-note" data-th="ต้องเป็นเลข 11 หลักของตัวเอง โดยที่เครื่องหมายคำพูดและจุลภาคท้ายบรรทัดยังอยู่ครบ · noticesUrl ยังชี้ที่ไฟล์ก่อน แล้วจะเปลี่ยนเป็น /api/notices ในข้อ 23 บรรทัดเดียวนั้นคือความต่างทั้งหมดระหว่างหน้าเว็บกับแอปพลิเคชัน">Your own 11 digits, with the quotes and the trailing comma still intact. <code>noticesUrl</code> stays on the file for now — it becomes <code>/api/notices</code> in step 23, and that one line is the entire difference between a page and an application.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">10</div><div>
           <div class="wcmd">sudo micro /etc/nginx/conf.d/noticeboard.conf</div>
           <div class="wwhy" data-th="server block อยู่ที่ <span class='path'>/etc/nginx/conf.d/noticeboard.conf</span> ต้องมี: <code>listen 80 default_server;</code> · <code>server_name</code> ทั้งชื่อยาวและชื่อสั้นของเครื่อง · <code>root /var/www/noticeboard;</code> · <code>index index.html;</code> · และ log ของตัวเอง <span class='path'>/var/log/nginx/noticeboard.access.log</span> กับ <span class='path'>…error.log</span>">The server block goes in <span class="path">/etc/nginx/conf.d/noticeboard.conf</span> and needs: <code>listen 80 default_server;</code> · a <code>server_name</code> claiming both of your VM's names · <code>root /var/www/noticeboard;</code> · <code>index index.html;</code> · and its own <span class="path">/var/log/nginx/noticeboard.access.log</span> and <span class="path">…error.log</span>.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><i>(micro writes with CTRL+S and quits with CTRL+Q, printing nothing)</i>
+<b>sysadmin@lvm68xxx:~$</b> ls /etc/nginx/conf.d/
+<u>default.conf  noticeboard.conf</u></pre>
+            <div class="wok-note" data-th="ทั้งสองชื่อลงท้ายด้วย .conf · nginx.conf include แค่ conf.d ดอกจันจุด conf เท่านั้น ไฟล์ชื่อ noticeboard.config หรือ noticeboard.conf.bak จึงล่องหน และ nginx -t ก็ยังบอกว่าผ่าน เพราะไฟล์ที่ไม่เคยถูกอ่านย่อมไม่มีอะไรผิด">Both names end in <b>.conf</b>. <code>nginx.conf</code> includes <code>conf.d/*.conf</code> and nothing else, so a file called <code>noticeboard.config</code> or <code>noticeboard.conf.bak</code> is invisible — and <code>nginx -t</code> will still say the config is fine, because a file that is never read has nothing wrong in it.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">11</div><div>
           <div class="wcmd">sudo nginx -t &amp;&amp; sudo systemctl reload nginx
 curl -s http://127.0.0.1/config.js</div>
           <div class="wwhy" data-th="ทดสอบก่อน reload เสมอ ถ้า <code>nginx -t</code> ไม่ผ่าน reload จะไม่ทำอะไรเลยและยังเสิร์ฟ config เก่าอยู่ — ดูเหมือนปกติทั้งที่แก้ไม่ติด">Always test before reloading. If <code>nginx -t</code> fails, the reload does nothing and the old config keeps serving — it looks fine while your change quietly isn't live.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><u>nginx: the configuration file /etc/nginx/nginx.conf syntax is ok</u>
+<u>nginx: configuration file /etc/nginx/nginx.conf test is successful</u>
+<i>(reload prints nothing)</i>
+<b>sysadmin@lvm68xxx:~$</b> curl -s http://127.0.0.1/config.js
+window.INT134 = {
+  studentId: "68130500123",</pre>
+            <div class="wok-note" data-th="ต้องได้สองบรรทัดจาก nginx -t ไม่ใช่บรรทัดเดียว · และดูว่า curl พิสูจน์อะไร: nginx กำลังเสิร์ฟไฟล์ของเราจาก root ของเราแล้ว · ถ้าไม่ได้อะไรกลับมา แปลว่า reload ไม่ได้ทำอะไรเลยเพราะ nginx -t ไม่ผ่านและ && ตัดสายไป ซึ่งเป็นเหตุผลที่ต้องเขียนต่อกันแบบนั้น">Two lines from <code>nginx -t</code>, not one. And note what curl proves: nginx is now serving <em>your</em> file from <em>your</em> root. If it returns nothing, the reload silently did nothing because <code>nginx -t</code> failed and <code>&amp;&amp;</code> stopped the chain — which is exactly why the two commands are chained that way.</div>
+          </div>
         </div></div>
+
+        <div class="mock">
+          <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mock-url">http://lvm68xxx.sit.kmutt.ac.th/</span></div>
+          <div class="mock-body">
+            <h4>INT134 Noticeboard</h4>
+            <p class="by">deployed by 68130500123</p>
+            <h5>Post a notice</h5>
+            <div class="mfield">Your name</div>
+            <div class="mfield">Your message</div>
+            <span class="mbtn">Add notice</span>
+            <div class="merr" data-th="เพิ่มประกาศไม่สำเร็จ">Could not add notice.</div>
+            <h5>Notices</h5>
+            <div class="mnote"><b>INT134</b>This board is being served from a file on disk. Nothing can be added to it yet.</div>
+            <div class="mnote"><b>INT134</b>A web server hands out files. Storing something new needs a program and somewhere to put it.</div>
+            <div class="mnote"><b>INT134</b>If you can read this from another machine, your server is running and your firewall lets it through.</div>
+          </div>
+        </div>
+        <p class="mock-cap" data-th="สามอย่างที่ต้องเห็น: ชื่อบอร์ด, บรรทัด deployed by ที่มีรหัสนักศึกษาของเรา (ถ้าขึ้นว่า not configured แปลว่าข้อ 9 ยังไม่เสร็จ) และประกาศสามอันที่มาจากไฟล์ data/notices.json · ปุ่ม Add notice กดแล้วต้องพัง และนั่นถูกต้อง ตอนนี้ยังไม่มีอะไรมารับข้อมูล — เว็บเซิร์ฟเวอร์ยื่นไฟล์ให้ได้อย่างเดียว">Three things to look for: the board's title, the <b>deployed by</b> line carrying your own student number (if it reads <em>(not configured)</em>, step 9 isn't done), and the three notices that came out of <code>data/notices.json</code>. The <b>Add notice</b> button must fail — that is correct. Nothing is listening to receive anything yet; a web server only hands files out.</p>
       </div>
 
       <div class="phase p3">
@@ -1108,11 +1378,27 @@ curl -s http://127.0.0.1/config.js</div>
           <div class="wcmd">sudo apt install mysql-server -y
 systemctl is-enabled mysql ; systemctl is-active mysql</div>
           <div class="wwhy" data-th="อันนี้ต่างจาก nginx — MySQL เปิดและ enable ให้เองตั้งแต่ติดตั้งเสร็จ ไม่ต้องสั่ง start">Unlike nginx, MySQL enables and starts itself on install. You don't run <code>enable --now</code> here.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>Setting up mysql-server (8.0.43-0ubuntu0.24.04.1) ...
+<b>sysadmin@lvm68xxx:~$</b> systemctl is-enabled mysql ; systemctl is-active mysql
+<u>enabled</u>
+<u>active</u></pre>
+            <div class="wok-note" data-th="เป็น enabled และ active อยู่แล้วโดยไม่ต้องสั่ง enable --now เลย เพราะแพ็กเกจของ MySQL ทำให้เอง ส่วนของ nginx ไม่ทำ · สองแพ็กเกจ สองธรรมเนียม และเป็นข้อสอบปรนัยที่ดีมาก">Already <b>enabled</b> and <b>active</b> without you running <code>enable --now</code> — MySQL's package does it for you, nginx's does not. Two packages, two conventions, and a good multiple-choice question.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">13</div><div>
           <div class="wcmd">sudo mysql</div>
           <div class="wwhy" data-th="เข้าได้เลยไม่ต้องใส่รหัส เพราะ admin ผูกกับ user ของ OS (auth_socket) — ลอง <code>mysql -e &quot;SELECT 1;&quot;</code> เฉยๆ จะโดน <code>ERROR 1045</code> ซึ่งถูกแล้ว">You get in with no password because the admin account is tied to your OS user (auth_socket). Try plain <code>mysql -e "SELECT 1;"</code> and you'll get <code>ERROR 1045</code> — that's correct behaviour.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.43-0ubuntu0.24.04.1 (Ubuntu)
+<b>mysql&gt;</b></pre>
+            <div class="wok-note" data-th="เข้าได้โดยไม่ต้องพิมพ์รหัสผ่านเลย · ลองแบบที่คิดว่าน่าจะถูกดูแล้วจะเห็นมันพัง: mysql -u root -p จะได้ ERROR 1045 (28000) Access denied · ไม่มีอะไรเสีย บัญชีนั้นยืนยันตัวตนด้วย auth_socket คือดูว่าเราเป็นใครบนเครื่อง ไม่ได้ดูว่าเรารู้อะไร">You are in without ever typing a password. Now try it the way you expect to and watch it fail: <code>mysql -u root -p</code> gives <b>ERROR 1045 (28000): Access denied</b>. Nothing is broken — that account authenticates by <code>auth_socket</code>, meaning it checks who you are on the machine, not what you know.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">14</div><div>
@@ -1121,11 +1407,36 @@ CREATE USER 'noticeboard'@'localhost' IDENTIFIED BY RANDOM PASSWORD;
 GRANT ALL PRIVILEGES ON noticeboard.* TO 'noticeboard'@'localhost';
 exit</div>
           <div class="wwhy" data-th="คัดลอกรหัสผ่าน 20 ตัวที่มันพิมพ์ออกมาทันที — เซิร์ฟเวอร์เก็บแค่ hash บอกซ้ำไม่ได้ ถ้าพลาดต้อง <code>ALTER USER … IDENTIFIED BY RANDOM PASSWORD;</code> ออกอันใหม่">Copy the 20-character password it prints, right now. The server keeps only a hash and cannot tell you again — if you lose it, generate a new one with <code>ALTER USER … IDENTIFIED BY RANDOM PASSWORD;</code>.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>Query OK, 1 row affected (0.01 sec)
+
++--------------+---------------+----------------------+
+| user         | host          | generated password   |
++--------------+---------------+----------------------+
+| noticeboard  | localhost     | <u>}Kq3!vX8sN/wQ2rT-mZ4</u> |
++--------------+---------------+----------------------+
+1 row in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)</pre>
+            <div class="wok-note" data-th="รหัส 20 ตัวที่เราไม่ได้เลือกเองและไม่ต้องจำ · คัดลอกทันที เซิร์ฟเวอร์เก็บแค่ hash และตารางนี้จะไม่ถูกแสดงอีกเลย · ดูตัวอย่างให้ดี มันมีทั้ง / และ ! · เครื่องหมาย / ต้องเข้ารหัสเป็น %2F ใน DATABASE_URL และทั้งก้อนต้องครอบด้วย single quote ทุกที่ที่ shell มองเห็น">Twenty characters you never chose and never have to remember. Copy it <em>now</em> — the server keeps only a hash and this table will never be shown again. Look at that example closely: it contains a <b>/</b> and a <b>!</b>. The slash must be percent-encoded as <code>%2F</code> inside DATABASE_URL, and the whole thing needs single quotes anywhere a shell can see it.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">15</div><div>
           <div class="wcmd">MYSQL_PWD='&lt;the 20 characters&gt;' mysql -u noticeboard noticeboard -e "SHOW GRANTS;"</div>
           <div class="wwhy" data-th="ทดสอบรหัสผ่านก่อนเอาไปแปะใน .env — <code>MYSQL_PWD=</code> นำหน้าทำให้รหัสอยู่แค่ในคำสั่งนั้นคำสั่งเดียว ไม่ติดใน <code>ps</code> และ history (ห้ามใช้ <code>-p</code> ติดกับรหัสเด็ดขาด) ⚠️ noticeboard ไม่มีโฟลเดอร์ <span class='path'>db/</span> เหมือน school — รหัสของมันจะไปอยู่ที่ <span class='path'>/srv/noticeboard/backend/.env</span> ในข้อ 18 ที่เดียว และต้อง <strong>ไม่ซ้ำ</strong> กับรหัสของ school เพราะ checker ของ lab04 เทียบสองอันนี้">Prove the credential works before you paste it anywhere. The <code>MYSQL_PWD=</code> prefix keeps it out of <code>ps</code> and your history — never stick it to <code>-p</code>. ⚠️ Unlike school, noticeboard ships no <span class="path">db/</span> folder: this password's only home is <span class="path">/srv/noticeboard/backend/.env</span> in step 18, and it must <strong>differ</strong> from your school one — lab04's checker compares them.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>+----------------------------------------------------------------------+
+| Grants for noticeboard@localhost                                     |
++----------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `noticeboard`@`localhost`                      |
+| <u>GRANT ALL PRIVILEGES ON `noticeboard`.* TO `noticeboard`@`localhost`</u> |
++----------------------------------------------------------------------+
+2 rows in set (0.00 sec)</pre>
+            <div class="wok-note" data-th="ต้องได้สองแถวพอดี · USAGE ON *.* ไม่ใช่สิทธิ์ แปลว่าต่อเข้ามาได้แต่ทำอะไรไม่ได้ และมันมีอยู่เสมอ · แถวที่สองคือสิทธิ์จริงอันเดียว และมันระบุว่า noticeboard.* · ถ้าเมื่อไหร่เห็น ALL PRIVILEGES ON *.* แปลว่าให้สิทธิ์ทั้งเซิร์ฟเวอร์ไปแล้ว และหลักสิทธิ์เท่าที่จำเป็นก็หายไป">Exactly two rows. <b>USAGE ON *.*</b> is not a privilege — it means “may connect, may do nothing”, and it is always there. The second row is the only real grant, and it names <code>noticeboard.*</code>. If you ever see <b>ALL PRIVILEGES ON *.*</b>, you gave the app the whole server and least privilege is gone.</div>
+          </div>
         </div></div>
       </div>
 
@@ -1142,18 +1453,39 @@ echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.
 sudo apt update &amp;&amp; sudo apt install nodejs -y
 node -v</div>
           <div class="wwhy" data-th="รูปแบบเดียวกับ nginx เป๊ะ: กุญแจ → ไฟล์ repo → update → install ต้องได้ Node 24 เพราะของ Ubuntu เองเป็น v18 ที่หมดอายุไปแล้ว">Exactly the same shape as nginx: key → repo file → update → install. You need Node 24; Ubuntu's own package is the dead v18.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>Setting up nodejs (24.8.0-1nodesource1) ...
+<b>sysadmin@lvm68xxx:~$</b> node -v
+<u>v24.8.0</u></pre>
+            <div class="wok-note" data-th="ต้องได้ v24.x · ถ้า node -v ตอบ v18.x แปลว่าลงแพ็กเกจของ Ubuntu ไม่ใช่ของ NodeSource เป็นความพลาดแบบเดียวกับตอนได้ nginx 1.24 สาเหตุเดียวกัน วิธีแก้เดียวกัน"><b>v24.x</b>. If <code>node -v</code> answers <b>v18.x</b> you installed Ubuntu's package instead of NodeSource's — same failure as getting nginx 1.24, same cause, same fix.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">17</div><div>
           <div class="wcmd">cd /srv/noticeboard/backend
 npm ci</div>
           <div class="wwhy" data-th="<code>npm ci</code> ไม่ใช่ <code>npm install</code> — ci ลงเวอร์ชันตรงตาม <span class='path'>package-lock.json</span> เป๊ะ ไม่เดาเวอร์ชันใหม่ให้">Use <code>npm ci</code>, not <code>npm install</code> — ci installs exactly what <span class="path">package-lock.json</span> records instead of quietly picking newer versions.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>added 112 packages, and audited 113 packages in 6s
+<u>found 0 vulnerabilities</u></pre>
+            <div class="wok-note" data-th="npm ci จะไม่มีวันพิมพ์ว่า changed N packages เพราะมันลบ node_modules ทิ้งแล้วสร้างใหม่จาก lockfile จำนวนจึงเท่ากันทุกเครื่องทุกครั้ง · ถ้าเห็นว่ามันแก้ lockfile แปลว่าพิมพ์ npm install ไปแล้ว"><code>npm ci</code> never prints “changed N packages” — it deletes <code>node_modules</code> and rebuilds it from the lockfile, so the count is the same on every machine, every time. If you see the lockfile being rewritten, you typed <code>npm install</code>.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">18</div><div>
           <div class="wcmd">install -m 600 .env.example .env
 micro /srv/noticeboard/backend/.env</div>
           <div class="wwhy" data-th="ไฟล์ตั้งค่าแอปอยู่ที่ <span class='path'>/srv/noticeboard/backend/.env</span> ใส่ <code>DATABASE_URL</code> เป็น <code>mysql://noticeboard:รหัสผ่านที่ percent-encode แล้ว@127.0.0.1:3306/noticeboard</code> พร้อม STUDENT_ID, PORT=3000, HOST=0.0.0.0 — เขียนรหัสตรงตัว ห้ามใช้ <code>${VAR}</code> เพราะ systemd ไม่ขยายให้">The app's settings live at <span class="path">/srv/noticeboard/backend/.env</span>: <code>DATABASE_URL</code> with the <strong>percent-encoded</strong> password, plus STUDENT_ID, PORT=3000, HOST=0.0.0.0. Write the password literally — <code>${VAR}</code> is not expanded by systemd.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><b>sysadmin@lvm68xxx:/srv/noticeboard/backend$</b> ls -l .env
+<u>-rw-------</u> 1 sysadmin sysadmin 512 Sep  9 10:02 .env
+<b>sysadmin@lvm68xxx:/srv/noticeboard/backend$</b> grep -c '^DATABASE_URL' .env
+1</pre>
+            <div class="wok-note" data-th="-rw------- คือโหมด 600: เจ้าของอ่านและเขียนได้ คนอื่นบนเครื่องอ่านไม่ได้เลย · ถ้าเห็นตัว r ในหกอักขระท้าย แปลว่ารหัสฐานข้อมูลเปิดให้ทุกคนอ่านได้ · คำสั่ง install -m 600 ตั้งค่านี้ให้ในขั้นตอนเดียว จึงใช้แทน cp"><b>-rw-------</b> is mode 600: you can read and write it, and nobody else on the machine can read it at all. Anything with an <code>r</code> in the last six characters means the database password is world-readable. Note <code>install -m 600</code> set that in one step, which is why the walkthrough uses it instead of <code>cp</code>.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">19</div><div>
@@ -1161,11 +1493,31 @@ micro /srv/noticeboard/backend/.env</div>
 npx prisma generate</div>
           <div class="wwhy" data-th="<code>migrate deploy</code> คือคำสั่งของคนติดตั้ง (เอา migration ที่มีอยู่ไปลง) ส่วน <code>migrate dev</code> เป็นของคนพัฒนาและจะพังตรง shadow database — ถูกแล้ว ห้ามแก้ด้วยการเพิ่มสิทธิ์">
 <code>migrate deploy</code> is the operator's command — it applies the migration that already ships. <code>migrate dev</code> is the developer's and will fail on the shadow database; that's correct, don't fix it by widening the grant.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>1 migration found in prisma/migrations
+Applying migration `20260819000000_init`
+The following migration(s) have been applied:
+migrations/
+  &#9492;&#9472; 20260819000000_init/
+    &#9492;&#9472; migration.sql
+<u>All migrations have been successfully applied.</u>
+&#10004; Generated Prisma Client to ./node_modules/@prisma/client in 180ms</pre>
+            <div class="wok-note" data-th="migration หนึ่งอันถูกลง และมันสร้างตาราง notices ขึ้นมาแบบว่างเปล่า · ตารางว่างคือผลลัพธ์ที่ถูกต้อง แอปนี้ไม่มีข้อมูลตั้งต้น · แต่ถ้าเห็น Error: P1001 Can't reach database server แปลว่า DATABASE_URL ในข้อ 18 ผิด และเก้าในสิบครั้งคือเครื่องหมาย / ในรหัสผ่านที่ยังไม่ได้เข้ารหัส">One migration applied, and it created the <code>notices</code> table — <b>empty</b>. An empty table is the correct outcome here; there is no seed data in this app. If instead you see <b>Error: P1001 Can't reach database server</b>, the DATABASE_URL in step 18 is wrong, and nine times out of ten it is the un-encoded <code>/</code> in the password.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">20</div><div>
           <div class="wcmd">sudo micro /etc/systemd/system/noticeboard-api.service</div>
           <div class="wwhy" data-th="unit file อยู่ที่ <span class='path'>/etc/systemd/system/noticeboard-api.service</span> ต้องมี <code>User=sysadmin</code> · <code>WorkingDirectory=/srv/noticeboard/backend</code> · <code>EnvironmentFile=/srv/noticeboard/backend/.env</code> · <code>ExecStart=/usr/bin/node server.js</code> (ตัว node ต้องเป็น path เต็ม) · <code>Restart=always</code> · <code>After=network-online.target mysql.service</code> · <code>WantedBy=multi-user.target</code>">Unit file at <span class="path">/etc/systemd/system/noticeboard-api.service</span> with <code>User=sysadmin</code> · <code>WorkingDirectory=/srv/noticeboard/backend</code> · <code>EnvironmentFile=/srv/noticeboard/backend/.env</code> · <code>ExecStart=/usr/bin/node server.js</code> (the interpreter needs its absolute path) · <code>Restart=always</code> · <code>After=network-online.target mysql.service</code> · <code>WantedBy=multi-user.target</code>.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><b>sysadmin@lvm68xxx:~$</b> systemd-analyze verify /etc/systemd/system/noticeboard-api.service
+<i>(no output = the unit file is well-formed)</i>
+<b>sysadmin@lvm68xxx:~$</b> ls /etc/systemd/system/noticeboard-api.service
+<u>/etc/systemd/system/noticeboard-api.service</u></pre>
+            <div class="wok-note" data-th="systemd-analyze verify เงียบ แปลว่าไฟล์อ่านได้ ไม่ได้แปลว่า ExecStart ชี้ไปที่ของที่มีอยู่จริง · ตรวจเองด้วย ls -l /usr/bin/node เพราะการใส่ path แบบสัมพัทธ์หรือใส่ tilde ตรงนั้นคือสาเหตุอันดับหนึ่งที่ unit file แรกของทุกคนไม่ยอมสตาร์ท">Silence from <code>systemd-analyze verify</code> means the file parses — it does <em>not</em> mean <code>ExecStart</code> points at anything real. Check that yourself with <code>ls -l /usr/bin/node</code>, because a relative path or a <code>~</code> there is the single most common reason a first unit file never starts.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">21</div><div>
@@ -1174,6 +1526,15 @@ sudo systemctl enable --now noticeboard-api
 sudo ufw allow 3000/tcp
 curl -s http://127.0.0.1:3000/api/health</div>
           <div class="wwhy" data-th="ถ้าไม่ขึ้น ให้ดู <code>journalctl -u noticeboard-api -n 20</code> ก่อนเสมอ — 90% เป็น .env ผิดหรือ ExecStart ไม่ใช่ path เต็ม พอร์ต 3000 เปิดไว้ชั่วคราวเพื่อทดสอบเท่านั้น เดี๋ยวช่วงที่ 5 จะปิดคืน">If it won't start, read <code>journalctl -u noticeboard-api -n 20</code> first — it's almost always the .env or a non-absolute ExecStart. Port 3000 is open only temporarily; phase 5 closes it again.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>Created symlink /etc/systemd/system/multi-user.target.wants/noticeboard-api.service &rarr; /etc/systemd/system/noticeboard-api.service.
+Rule added
+Rule added (v6)
+<b>sysadmin@lvm68xxx:~$</b> curl -s http://127.0.0.1:3000/api/health
+<u>{"ok":true,"student":"68130500123","time":"2026-09-09T03:11:52.409Z"}</u></pre>
+            <div class="wok-note" data-th="ต้องได้ ok:true พร้อมรหัสนักศึกษาของเราอยู่ในนั้น · ถ้า curl ไม่ได้อะไรกลับมาเลย แปลว่า service ตายตอนสตาร์ท ให้ดู journalctl -u noticeboard-api -n 20 บรรทัดสุดท้ายจะบอกสาเหตุ และเกือบทุกครั้งคือ .env หรือ ExecStart ที่ไม่ใช่ path เต็ม"><code>"ok":true</code> with <em>your</em> student number in it. If <code>curl</code> returns nothing at all, the service died on startup — <code>journalctl -u noticeboard-api -n 20</code> will name the reason on its last line, and it is almost always the .env or a non-absolute ExecStart.</div>
+          </div>
         </div></div>
       </div>
 
@@ -1185,12 +1546,26 @@ curl -s http://127.0.0.1:3000/api/health</div>
         <div class="wstep"><div class="wnum">22</div><div>
           <div class="wcmd">sudo micro /etc/nginx/conf.d/noticeboard.conf</div>
           <div class="wwhy" data-th="เพิ่ม block นี้เข้าไปในไฟล์เดิม: <code>location /api/ { proxy_pass http://127.0.0.1:3000/; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; }</code> — ต้องมี proxy_set_header ไม่งั้น backend จะเห็น Host เป็น 127.0.0.1">Add to the same file: <code>location /api/ { proxy_pass http://127.0.0.1:3000/; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; }</code> — without the headers the backend only ever sees <code>Host: 127.0.0.1</code>.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><b>sysadmin@lvm68xxx:~$</b> sudo nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+<u>nginx: configuration file /etc/nginx/nginx.conf test is successful</u></pre>
+            <div class="wok-note" data-th="ระวัง: การผ่านตรงนี้บอกแค่ว่าวงเล็บปีกกาครบ ไม่ได้บอกว่า proxy_pass ชี้พอร์ตถูก · location /api/ ที่ชี้ไปพอร์ต 3001 ที่ไม่มีอะไรอยู่ ก็ test successful เหมือนกัน แล้วตอบ 502 ให้ทุกคน · เครื่องหมาย / ท้าย http://127.0.0.1:3000/ ก็สำคัญ ถ้าไม่มี backend จะได้รับ /api/notices แทนที่จะเป็น /notices">Careful: this passing tells you the braces balance, <b>not</b> that <code>proxy_pass</code> has the right port. A <code>location /api/</code> pointing at a dead port 3001 tests successful and returns 502 to every visitor. The trailing slash on <code>http://127.0.0.1:3000/</code> matters too — without it the backend receives <code>/api/notices</code> instead of <code>/notices</code>.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">23</div><div>
           <div class="wcmd">micro /var/www/noticeboard/config.js
 sudo nginx -t &amp;&amp; sudo systemctl reload nginx</div>
           <div class="wwhy" data-th="เปลี่ยน <code>noticesUrl</code> ให้ชี้ที่ <code>/api/notices</code> เฉยๆ (path ล้วน ไม่ต้องมีชื่อโฮสต์กับพอร์ต) — พอเป็น origin เดียวกันแล้ว CORS ก็หายไปเอง ไม่ต้องตั้งค่าอะไรเพิ่ม">Change <code>noticesUrl</code> to just <code>/api/notices</code> — a bare path, no host and no port. Same origin now, so the CORS problem disappears instead of being configured around.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>nginx: configuration file /etc/nginx/nginx.conf test is successful
+<b>sysadmin@lvm68xxx:~$</b> curl -s http://127.0.0.1/api/notices
+<u>[]</u></pre>
+            <div class="wok-note" data-th="วงเล็บเหลี่ยมเปล่าคือผลลัพธ์ที่ถูกต้อง · บอร์ดเพิ่งเลิกอ่านประกาศสามอันที่มากับไฟล์ data/notices.json แล้วหันไปอ่านตารางในฐานข้อมูลที่ว่างเปล่าจริงๆ · หน้าเว็บจะดูเหมือนพัง แต่มันไม่ได้พัง เราแค่ย้ายมันจากไฟล์ไปเป็นแอปพลิเคชัน ซึ่งคือประเด็นทั้งหมดของสัปดาห์ที่ 5"><b><code>[]</code> is the success case.</b> The board just stopped reading the three notices that shipped in <code>data/notices.json</code> and started reading a database table that is genuinely empty. Your page will look like it broke. It didn't — you just moved it from a file to an application, which is the entire point of week 5.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">24</div><div>
@@ -1198,7 +1573,38 @@ sudo nginx -t &amp;&amp; sudo systemctl reload nginx</div>
 sudo systemctl restart noticeboard-api
 sudo ufw delete allow 3000/tcp</div>
           <div class="wwhy" data-th="แก้ <code>HOST</code> เป็น <code>127.0.0.1</code> ให้ backend ฟังเฉพาะในเครื่อง (nginx เรียกผ่าน loopback อยู่แล้ว) ต้อง <code>restart</code> ไม่ใช่ <code>reload</code> เพราะ EnvironmentFile อ่านตอน start เท่านั้น แล้วปิดพอร์ต 3000 ที่เปิดไว้ข้อ 21 ⚠️ <strong>ข้อนี้คือปลายทางของสัปดาห์ 5</strong> — ถ้ากำลังส่ง lab04 อยู่ ให้หยุดที่ข้อ 21 เพราะ checker ของ lab04 ต้องการ <code>HOST=0.0.0.0</code> และต้องยิง API จากข้างนอกได้">Set <code>HOST</code> to <code>127.0.0.1</code> so the API only listens locally — nginx reaches it over loopback anyway. Use <code>restart</code>, not reload: EnvironmentFile is read only at start. Then close the port you opened in step 21. ⚠️ <strong>This is the week-5 end state.</strong> If you're submitting lab04, stop at step 21 — that checker wants <code>HOST=0.0.0.0</code> and probes the API from outside.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><b>sysadmin@lvm68xxx:~$</b> sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW       Anywhere
+80/tcp                     ALLOW       Anywhere
+22/tcp (v6)                ALLOW       Anywhere (v6)
+80/tcp (v6)                ALLOW       Anywhere (v6)
+<b>sysadmin@lvm68xxx:~$</b> ss -tln | grep 3000
+LISTEN 0  511  <u>127.0.0.1:3000</u>  0.0.0.0:*</pre>
+            <div class="wok-note" data-th="มีสองอย่างเปลี่ยนไปและสำคัญทั้งคู่ · พอร์ต 3000 หายไปจาก ufw แล้ว และที่อยู่ที่ฟังกลายเป็น 127.0.0.1:3000 ไม่ใช่ 0.0.0.0:3000 · แปลว่าต่อให้ปิด firewall ทิ้ง ข้างนอกก็ยังเข้าถึง API ไม่ได้อยู่ดี · กันสองชั้น และเรียงถูกลำดับ">Two things changed and both matter. <b>3000 is gone from ufw</b>, and the listen address is now <code>127.0.0.1:3000</code> rather than <code>0.0.0.0:3000</code> — so even with the firewall off, nothing outside the machine could reach the API. Belt and braces, in the right order.</div>
+          </div>
         </div></div>
+
+        <div class="mock">
+          <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mock-url">http://lvm68xxx.sit.kmutt.ac.th/</span></div>
+          <div class="mock-body">
+            <h4>INT134 Noticeboard</h4>
+            <p class="by">deployed by 68130500123</p>
+            <h5>Post a notice</h5>
+            <div class="mfield">Your name</div>
+            <div class="mfield">Your message</div>
+            <span class="mbtn">Add notice</span>
+            <h5>Notices</h5>
+            <p class="mempty" data-th="ยังไม่มีประกาศ">No notices yet.</p>
+          </div>
+        </div>
+        <p class="mock-cap" data-th="<b>ประกาศสามอันหายไป และนั่นคือความสำเร็จ</b> — บอร์ดเลิกอ่านไฟล์แล้วมาอ่านฐานข้อมูลที่ยังว่างอยู่ ตรงกับที่ curl ตอบ [] ในข้อ 23 · ที่ต่างจากรูปก่อนหน้าจริงๆ คือคราวนี้ปุ่ม Add notice ใช้ได้แล้ว ลองกรอกแล้วกดดู ประกาศจะโผล่ขึ้นมาและอยู่ต่อแม้รีเฟรช เพราะมันถูกเขียนลงฐานข้อมูลจริง">
+          <b>The three notices are gone, and that is the success.</b> The board stopped reading a file and started reading a database that is still empty — the same fact <code>curl</code> reported as <code>[]</code> in step 23. What actually changed from the previous picture is that <b>Add notice now works</b>. Fill it in and press it: the notice appears, and it is still there after a refresh, because this time it was written to a database.</p>
       </div>
 
       <div class="phase p6">
@@ -1211,6 +1617,18 @@ sudo ufw delete allow 3000/tcp</div>
 systemctl is-active  nginx mysql noticeboard-api
 sudo ufw status</div>
           <div class="wwhy" data-th="ต้องได้ enabled/active ครบทั้งหกคำตอบ และใน ufw ต้องเหลือแค่ 22 กับ 80 — ถ้ายังเห็น 3000 หรือ 3306 แปลว่าเปิดทิ้งไว้">All six answers must come back enabled/active, and ufw should list only 22 and 80. Seeing 3000 or 3306 there means you left a door open.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><b>sysadmin@lvm68xxx:~$</b> systemctl is-enabled nginx mysql noticeboard-api
+<u>enabled</u>
+<u>enabled</u>
+<u>enabled</u>
+<b>sysadmin@lvm68xxx:~$</b> systemctl is-active nginx mysql noticeboard-api
+<u>active</u>
+<u>active</u>
+<u>active</u></pre>
+            <div class="wok-note" data-th="หกคำ และถูกทั้งหกคำ · นี่คือการตรวจที่ถูกที่สุดในวิชานี้ และเป็นอันที่คนข้ามบ่อยที่สุด · ตัวที่ตอบ disabled คือ service ที่วันนี้ทำงานดีทุกอย่าง แล้วหายไปหลังข้อ 27">Six words, all six the right ones. This is the cheapest check in the whole course and the one people skip. An <b>enabled</b> that reads <s>disabled</s> is a service that works perfectly today and is gone after step 27.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">26</div><div>
@@ -1218,12 +1636,49 @@ sudo ufw status</div>
 curl -s -X POST -H 'Content-Type: application/json' \
   -d '{"author":"68xxxxxxxxx","message":"hello"}' http://127.0.0.1/api/notices</div>
           <div class="wwhy" data-th="เรียกผ่าน <code>/api/</code> ของ nginx ไม่ใช่พอร์ต 3000 ตรงๆ — พิสูจน์ว่า reverse proxy ทำงาน และ POST ผ่าน API เท่านั้นที่นับว่า “เขียนข้อมูลได้จริง”">Go through nginx's <code>/api/</code>, not port 3000 directly — that's what proves the proxy works. And only a POST through the API counts as proof the app can write.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre><b>sysadmin@lvm68xxx:~$</b> curl -s http://127.0.0.1/api/notices
+[]
+<b>sysadmin@lvm68xxx:~$</b> curl -s -X POST ... http://127.0.0.1/api/notices
+<u>{"id":1,"author":"68130500123","message":"hello","createdAt":"2026-09-09T03:20:11.000Z"}</u>
+<b>sysadmin@lvm68xxx:~$</b> curl -s http://127.0.0.1/api/notices
+<u>[{"id":1,"author":"68130500123","message":"hello","createdAt":"..."}]</u></pre>
+            <div class="wok-note" data-th="POST ตอบกลับมาพร้อม id ที่เซิร์ฟเวอร์ออกให้ และ GET รอบถัดไปมีมันอยู่ · การไปกลับรอบนี้คือสิ่งเดียวที่พิสูจน์ว่าทั้งสี่ชิ้นต่อกันครบพร้อมกัน: nginx ส่งต่อ, API อ่าน, Prisma เขียน, MySQL เก็บ · ได้ 400 แปลว่า JSON ขาด author หรือ message · ได้ 502 แปลว่า API ล่ม ไม่ใช่ proxy พัง">The POST comes back with an <b><code>id</code></b> the server assigned, and the next GET contains it. That round trip is the only thing that proves all four pieces are wired together at once: nginx routed it, the API parsed it, Prisma wrote it, MySQL kept it. A 400 here means your JSON was missing <code>author</code> or <code>message</code>; a 502 means the API is down, not the proxy.</div>
+          </div>
         </div></div>
 
         <div class="wstep"><div class="wnum">27</div><div>
           <div class="wcmd">sudo reboot</div>
           <div class="wwhy" data-th="รอสักนาที ssh กลับเข้าไป แล้วทำข้อ 25 กับ 26 ซ้ำอีกรอบ ถ้ามีตัวไหนกลายเป็น inactive แปลว่าตัวนั้นไม่เคยถูก <code>enable</code> จริง — นี่คือข้อแตกต่างระหว่าง “รันอยู่” กับ “deploy แล้ว”">Wait a minute, ssh back in, and run steps 25 and 26 again. Anything that comes back inactive was never really enabled — that gap is the whole difference between running and deployed.</div>
+          <div class="wok">
+            <div class="wok-h" data-th="หน้าตาตอนสำเร็จ">What success looks like</div>
+            <pre>Connection to lvm68xxx.sit.kmutt.ac.th closed by remote host.
+<i>(wait about a minute, then ssh back in)</i>
+<b>sysadmin@lvm68xxx:~$</b> systemctl is-active nginx mysql noticeboard-api
+<u>active</u>
+<u>active</u>
+<u>active</u>
+<b>sysadmin@lvm68xxx:~$</b> curl -s http://127.0.0.1/api/notices
+<u>[{"id":1,"author":"68130500123","message":"hello","createdAt":"..."}]</u></pre>
+            <div class="wok-note" data-th="ได้ active สามตัวอีกครั้งหลังรีบูตที่เราไม่ได้คุมอะไรเลย และประกาศที่โพสต์ไว้ก่อนรีบูตยังอยู่ · ครึ่งหลังสำคัญเท่าครึ่งแรก: service กลับมาเอง และข้อมูลรอด · นี่คือจังหวะที่คำว่ามันรันอยู่กลายเป็นคำว่ามัน deploy แล้ว และเป็นเวอร์ชันเดียวของคำกล่าวอ้างนี้ที่ควรเชื่อ">Three <b>active</b> again after a reboot you did not supervise, and the notice you posted before the reboot is still there. That second half matters as much as the first: the services came back <em>and</em> the data survived. This is the moment “it runs” becomes “it is deployed”, and it is the only version of that claim anyone should believe.</div>
+          </div>
         </div></div>
+
+        <div class="mock">
+          <div class="mock-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="mock-url">http://lvm68xxx.sit.kmutt.ac.th/</span></div>
+          <div class="mock-body">
+            <h4>INT134 Noticeboard</h4>
+            <p class="by">deployed by 68130500123</p>
+            <h5>Post a notice</h5>
+            <div class="mfield">Your name</div>
+            <div class="mfield">Your message</div>
+            <span class="mbtn">Add notice</span>
+            <h5>Notices</h5>
+            <div class="mnote"><b>68130500123</b>hello</div>
+          </div>
+        </div>
+        <p class="mock-cap" data-th="นี่คือหน้าตาปลายทางของทั้ง 27 ข้อ: ประกาศที่เราโพสต์ก่อนสั่ง reboot ยังอยู่หลังเครื่องกลับมา · ที่อยู่บนแถบ URL ไม่มีเลขพอร์ตต่อท้าย ทุกอย่างเข้าทางพอร์ต 80 ทางเดียว · ถ้ายังต้องพิมพ์โคลอนสามพันเพื่อให้ใช้งานได้ แปลว่ายังไม่ผ่านช่วงที่ 5 · ถ้าหน้าเว็บขึ้นแต่ประกาศหาย แปลว่า MySQL ไม่ได้ enable และเพิ่งหายไปตอน reboot">This is what all twenty-seven steps were for: the notice you posted before the reboot is still on the board after it. Look at the address bar — <b>no port number</b>. Everything arrives on port 80 alone. If you still have to type <code>:3000</code> for anything to work, phase 5 isn't finished. If the page loads but the notices vanished, MySQL was never enabled and it just failed to come back.</p>
       </div>
 
     </div>
@@ -1353,6 +1808,307 @@ curl -s http://127.0.0.1:3000/api/health</div>
         </div>
 
       </div>
+    </div>
+  </section>
+
+  <section class="band" style="margin-top:44px;">
+    <div class="band-head">
+      <span class="wk-pill">theory</span>
+      <h2 data-th="สอบทฤษฎี — เอาจากสไลด์และสิ่งที่อาจารย์พูดเอง">Theory paper — from the slides, and from what the lecturer actually said</h2>
+      <span class="band-tag" data-th="ทุกข้อในหน้านี้มาจากสไลด์คาบ 1–5 หรือจากเสียงในคาบ ไม่ได้แต่งเอง · การ์ดเหลืองคือคำพูดของอาจารย์เรื่องข้อสอบโดยตรง">Everything below comes from the class 1–5 slides or from the recordings — none of it is invented. The yellow cards are the lecturer talking about the exam itself.</span>
+    </div>
+
+    <div class="quote-strip">
+      <div class="qs">
+        <b data-th="รูปแบบข้อสอบ">Exam format</b>
+        <span class="said" data-th="&ldquo;ปกติไม่ได้ให้นำอะไรเข้า … แนวทางก็คงเหมือนเดิม ก็คือมีทั้งช้อยส์ แล้วก็ปฏิบัติ&rdquo;">&ldquo;Normally you are not allowed to bring anything in … the shape is the same as before: multiple choice, and practical.&rdquo;</span>
+        <span class="means" data-th="แปลว่า: ปิดตำรา ไม่มีชีตช่วย และมีสองส่วน — ปรนัยกับลงมือทำบน VM จริง">So: closed book, no cheat sheet, and two halves — multiple choice plus real work on the VM.</span>
+      </div>
+      <div class="qs">
+        <b data-th="โจทย์จะเขียนแบบไหน">How questions are worded</b>
+        <span class="said" data-th="&ldquo;คำสั่งจะเหมือนกับที่จะออกข้อสอบ ก็คือจะพูดถึงผลลัพธ์หรือสิ่งที่จะเกิดขึ้น โดยจะไม่ได้บอกว่าต้องใช้คำสั่งอะไร&rdquo;">&ldquo;The wording will be like the exam: it talks about the result, or what should happen. It does not tell you which command to use.&rdquo;</span>
+        <span class="means" data-th="แปลว่า: ท่องคำสั่งอย่างเดียวไม่พอ ต้องอ่านโจทย์ที่บอกแค่ปลายทางแล้วเลือกเครื่องมือเองได้">So: memorising commands is not enough. You get told the destination and must pick the tool yourself.</span>
+      </div>
+      <div class="qs">
+        <b data-th="สิ่งที่ไม่ต้องท่อง">What you will be given</b>
+        <span class="said" data-th="&ldquo;อันนี้ไม่ต้องจำ ถ้าต้องติดตั้งตอนสอบ อาจารย์จะมีข้อมูลให้&rdquo; · &ldquo;อาจารย์เองก็ไม่จำ ดังนั้นถ้าจะออกสอบก็เดี๋ยวช่วยให้&rdquo;">&ldquo;You don't need to memorise this — if you have to install it in the exam I'll give you the information.&rdquo; · &ldquo;I don't remember it either, so if it's on the paper I'll help you.&rdquo;</span>
+        <span class="means" data-th="พูดถึง: ชุดคำสั่งเพิ่ม GPG key ของ nginx.org และคำสั่ง find ที่ตามแก้ permission ท่องไม่คุ้ม เอาเวลาไปเข้าใจอย่างอื่นดีกว่า">He was talking about the nginx.org GPG-key incantation and the <code>find … -exec chmod</code> line. Not worth memorising — spend the time elsewhere.</span>
+      </div>
+      <div class="qs">
+        <b data-th="กับดักจากการถาม AI">The AI trap</b>
+        <span class="said" data-th="&ldquo;เวลาไปเจอ AI แล้ว AI บอกให้ใช้วิธีนี้ ก็จะได้เอ๊ะ … มันคือ nginx บน Ubuntu ไม่ใช่ nginx แบบที่อาจารย์ให้ใช้&rdquo;">&ldquo;When an AI tells you to do it this way you should think — that's nginx on Ubuntu, not the nginx I told you to use.&rdquo;</span>
+        <span class="means" data-th="แปลว่า: คำตอบยอดนิยมบนเน็ตคือ sites-available/sites-enabled ซึ่งผิดสำหรับวิชานี้ ข้อสอบน่าจะใช้จุดนี้แยกคนที่เข้าใจจริงออกจากคนที่ลอกมา">The popular internet answer is <code>sites-available/sites-enabled</code>, which is wrong for this course. Expect the paper to use that to separate understanding from copy-paste.</span>
+      </div>
+    </div>
+
+    <div class="sub-h" data-th="ตารางที่ออกช้อยส์ได้ง่ายที่สุด">The facts most easily turned into multiple choice</div>
+
+    <div class="fact-grid">
+
+      <div class="fact">
+        <h3 data-th="สัญญาณ (signals) — คาบ 2">Signals — class 2</h3>
+        <p class="lede" data-th="สไลด์ให้มาสี่ตัว และตั้งคำถามไว้ว่าตัวไหนปฏิเสธไม่ได้">The slide gives four, and asks which one cannot be refused.</p>
+        <table class="ftab">
+          <tr><td>SIGHUP 1</td><td data-th="เทอร์มินัลหายไป">your terminal went away</td></tr>
+          <tr><td>SIGINT 2</td><td data-th="CTRL+C — ขอให้หยุด">CTRL+C — please stop</td></tr>
+          <tr><td>SIGKILL 9</td><td data-th="เคอร์เนลสั่งหยุดทันที ดักไม่ได้ บล็อกไม่ได้ เมินไม่ได้">the kernel stops it now. Cannot be caught, blocked or ignored</td></tr>
+          <tr><td>SIGTERM 15</td><td data-th="ขอให้ปิดตัวเองอย่างเรียบร้อย — เป็นค่า default ของ kill">please shut down cleanly — this is what plain <code>kill</code> sends</td></tr>
+        </table>
+        <div class="fnote" data-th="<b>จำเลข</b> kill -l ลิสต์ครบ 64 ตัว · service จริงมักดัก SIGTERM ไว้เพื่อเขียนข้อมูลลงดิสก์ให้จบก่อน นั่นคือพฤติกรรมที่ถูกต้อง ไม่ใช่บั๊ก · systemd จึงขอดีๆ ก่อน รอได้ถึง 90 วินาที แล้วค่อยใช้ตัวที่ปฏิเสธไม่ได้"><b>Know the numbers.</b> <code>kill -l</code> lists all sixty-four. A real service traps SIGTERM so it can finish writing to disk — correct behaviour, not a bug. So systemd asks politely, waits up to 90 seconds, then uses the one that cannot be refused.</div>
+      </div>
+
+      <div class="fact g">
+        <h3 data-th="enable ไม่เท่ากับ start — คาบ 1 และ 2">enable is not start — classes 1 and 2</h3>
+        <p class="lede" data-th="สไลด์ขึ้นหัวข้อนี้ซ้ำสองครั้ง และเขียนกำกับว่า &ldquo;the point of the whole class&rdquo;">The slide repeats this title twice, and labels it &ldquo;the point of the whole class&rdquo;.</p>
+        <table class="ftab">
+          <tr><td>is-enabled</td><td data-th="ตอน boot จะขึ้นเองไหม — ตอบจาก symlink ใน multi-user.target.wants">will it come up at boot? — answered by a symlink in <code>multi-user.target.wants</code></td></tr>
+          <tr><td>is-active</td><td data-th="ตอนนี้กำลังทำงานอยู่ไหม">is it running right now?</td></tr>
+          <tr><td>enable --now</td><td data-th="ทำทั้งสองอย่างในครั้งเดียว">does both at once</td></tr>
+          <tr><td>daemon-reload</td><td data-th="สั่งให้ systemd อ่าน unit file ใหม่ ต้องทำทุกครั้งที่แก้ไฟล์">makes systemd re-read the unit. Required every time you edit the file</td></tr>
+        </table>
+        <div class="fnote" data-th="symlink หนึ่งอันคือความหมายทั้งหมดของคำว่า enabled และนั่นคือเหตุผลที่ unit file ต้องมีท่อน [Install] · ถ้าลืม daemon-reload systemd จะตอบจากไฟล์เวอร์ชันเก่าที่อ่านค้างไว้ แต่มันจะเตือนและบอกวิธีแก้มาด้วย"><b>One symlink</b> is the entire meaning of &ldquo;enabled&rdquo; — and it is what the <code>[Install]</code> stanza was for. Skip <code>daemon-reload</code> and systemd answers from the version it read last; it warns you, and the warning names the fix.</div>
+      </div>
+
+      <div class="fact v">
+        <h3 data-th="มองให้เห็นว่าอะไรกำลังรัน — คาบ 2">Seeing what is running — class 2</h3>
+        <p class="lede" data-th="สไลด์เขียนไว้ตรงๆ ว่า &ldquo;ps แสดงน้อยกว่าที่คุณคิดมาก&rdquo;">The slide's own words: <code>ps</code> shows you far less than you think.</p>
+        <table class="ftab">
+          <tr><td>ps</td><td data-th="เฉพาะเทอร์มินัลของคุณเอง — ได้สองสามบรรทัดจากโปรเซสเป็นร้อย">only YOUR terminal — two or three lines out of a hundred-odd processes</td></tr>
+          <tr><td>ps aux</td><td data-th="ทุกอย่าง สไตล์ BSD มีคอลัมน์ %CPU %MEM">everything, BSD style, with %CPU and %MEM</td></tr>
+          <tr><td>ps -ef</td><td data-th="ทุกอย่าง สไตล์ UNIX มีคอลัมน์ PPID">everything, UNIX style, with the PPID column</td></tr>
+          <tr><td>pgrep -af</td><td data-th="-f จับทั้งบรรทัดคำสั่ง ไม่ใช่แค่ชื่อโปรเซส">-f matches the whole command line, not just the process name</td></tr>
+          <tr><td>ss -tln</td><td data-th="พอร์ตไหนกำลัง LISTEN อยู่ — คำถามว่า &ldquo;เซิร์ฟเวอร์ฟังอยู่จริงไหม&rdquo; ตอบที่นี่">which ports are LISTENING — where &ldquo;is my server actually listening?&rdquo; gets answered</td></tr>
+          <tr><td>pstree -p</td><td data-th="โปรเซสชุดเดียวกัน วาดเป็นต้นไม้ตามจริง ทุกตัวสืบสายจาก pid 1">the same processes drawn as the tree they form. Everything descends from pid 1</td></tr>
+        </table>
+        <div class="fnote" data-th="ข้อความในสไลด์ที่กลิ่นข้อสอบชัด: &ldquo;ฉันรัน ps แล้วไม่เห็น service ของฉัน&rdquo; ไม่ได้พิสูจน์อะไรเลย · script ที่รันด้วย pgrep เฉยๆ จะจับได้แค่ตัว interpreter ไม่ใช่ชื่อสคริปต์ · ss -tlnp จะเห็นเจ้าของพอร์ตก็ต่อเมื่อเป็น root">Straight off the slide, and exam-shaped: &ldquo;I ran <code>ps</code> and my service wasn't there&rdquo; is not evidence of anything. Without <code>-f</code>, pgrep matches the interpreter, not your script. And <code>ss -tlnp</code> only names the owning process if you are root.</div>
+      </div>
+
+      <div class="fact a">
+        <h3 data-th="apt / apt-get และ dpkg — คาบ 1">apt, apt-get and dpkg — class 1</h3>
+        <p class="lede" data-th="คู่ที่ทำหน้าที่เหมือนกัน ต่างกันที่หน้าตา — ข้อสอบชอบถามคู่แบบนี้">Pairs that do the same job with different faces — exactly the shape a multiple-choice item likes.</p>
+        <table class="ftab">
+          <tr><td>apt update</td><td>apt-get update</td></tr>
+          <tr><td>apt upgrade</td><td>apt-get upgrade</td></tr>
+          <tr><td>apt install</td><td>apt-get install</td></tr>
+          <tr><td>apt remove</td><td>apt-get remove</td></tr>
+          <tr><td>apt search</td><td>apt-cache search</td></tr>
+          <tr><td>apt show</td><td>apt-cache show</td></tr>
+          <tr><td>apt list --installed</td><td>dpkg -l</td></tr>
+        </table>
+        <div class="fnote" data-th="update ไม่ได้ติดตั้งอะไร มันแค่ไปดึงรายการเวอร์ชันล่าสุดมาไว้ · upgrade คือตัวที่ลงจริง · ที่อาจารย์ย้ำในคาบ 4 คือถ้าไม่ update ก่อน จะได้ micro เวอร์ชันเก่าและงงว่าทำไมเมนูไม่ตรงกับที่สอน"><code>update</code> installs nothing — it refreshes the list of what is available. <code>upgrade</code> is what actually installs. In class 4 he made the point that skipping <code>update</code> gets you an old <code>micro</code> whose menus don't match the demo.</div>
+      </div>
+
+      <div class="fact">
+        <h3 data-th="ประวัติคำสั่งและปุ่มลัด — คาบ 1">Command history and the keys — class 1</h3>
+        <p class="lede" data-th="เรื่องนี้ท่องง่าย ออกช้อยส์ง่าย และช่วยจริงในภาคปฏิบัติที่จับเวลา">Cheap to memorise, easy to examine, and genuinely useful in a timed practical.</p>
+        <table class="ftab">
+          <tr><td>!!</td><td data-th="คำสั่งก่อนหน้าทั้งบรรทัด — ที่ใช้บ่อยคือ sudo !!">the whole previous line — the classic use is <code>sudo !!</code></td></tr>
+          <tr><td>!42</td><td data-th="คำสั่งลำดับที่ 42 ใน history">history entry number 42</td></tr>
+          <tr><td>!-2</td><td data-th="ย้อนกลับไปสองคำสั่ง">two commands back</td></tr>
+          <tr><td>!echo</td><td data-th="คำสั่งล่าสุดที่ขึ้นต้นด้วย echo">the most recent command starting with <code>echo</code></td></tr>
+          <tr><td>!$</td><td data-th="อาร์กิวเมนต์ตัวสุดท้ายของคำสั่งก่อนหน้า">the last argument of the previous command</td></tr>
+          <tr><td>!*</td><td data-th="อาร์กิวเมนต์ทั้งหมดของคำสั่งก่อนหน้า">all the arguments of the previous command</td></tr>
+          <tr><td>CTRL+R</td><td data-th="ค้นย้อนกลับใน history">search backwards through history</td></tr>
+          <tr><td>CTRL+A / CTRL+E</td><td data-th="ไปต้นบรรทัด / ท้ายบรรทัด">start of line / end of line</td></tr>
+          <tr><td>CTRL+U / CTRL+K</td><td data-th="ลบไปทางซ้ายจนสุด / ลบไปทางขวาจนสุด">cut to the start / cut to the end</td></tr>
+          <tr><td>CTRL+W</td><td data-th="ลบคำที่อยู่ทางซ้าย">delete the word before the cursor</td></tr>
+        </table>
+      </div>
+
+      <div class="fact r">
+        <h3 data-th="nginx สองสำนัก — คาบ 3">Two different nginxes — class 3</h3>
+        <p class="lede" data-th="วิชานี้ให้ลงจาก nginx.org คำตอบที่เจอบนอินเทอร์เน็ตส่วนใหญ่เป็นของอีกฝั่ง">This course installs from nginx.org. Most answers you find online are for the other one.</p>
+        <table class="ftab">
+          <tr><td data-th="ของ Ubuntu">Ubuntu's</td><td data-th="apt install nginx จาก repo มาตรฐาน · เวอร์ชัน 1.24 · รันเป็น www-data · ใช้ sites-available กับ sites-enabled · เว็บอยู่ที่ /var/www/html"><code>apt install nginx</code> from the stock repo · version 1.24 · runs as <code>www-data</code> · <code>sites-available</code> + <code>sites-enabled</code> · site root <code>/var/www/html</code></td></tr>
+          <tr><td>nginx.org</td><td data-th="เพิ่ม repo เอง · เวอร์ชัน 1.30.x · รันเป็น nginx · มีแต่ conf.d ไม่มี sites-enabled · เว็บอยู่ที่ /usr/share/nginx/html">add the repo yourself · version 1.30.x · runs as <code>nginx</code> · <code>conf.d</code> only, no <code>sites-enabled</code> · site root <code>/usr/share/nginx/html</code></td></tr>
+        </table>
+        <div class="fnote" data-th="<b>สำคัญมาก</b> — nginx.conf สั่ง include เป็น conf.d/*.conf ดังนั้นไฟล์ที่ไม่ลงท้ายด้วย .conf จะไม่ถูกอ่านเลย และนี่คือวิธีปิด config ชั่วคราวที่อาจารย์สอน: เปลี่ยนนามสกุลทิ้ง ไม่ต้องลบ · ตั้งต้นจาก default.conf แล้วก็อปปี้ไปแก้ จะได้ไม่ต้องจำว่าต้องเขียนอะไรบ้าง"><b>He called this one out as สำคัญมาก.</b> <code>nginx.conf</code> includes <code>conf.d/*.conf</code>, so a file not ending in <code>.conf</code> is never read — and that is the sanctioned way to disable a config: rename it, don't delete it. Start from <code>default.conf</code> and copy-then-edit, so you needn't remember the syntax.</div>
+      </div>
+
+      <div class="fact r">
+        <h3 data-th="nginx เลือก server block ยังไง — คาบ 3">How nginx picks a server block — class 3</h3>
+        <p class="lede" data-th="อันนี้เป็นอัลกอริทึมที่มีลำดับชัดเจน ออกช้อยส์ได้ตรงๆ">A ranked algorithm — the most directly examinable thing in the whole course.</p>
+        <table class="ftab">
+          <tr><td>1</td><td data-th="ถ้าไม่เขียน listen เลย ถือว่าเป็น 0.0.0.0:80">no <code>listen</code> at all means <code>0.0.0.0:80</code></td></tr>
+          <tr><td>2</td><td data-th="จับคู่ IP และพอร์ตก่อน แล้วค่อยดู server_name">match IP and port first, only then look at <code>server_name</code></td></tr>
+          <tr><td>3</td><td data-th="ลำดับของ server_name: ตรงเป๊ะ ก่อน ขึ้นต้นด้วยดอกจัน ก่อน ลงท้ายด้วยดอกจัน ก่อน regex">name order: exact, then leading wildcard, then trailing wildcard, then regex</td></tr>
+          <tr><td>4</td><td data-th="ไม่เข้าเงื่อนไขไหนเลย ไปที่ default_server">nothing matched? the <code>default_server</code> takes it</td></tr>
+          <tr><td>5</td><td data-th="ไม่มีใครประกาศ default_server เลย บล็อกแรกที่ถูกอ่านจะได้ไปโดยปริยาย">nobody declared one? the first block read wins by default</td></tr>
+          <tr><td>6</td><td data-th="มี server block เดียว จะไม่ตรวจ server_name เลย ทุก request เข้าหมด">with only one block, <code>server_name</code> is never checked — everything lands there</td></tr>
+        </table>
+        <div class="fnote" data-th="ชื่อชนกัน: บล็อกที่อ่านทีหลังจะถูกเมิน และการใส่ default_server ไม่ช่วย เพราะปัญหาอยู่ที่ชื่อซ้ำ ไม่ใช่ลำดับ · listen วงเล็บก้ามปูสองโคลอน 80 คือ IPv6 · server_name เป็นสตริงว่างคู่หนึ่งหมายถึงจับ request ที่ไม่มี Host header">Name conflict: the later file is ignored, and adding <code>default_server</code> does not fix it — the problem is the duplicate name, not the order. <code>listen [::]:80</code> is IPv6. A <code>server_name</code> of <code>""</code> matches requests with no Host header.</div>
+      </div>
+
+      <div class="fact a">
+        <h3 data-th="nginx -t reload restart — คาบ 3">nginx -t, reload, restart — class 3</h3>
+        <table class="ftab">
+          <tr><td>nginx -t</td><td data-th="ทดสอบว่า config โหลดได้ ไม่ได้ทดสอบว่าถูกต้อง — พิมพ์ path ผิดแต่ syntax ถูก ก็ผ่าน">tests that the config LOADS, not that it is correct. A typo'd path with valid syntax still passes</td></tr>
+          <tr><td>systemctl reload</td><td data-th="อ่าน config ใหม่โดยไม่ตัดการเชื่อมต่อที่กำลังทำงาน — ใช้ตัวนี้เป็นหลัก">re-reads the config without dropping live connections — this is the normal one</td></tr>
+          <tr><td>systemctl restart</td><td data-th="ฆ่าแล้วเปิดใหม่ ผู้ใช้ที่ค้างอยู่หลุด ใช้เมื่อ reload ไม่พอ">kills and starts again; anything in flight is dropped. For when reload is not enough</td></tr>
+        </table>
+        <div class="fnote" data-th="ลำดับที่ถูกคือ แก้ไฟล์ แล้ว nginx -t แล้วค่อย reload · ถ้า reload แล้วหน้าเว็บยังเหมือนเดิม ให้สงสัยสามอย่าง: นามสกุลไฟล์ไม่ใช่ .conf, ไปแก้ผิด server block, หรือเบราว์เซอร์ cache ไว้">The order is: edit, <code>nginx -t</code>, then reload. If a reload changes nothing, suspect three things — the file isn't <code>.conf</code>, you edited the wrong server block, or the browser cached it.</div>
+      </div>
+
+      <div class="fact v">
+        <h3 data-th="MySQL — คาบ 4">MySQL — class 4</h3>
+        <p class="lede" data-th="คาบนี้มีทั้งเรื่องสิทธิ์และเรื่องความปลอดภัย ซึ่งเป็นเนื้อทฤษฎีล้วน">The half of class 4 that is pure theory: privileges and secrets.</p>
+        <table class="ftab">
+          <tr><td>auth_socket</td><td data-th="root ของ MySQL บน Ubuntu ไม่ได้ยืนยันด้วยรหัสผ่าน แต่ดูว่าคุณเป็น root ของเครื่องหรือเปล่า จึงต้อง sudo mysql ไม่ใช่ mysql -u root -p">MySQL's root on Ubuntu doesn't check a password, it checks that you are the machine's root. Hence <code>sudo mysql</code>, not <code>mysql -u root -p</code></td></tr>
+          <tr><td>utf8mb4</td><td data-th="ชุดอักขระที่ต้องใช้ ตัวที่ชื่อ utf8 เฉยๆ ของ MySQL เก็บได้แค่ 3 ไบต์ อีโมจิและอักขระบางตัวหาย">the charset to use. MySQL's plain <code>utf8</code> is only three bytes; emoji and some characters are silently lost</td></tr>
+          <tr><td>RANDOM PASSWORD</td><td data-th="ให้ MySQL สุ่มรหัส 20 ตัวให้เอง อาจารย์แนะนำวิธีนี้ เพราะเราไม่ต้องจำมันเลย">MySQL generates twenty characters for you. He recommended it precisely so nobody has to remember one</td></tr>
+          <tr><td>ERROR 1045 (28000)</td><td data-th="Access denied — ยืนยันตัวตนไม่ผ่าน คนละเรื่องกับสิทธิ์ไม่พอ ซึ่งจะเป็น ERROR 1142">Access denied — authentication failed. Different from lacking privileges, which is ERROR 1142</td></tr>
+          <tr><td data-th="สิทธิ์เท่าที่จำเป็น">least privilege</td><td data-th="user ของแอปได้สิทธิ์เฉพาะตารางในฐานข้อมูลของตัวเอง ฐานอื่นห้ามอ่านห้ามเขียน นี่คือเหตุผลที่วิชานี้สอนสร้าง user ก่อน">the app's user gets rights on its own database's tables and nothing else. This is why the course teaches user creation first</td></tr>
+        </table>
+        <div class="fnote" data-th="<b>ครอบรหัสผ่านด้วย single quote เสมอ</b> — อาจารย์ย้ำในคาบ เพราะรหัสที่สุ่มมาอาจมีเครื่องหมายเท่ากับหรือสัญลักษณ์อื่นที่ shell ตีความ และรหัสที่สุ่มจะไม่มี single quote อยู่แล้ว · เก็บลงไฟล์ chmod 600 อย่างเดียว เพราะฐานข้อมูลเก็บเป็น hash เปิดดูย้อนหลังไม่ได้ · ในสตริงต่อฐานข้อมูลต้องเข้ารหัสอักขระพิเศษ ราวหนึ่งในห้าของรหัสที่สุ่มมามีเครื่องหมาย / ปนอยู่ และการเข้ารหัสซ้ำสองรอบจะกลายเป็นรหัสผิดแบบเงียบๆ"><b>Always wrap the password in single quotes</b> — he stressed this live, because a generated password can contain <code>=</code> or other characters the shell reads, and a generated password never contains a single quote. Store it in one <code>chmod 600</code> file only; the database keeps a hash, so you cannot look it up later. In a connection string special characters must be percent-encoded — roughly one generated password in five contains a <code>/</code>, and encoding twice gives you a silently wrong password.</div>
+      </div>
+
+      <div class="fact g">
+        <h3 data-th="Node, npm และ Prisma — คาบ 4">Node, npm and Prisma — class 4</h3>
+        <table class="ftab">
+          <tr><td>npm ci</td><td data-th="ติดตั้งตามล็อกไฟล์เป๊ะๆ ใช้บนเซิร์ฟเวอร์ · npm install แก้ล็อกไฟล์ได้ ใช้ตอนพัฒนา">installs exactly what the lockfile says — the server one. <code>npm install</code> may rewrite the lockfile; that is the development one</td></tr>
+          <tr><td>prisma migrate deploy</td><td data-th="รัน migration ที่มีอยู่แล้วเท่านั้น ใช้บนเครื่องจริง · migrate dev สร้าง migration ใหม่และรีเซ็ตข้อมูลได้ ห้ามใช้บนเซิร์ฟเวอร์">applies existing migrations only — the production one. <code>migrate dev</code> authors new ones and can reset your data. Never on a server</td></tr>
+          <tr><td>prisma generate</td><td data-th="สร้าง client จาก schema ไม่ได้แตะฐานข้อมูล">builds the client from the schema. Touches no database</td></tr>
+          <tr><td>migrate diff --exit-code</td><td data-th="ออกด้วยรหัส 0 เมื่อ schema กับฐานข้อมูลตรงกัน และรหัส 2 เมื่อไม่ตรง">exits 0 when schema and database agree, 2 when they have drifted</td></tr>
+        </table>
+        <div class="fnote" data-th="อาจารย์บอกเองว่า Prisma จะมี script ให้ ไม่ได้บังคับให้เขียนโค้ดเอง แต่ต้อง &ldquo;เข้าใจการใช้&rdquo; เพราะต้อง deploy มันขึ้นเซิร์ฟเวอร์ — แปลว่าข้อสอบน่าจะถามว่าคำสั่งไหนเหมาะกับสถานการณ์ไหน ไม่ใช่ให้เขียน schema">He said the Prisma scripts will be provided and you won't have to write the code — but you must understand its use, because you have to deploy it. Read that as: which command for which situation, not write me a schema.</div>
+      </div>
+
+      <div class="fact">
+        <h3 data-th="Reverse proxy และ CORS — คาบ 5">Reverse proxy and CORS — class 5</h3>
+        <p class="lede" data-th="คาบสุดท้ายก่อนสอบ และเป็นคาบที่อธิบายว่า &ldquo;ทำไม&rdquo; ชัดที่สุด">The last class before the exam, and the one with the clearest &ldquo;why&rdquo;.</p>
+        <table class="ftab">
+          <tr><td data-th="ปัญหา">the problem</td><td data-th="frontend อยู่ที่พอร์ต 80 backend อยู่ที่พอร์ต 3000 คนละพอร์ตคือคนละ origin เบราว์เซอร์จึงบล็อกการเรียก">frontend on :80, backend on :3000. A different port is a different origin, so the browser blocks the call</td></tr>
+          <tr><td>CORS</td><td data-th="กลไกที่ทำงานผ่าน HTTP header ให้เซิร์ฟเวอร์ระบุได้ว่ายอมให้ origin ไหนโหลดทรัพยากรได้บ้าง">an HTTP-header mechanism by which a server names the origins a browser may load its resources from</td></tr>
+          <tr><td data-th="ทางแก้ที่วิชานี้เลือก">this course's answer</td><td data-th="reverse proxy — ให้ทุกอย่างอยู่ใต้ origin เดียวกัน ปัญหา CORS จึงหายไปเอง ไม่ต้องไปตั้ง header">a reverse proxy — put everything behind one origin and the CORS problem stops existing, with no headers to set</td></tr>
+          <tr><td data-th="นิยาม">the definition</td><td data-th="เซิร์ฟเวอร์ที่รับ request แล้วส่งต่อไปยังเซิร์ฟเวอร์ปลายทางอย่างโปร่งใส ยืนอยู่หน้า origin server และทำให้ไม่มี client ไหนคุยกับ origin server ตรงๆ เลย">a server that transparently forwards requests to one or more web servers; it sits in front of the origin server so that no client ever talks to it directly</td></tr>
+          <tr><td data-th="ได้อะไร">what it buys</td><td data-th="scalability, performance, resilience, security — สี่คำนี้มาจากสไลด์ตรงๆ">scalability, performance, resilience and security — those four words, straight off the slide</td></tr>
+        </table>
+        <div class="fnote" data-th="ผังในสไลด์: ไม่มี proxy ผู้ใช้ต้องพิมพ์ชื่อเครื่องตามด้วยโคลอนสามพันเพื่อเรียก API · มี proxy ผู้ใช้เรียก /api/notices บนพอร์ต 80 แล้ว nginx ส่งต่อไป localhost:3000 · แบบ nested path ผู้ใช้เรียก /school/api/students แล้ว nginx ตัด /school ออกก่อนส่งไป backend เป็น /api/students">From the slide's diagrams: without a proxy the user has to type <code>host:3000</code> to reach the API. With one, they ask <code>/api/notices</code> on port 80 and nginx forwards to <code>localhost:3000</code>. In the nested form the user asks <code>/school/api/students</code> and nginx strips <code>/school</code> before forwarding as <code>/api/students</code>.</div>
+      </div>
+
+      <div class="fact a">
+        <h3 data-th="อ่านรหัสสถานะให้ออกว่าใครผิด">Reading a status code for whose fault it is</h3>
+        <p class="lede" data-th="ในภาคปฏิบัติที่จับเวลา ทักษะนี้ตัดเวลาไล่หาปัญหาได้มากที่สุด">In a timed practical this is the single biggest time-saver.</p>
+        <table class="ftab">
+          <tr><td>2xx</td><td data-th="ทำงานได้ ปัญหาอยู่ที่อื่นแล้ว">it worked. Look somewhere else</td></tr>
+          <tr><td>301 / 308</td><td data-th="ย้ายถาวรทั้งคู่ ต่างกันที่ 308 บังคับให้คง method และ body เดิม 301 เบราว์เซอร์อาจเปลี่ยน POST เป็น GET ให้">both permanent. 308 preserves the method and body; with 301 a browser may turn a POST into a GET</td></tr>
+          <tr><td>404</td><td data-th="ถึง nginx แล้ว แต่หาไฟล์หรือ location ไม่เจอ — ดู root และดู location block">nginx was reached but found no file or location — check <code>root</code>, check the location block</td></tr>
+          <tr><td>502</td><td data-th="nginx ส่งต่อแล้วแต่ backend ไม่ตอบ — backend ตาย หรือฟังคนละพอร์ต">nginx forwarded and the backend didn't answer — it's down, or listening on another port</td></tr>
+          <tr><td>504</td><td data-th="backend รับแล้วแต่ตอบช้าเกินไป">the backend accepted but took too long</td></tr>
+          <tr><td data-th="ต่อไม่ติดเลย">no response at all</td><td data-th="ไม่ใช่รหัสสถานะ แปลว่าไปไม่ถึง nginx ด้วยซ้ำ — ให้สงสัย ufw หรือ nginx ไม่ได้รันอยู่">not a status code at all. You never reached nginx — suspect <code>ufw</code>, or that nginx isn't running</td></tr>
+        </table>
+        <div class="fnote" data-th="กฎง่ายๆ: 4xx โทษฝั่งคำขอ 5xx โทษฝั่งเซิร์ฟเวอร์ ไม่มีรหัสเลยโทษฝั่งเครือข่าย · เมื่อเจอ 502 ให้ไปที่ journalctl -u ของ backend ก่อนเสมอ">Rule of thumb: 4xx blames the request, 5xx blames the server, no code at all blames the network. On a 502, go straight to <code>journalctl -u</code> for the backend.</div>
+      </div>
+
+      <div class="fact r">
+        <h3 data-th="ไฟร์วอลล์ ufw">The firewall, ufw</h3>
+        <table class="ftab">
+          <tr><td>ufw status numbered</td><td data-th="ดูกฎพร้อมหมายเลข ต้องใช้หมายเลขในการลบ">lists the rules with the numbers you need in order to delete one</td></tr>
+          <tr><td>ufw allow 80/tcp</td><td data-th="เปิดพอร์ตเว็บ">open the web port</td></tr>
+          <tr><td>ufw delete N</td><td data-th="ลบตามหมายเลข หมายเลขจะเลื่อนหลังลบ ต้องดูใหม่ทุกครั้ง">delete by number — and the numbers shift afterwards, so re-list every time</td></tr>
+        </table>
+        <div class="fnote" data-th="<b>ห้ามลบกฎพอร์ต 22 เด็ดขาด</b> อาจารย์บอกในคาบว่าถ้าลบไปแล้วต้องรอแอดมินมาช่วย แม้แต่อาจารย์เองก็เข้าไปแก้ให้ไม่ได้ เพราะการเข้าไปช่วยก็ต้องใช้พอร์ต 22 · เปิดพอร์ตแล้วแต่ ss ไม่แสดง แปลว่ายังไม่มีอะไรมาฟังพอร์ตนั้น เป็นคนละเรื่องกัน"><b>Never delete the rule for port 22.</b> He said in class that if you do, you wait for an admin — he cannot fix it for you, because fixing it would need port 22. And an opened port that <code>ss</code> doesn't show simply means nothing is listening on it yet; that's a separate problem.</div>
+      </div>
+
+    </div>
+
+    <div class="sub-h" data-th="ข้อที่คนพลาดบ่อย — จากที่อาจารย์พูดในคาบ">The ones people actually get wrong — said out loud in class</div>
+
+    <div class="traps">
+      <div class="trap">
+        <b data-th="นามสกุลไฟล์ต้องเป็น .conf">The file must end in .conf</b>
+        <span data-th="อาจารย์ใช้คำว่า &ldquo;สำคัญมาก&rdquo; กับข้อนี้ เพราะ nginx.conf include เฉพาะ conf.d ดอกจันจุด conf ตั้งชื่อเป็นอย่างอื่นคือไม่ถูกอ่านเลย และจะงงว่าทำไมแก้แล้วไม่ขึ้น">He called this one สำคัญมาก. <code>nginx.conf</code> includes only <code>conf.d/*.conf</code>. Any other name is never read, and you spend twenty minutes wondering why your edit did nothing.</span>
+      </div>
+      <div class="trap">
+        <b data-th="ติดตั้งเสร็จไม่ได้แปลว่ารันอยู่">Installed does not mean running</b>
+        <span data-th="อาจารย์ย้ำว่าติดตั้งแล้วต้องเช็คสถานะทุกครั้ง ถ้ายังไม่รันต้อง start เอง และการ start ต้องใช้สิทธิ์ root">He repeated that after installing you check the status every time. If it isn't running you start it yourself — and starting needs root.</span>
+      </div>
+      <div class="trap">
+        <b data-th="รหัสผ่านต้องครอบด้วย single quote">Single-quote the password</b>
+        <span data-th="เขาเจอสดในคาบว่ารหัสที่สุ่มมามีสัญลักษณ์ที่ shell ตีความ ทำให้คำสั่งเพี้ยน ครอบด้วย single quote แล้วจบ และรหัสที่สุ่มจะไม่มี single quote อยู่ในนั้นแน่นอน">He hit this live: a generated password contained characters the shell reads. Single quotes end the problem, and a generated password never contains one.</span>
+      </div>
+      <div class="trap">
+        <b data-th="sites-enabled ไม่มีในวิชานี้">There is no sites-enabled here</b>
+        <span data-th="เป็น layout ของ nginx ฝั่ง Ubuntu ซึ่งวิชานี้ไม่ได้ใช้ ถ้าเขียนคำตอบด้วย layout นี้คือผิดบริบท และเป็นสัญญาณชัดว่าลอกคำตอบมาจากที่อื่น">That is the Ubuntu package's layout, which this course does not use. Answering with it is wrong in context — and a visible sign the answer came from somewhere else.</span>
+      </div>
+      <div class="trap">
+        <b data-th="nginx -t ผ่าน ไม่ได้แปลว่าถูก">nginx -t passing means very little</b>
+        <span data-th="มันทดสอบว่าโหลด config ได้ ไม่ได้ทดสอบว่า root ชี้ถูกที่ หรือ proxy_pass ชี้ถูกพอร์ต ผ่านแล้วเว็บพังยังเกิดได้ปกติ">It tests that the config loads, not that <code>root</code> points anywhere real or that <code>proxy_pass</code> has the right port. Passing and broken is an ordinary combination.</span>
+      </div>
+      <div class="trap">
+        <b data-th="แก้ unit file แล้วลืม daemon-reload">Editing a unit without daemon-reload</b>
+        <span data-th="systemd อ่าน unit file ไว้ครั้งเดียวแล้วจำไว้ แก้ไฟล์แล้วไม่บอกมัน มันจะตอบจากของเก่า สไลด์บอกว่ามันจะเตือนและบอกวิธีแก้มาให้ — ให้อ่านคำเตือน">systemd read the unit once and kept it. Edit the file without telling it and it answers from the old copy. The slide's advice: read the warning, it names the fix.</span>
+      </div>
+      <div class="trap">
+        <b data-th="ExecStart ใช้ path เต็มเท่านั้น">ExecStart takes an absolute path</b>
+        <span data-th="สไลด์เขียนว่านี่คือจุดที่ unit file แรกของทุกคนพัง systemd ไม่ได้รันผ่าน shell จึงไม่มี tilde ไม่มี working directory ไม่มี relative path และถ้าไม่ใส่ User มันจะรันเป็น root">The slide says this is where first unit files go wrong. systemd does not run your script from a shell: no <code>~</code>, no working directory, no relative paths. And with no <code>User=</code> it runs as root.</span>
+      </div>
+      <div class="trap">
+        <b data-th="ลบกฎพอร์ต 22 ใน ufw">Deleting the ufw rule for 22</b>
+        <span data-th="นี่คือจุดจบของ VM ในคาบสอบ ไม่มีใครกู้ให้ได้ทันเวลา ก่อนกด ufw delete ให้อ่านหมายเลขซ้ำอีกรอบเสมอ">In an exam this ends your VM, and nobody can restore it in time. Re-read the number before every <code>ufw delete</code>.</span>
+      </div>
+    </div>
+
+    <div class="sub-h" data-th="ลองตอบเอง — เปิดดูเฉลยได้ทีละข้อ">Try them yourself — each one opens to its answer</div>
+
+    <div class="quiz">
+
+      <details class="q"><summary data-th="เขียน trap ดัก TERM ไว้ในสคริปต์แล้วสั่ง systemctl stop จะเกิดอะไรขึ้น">A script traps TERM and you run <code>systemctl stop</code>. What happens?</summary>
+        <div class="qa"><span class="ans" data-th="รอสูงสุด 90 วินาที แล้ว systemd ส่ง SIGKILL">It waits up to 90 seconds, then systemd sends SIGKILL.</span><span data-th="systemd ส่ง SIGTERM ก่อนเสมอ สคริปต์ดักไว้ได้จึงยังไม่ตาย ครบเวลาแล้ว systemd ใช้สัญญาณ 9 ที่ดักไม่ได้ นี่คือเหตุผลที่ &ldquo;systemctl stop บางทีค้าง&rdquo; ไม่ใช่บั๊ก">systemd sends SIGTERM first; the trap catches it, so nothing dies. When the timer runs out it uses signal 9, which cannot be caught. This is why &ldquo;systemctl stop sometimes waits&rdquo; is not a bug.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="systemctl is-enabled ตอบ enabled แต่ is-active ตอบ inactive แปลว่าอะไร">is-enabled says enabled, is-active says inactive. What does that mean?</summary>
+        <div class="qa"><span class="ans" data-th="มัน &ldquo;จะ&rdquo; ขึ้นตอน boot ครั้งหน้า แต่ตอนนี้ยังไม่ได้รัน">It will come up at the next boot, but it is not running now.</span><span data-th="symlink ใน multi-user.target.wants มีอยู่แล้ว ซึ่งคือความหมายทั้งหมดของ enabled แต่ยังไม่มีใครสั่ง start สั่ง systemctl start เพื่อให้รันเดี๋ยวนี้ หรือใช้ enable --now ตั้งแต่แรกเพื่อทำทั้งสองอย่าง">The symlink in <code>multi-user.target.wants</code> exists — that is the whole meaning of enabled — but nobody has started it. <code>systemctl start</code> for now, or <code>enable --now</code> to do both.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="วาง config ไว้ที่ /etc/nginx/conf.d/site.txt แล้ว reload ทำไมไม่มีอะไรเปลี่ยน">You put a config at <code>/etc/nginx/conf.d/site.txt</code> and reloaded. Nothing changed. Why?</summary>
+        <div class="qa"><span class="ans" data-th="nginx.conf include แค่ conf.d ดอกจันจุด conf ไฟล์นามสกุล .txt จึงไม่ถูกอ่านเลย">nginx.conf includes <code>conf.d/*.conf</code> only, so a <code>.txt</code> is never read.</span><span data-th="และ nginx -t จะผ่านด้วย เพราะไฟล์ที่ไม่ถูกอ่านก็ไม่มีอะไรให้ผิด · ความรู้ก้อนเดียวกันนี้คือวิธีปิด config ที่ถูกต้อง: เปลี่ยนนามสกุลแทนการลบไฟล์">And <code>nginx -t</code> passes, because a file that is never read has nothing to be wrong in. The same fact is the correct way to disable a config: rename it rather than delete it.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="เครื่องมี server block เดียว ไม่ได้ใส่ default_server และ server_name ไม่ตรงกับที่ผู้ใช้เรียก จะเกิดอะไรขึ้น">One server block, no <code>default_server</code>, and the requested name doesn't match its <code>server_name</code>. What happens?</summary>
+        <div class="qa"><span class="ans" data-th="ยังเข้าบล็อกนั้นตามปกติ">The request still lands there.</span><span data-th="เมื่อมี server block เดียว nginx จะไม่ตรวจ server_name เลย ทุก request ที่เข้ามาที่ IP และพอร์ตนั้นเข้าบล็อกนั้นหมด ข้อนี้พลาดกันบ่อยเพราะคนคิดว่าชื่อไม่ตรงต้องเด้ง">With a single block nginx never checks <code>server_name</code>; everything arriving on that IP and port goes to it. People miss this because they expect a name mismatch to be rejected.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="เรียก API แล้วได้ 502 Bad Gateway ควรไปดูที่ไหนก่อน">The API returns 502 Bad Gateway. Where do you look first?</summary>
+        <div class="qa"><span class="ans" data-th="ที่ backend ไม่ใช่ที่ nginx">At the backend, not at nginx.</span><span data-th="502 แปลว่า nginx รับ request และส่งต่อสำเร็จ แต่ปลายทางไม่ตอบ ไล่ตามลำดับ: systemctl status ของ backend, journalctl -u ของมัน, แล้ว ss -tln ว่ามันฟังพอร์ตเดียวกับที่ proxy_pass ชี้ไปจริงไหม">502 means nginx accepted the request and forwarded it, and the far end did not answer. In order: <code>systemctl status</code> for the backend, <code>journalctl -u</code> for it, then <code>ss -tln</code> to see whether it is listening on the port <code>proxy_pass</code> names.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="เปิด ufw allow 8080/tcp แล้ว แต่ ss -tln ไม่แสดงพอร์ต 8080 ผิดตรงไหน">You ran <code>ufw allow 8080/tcp</code> but <code>ss -tln</code> doesn't show 8080. What's wrong?</summary>
+        <div class="qa"><span class="ans" data-th="ไม่ผิดอะไรเลย แค่ยังไม่มีโปรแกรมไหนมาฟังพอร์ตนั้น">Nothing. Nothing is listening on it yet.</span><span data-th="ufw เปิดทางเข้า ส่วน ss บอกว่ามีใครรออยู่ปลายทางไหม เป็นคนละชั้นกัน อาจารย์ยกตัวอย่างนี้ในคาบตรงๆ · ลำดับที่ถูกคือให้บริการรันก่อน แล้วค่อยยืนยันด้วย ss แล้วจึงเปิดไฟร์วอลล์"><code>ufw</code> opens the door; <code>ss</code> says whether anyone is waiting behind it. Different layers — he used this exact example in class. The right order is: start the service, confirm with <code>ss</code>, then open the firewall.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="ทำไมต้องใช้ npm ci บนเซิร์ฟเวอร์แทน npm install">Why <code>npm ci</code> on a server rather than <code>npm install</code>?</summary>
+        <div class="qa"><span class="ans" data-th="ci ติดตั้งตามล็อกไฟล์เป๊ะ ส่วน install แก้ล็อกไฟล์ได้">ci installs exactly the lockfile; install may rewrite it.</span><span data-th="แปลว่าเครื่อง production อาจได้เวอร์ชันไม่ตรงกับที่ทดสอบมา และการ deploy รอบถัดไปอาจได้คนละชุดอีก ซึ่งเป็นบั๊กประเภทที่ตามยากที่สุด · ci ยังลบ node_modules ทิ้งก่อนเสมอ จึงได้ผลเหมือนกันทุกครั้ง">Which means production can end up with versions you never tested, and the next deploy with different ones again — the hardest class of bug to chase. <code>ci</code> also wipes <code>node_modules</code> first, so the result is identical every time.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="prisma migrate dev กับ migrate deploy ต่างกันยังไง และตัวไหนห้ามใช้บนเซิร์ฟเวอร์">migrate dev vs migrate deploy — and which must never run on a server?</summary>
+        <div class="qa"><span class="ans" data-th="ห้ามใช้ migrate dev บนเซิร์ฟเวอร์">Never <code>migrate dev</code>.</span><span data-th="migrate dev มีไว้สร้าง migration ใหม่ตอนพัฒนา และมันรีเซ็ตฐานข้อมูลได้เมื่อเจอความไม่ตรงกัน · migrate deploy รันเฉพาะ migration ที่มีอยู่แล้ว ไม่สร้างใหม่ ไม่ลบข้อมูล นั่นคือตัวสำหรับเครื่องจริง"><code>migrate dev</code> exists to author migrations during development, and it will reset the database when it finds a mismatch. <code>migrate deploy</code> applies existing migrations only — it authors nothing and destroys nothing. That is the production one.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="ทำไมวิชานี้แก้ปัญหา CORS ด้วย reverse proxy แทนที่จะตั้ง header">Why does this course solve CORS with a reverse proxy instead of setting headers?</summary>
+        <div class="qa"><span class="ans" data-th="เพราะ proxy ทำให้ทุกอย่างอยู่ใต้ origin เดียวกัน ปัญหาจึงไม่เกิดตั้งแต่แรก">Because behind one origin the problem never arises.</span><span data-th="CORS เกิดเพราะ frontend อยู่พอร์ต 80 และ backend อยู่พอร์ต 3000 คนละพอร์ตคือคนละ origin · เมื่อ nginx รับทุกอย่างที่พอร์ต 80 แล้วส่งต่อไป localhost:3000 ในสายตาเบราว์เซอร์มี origin เดียว จึงไม่ต้องตั้ง header ใดๆ และได้ scalability performance resilience security ติดมาด้วยตามที่สไลด์เขียน">CORS appears because the frontend is on :80 and the backend on :3000 — a different port is a different origin. Once nginx takes everything on :80 and forwards to <code>localhost:3000</code>, the browser sees one origin, so there are no headers to set. The slide adds that you get scalability, performance, resilience and security along with it.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="pgrep myapp ไม่เจอ แต่สคริปต์กำลังรันอยู่จริง เพราะอะไร">Your script is running but <code>pgrep myapp</code> finds nothing. Why?</summary>
+        <div class="qa"><span class="ans" data-th="ต้องใส่ -f เพราะ pgrep เฉยๆ จับแค่ชื่อโปรเซส ซึ่งของสคริปต์คือ interpreter">You need <code>-f</code>. Plain pgrep matches the process name, which for a script is the interpreter.</span><span data-th="สคริปต์ bash จะปรากฏเป็น bash ไม่ใช่ myapp.sh · -f สั่งให้จับทั้งบรรทัดคำสั่ง จึงเจอชื่อไฟล์ · สไลด์บอกไว้เลยว่า &ldquo;you will hit this today&rdquo;">A bash script shows up as <code>bash</code>, not <code>myapp.sh</code>. <code>-f</code> matches the whole command line, which contains the filename. The slide says outright: you will hit this today.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="ทำไม MySQL root บน Ubuntu ต้องเข้าด้วย sudo mysql ไม่ใช่ mysql -u root -p">Why is MySQL's root reached with <code>sudo mysql</code> rather than <code>mysql -u root -p</code>?</summary>
+        <div class="qa"><span class="ans" data-th="เพราะบัญชีนั้นใช้ auth_socket ไม่ได้ตรวจรหัสผ่าน แต่ตรวจว่าคุณเป็น root ของเครื่อง">Because that account uses <code>auth_socket</code>: it checks that you are the machine's root, not a password.</span><span data-th="ถ้าลองด้วย mysql -u root -p จะได้ ERROR 1045 (28000) Access denied ซึ่งไม่ได้แปลว่ารหัสผิด แต่แปลว่าวิธียืนยันตัวตนผิดวิธี">Trying <code>mysql -u root -p</code> gives ERROR 1045 (28000) Access denied — which does not mean the password is wrong, it means you authenticated the wrong way entirely.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="ทำไมต้อง utf8mb4 ไม่ใช่ utf8">Why <code>utf8mb4</code> and not <code>utf8</code>?</summary>
+        <div class="qa"><span class="ans" data-th="เพราะ utf8 ของ MySQL เก็บได้แค่ 3 ไบต์ต่ออักขระ">Because MySQL's <code>utf8</code> stores at most three bytes per character.</span><span data-th="อักขระที่ต้องใช้ 4 ไบต์ เช่น อีโมจิ จะหายหรือทำให้ insert ล้มเหลว · utf8mb4 คือ UTF-8 ที่แท้จริง ชื่อ utf8 ของ MySQL เป็นชื่อที่ตั้งพลาดมาแต่เดิม จึงต้องระบุ utf8mb4 ตอน CREATE DATABASE เสมอ">Anything needing four — emoji, for instance — is lost or makes the insert fail. <code>utf8mb4</code> is real UTF-8; MySQL's <code>utf8</code> is a historical misnomer. So name <code>utf8mb4</code> at CREATE DATABASE time, every time.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="ทำไมต้องครอบรหัสผ่านด้วย single quote ในไฟล์ .env และในคำสั่ง export">Why single-quote the password in <code>.env</code> and in an <code>export</code>?</summary>
+        <div class="qa"><span class="ans" data-th="เพราะรหัสที่สุ่มมาอาจมีอักขระที่ shell ตีความ">Because a generated password can contain characters the shell interprets.</span><span data-th="เครื่องหมายเท่ากับ ดอกจัน หรือเครื่องหมายดอลลาร์ ทำให้บรรทัดถูกตัดหรือถูกแทนค่าโดยไม่รู้ตัว และคุณจะได้รหัสผิดแบบเงียบๆ · single quote ปิดการตีความทั้งหมด และรหัสที่ MySQL สุ่มจะไม่มี single quote ปนอยู่แน่นอน จึงปลอดภัยเสมอ · นอกจากนี้เมื่อเอาไปต่อในสตริงเชื่อมต่อ อักขระพิเศษต้องเข้ารหัสแบบเปอร์เซ็นต์ และการเข้ารหัสซ้ำสองรอบจะได้รหัสผิดโดยไม่มีข้อความเตือน">An <code>=</code>, a <code>*</code> or a <code>$</code> truncates the line or gets substituted behind your back, and you end up with a silently wrong password. Single quotes switch all interpretation off, and a MySQL-generated password never contains one, so it is always safe. Separately: in a connection string those characters must be percent-encoded, and encoding twice gives a wrong password with no warning at all.</span></div>
+      </details>
+
+      <details class="q"><summary data-th="โจทย์บอกว่า &ldquo;ต้องกลับมาทำงานเองหลังเครื่อง reboot&rdquo; ต้องทำอะไร">A question says &ldquo;it must come back by itself after a reboot&rdquo;. What does it want?</summary>
+        <div class="qa"><span class="ans" data-th="unit file บวก systemctl enable แล้วจึง reboot เพื่อพิสูจน์">A unit file plus <code>systemctl enable</code> — then a reboot to prove it.</span><span data-th="นี่คือรูปแบบโจทย์ที่อาจารย์บอกเองว่าข้อสอบจะเขียนแบบนี้ คือบอกผลลัพธ์แต่ไม่บอกคำสั่ง · &ldquo;อยู่รอดหลัง logout&rdquo; ตอบ nohup ได้ · แต่ &ldquo;อยู่รอดหลัง reboot&rdquo; หรือ &ldquo;ล้มแล้วขึ้นเอง&rdquo; nohup ทำไม่ได้ ต้องเป็น unit file เท่านั้น และเป็น Restart กับ WantedBy ที่ทำให้เกิดขึ้น">This is the wording he described: it names the outcome, not the command. &ldquo;Survives a logout&rdquo; can be <code>nohup</code>. &ldquo;Survives a reboot&rdquo; or &ldquo;restarts itself when it crashes&rdquo; cannot — only a unit file, and it is <code>Restart=</code> and <code>WantedBy=</code> that do it.</span></div>
+      </details>
+
     </div>
   </section>
 
