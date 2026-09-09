@@ -1048,8 +1048,9 @@ curl -s http://localhost/ | head -3</div>
 
         <div class="wstep"><div class="wnum">7</div><div>
           <div class="wcmd">sudo install -d -o sysadmin -g sysadmin -m 2775 /srv/noticeboard
-tar -xzf /home/public/labs/lab03/noticeboard.tar.gz -C /srv/noticeboard --strip-components=1</div>
-          <div class="wwhy" data-th="ซอร์สอยู่ที่ <span class='path'>/srv/noticeboard</span> — <code>tar</code> ห้ามใส่ sudo เพราะจะทับสิทธิ์ที่เพิ่งตั้ง ส่วน <code>--strip-components=1</code> ตัดโฟลเดอร์ชั้นนอกออก ไม่งั้นจะได้ /srv/noticeboard/noticeboard/">Source lives at <span class="path">/srv/noticeboard</span>. No sudo on <code>tar</code> — it would overwrite the permissions you just set. <code>--strip-components=1</code> drops the archive's outer folder.</div>
+tar -xzf /home/public/labs/lab03/noticeboard.tar.gz -C /srv/noticeboard --strip-components=1
+find /srv/noticeboard -perm -u+w -exec chmod g+w {} +</div>
+          <div class="wwhy" data-th="ซอร์สอยู่ที่ <span class='path'>/srv/noticeboard</span> — <code>tar</code> ห้ามใส่ sudo เพราะจะทับสิทธิ์ที่เพิ่งตั้ง ส่วน <code>--strip-components=1</code> ตัดโฟลเดอร์ชั้นนอกออก บรรทัด <code>find</code> ห้ามลืม: setgid (เลข 2 ใน 2775) ส่งต่อแค่ <em>กลุ่ม</em> ไม่ได้ส่งต่อสิทธิ์เขียน — checker ของ lab03 เช็กข้อนี้ด้วย">Source lives at <span class="path">/srv/noticeboard</span>. No sudo on <code>tar</code> — it would overwrite the permissions you just set. Don't skip the <code>find</code> line: setgid (the 2 in 2775) hands down the <em>group</em> but never the write bit, and lab03's checker tests for it.</div>
         </div></div>
 
         <div class="wstep"><div class="wnum">8</div><div>
@@ -1101,9 +1102,8 @@ exit</div>
         </div></div>
 
         <div class="wstep"><div class="wnum">15</div><div>
-          <div class="wcmd">install -m 600 /dev/null /srv/noticeboard/db/noticeboard.env
-micro /srv/noticeboard/db/noticeboard.env</div>
-          <div class="wwhy" data-th="ไฟล์รหัสผ่านอยู่ที่ <span class='path'>/srv/noticeboard/db/noticeboard.env</span> ตั้ง 600 ตั้งแต่ตอนสร้าง ก่อนความลับจะเข้าไป ข้างในเขียนสามบรรทัด: NOTICEBOARD_USER / NOTICEBOARD_DATABASE / NOTICEBOARD_PASSWORD (ครอบด้วย single quote)">The password file is <span class="path">/srv/noticeboard/db/noticeboard.env</span>, created at mode 600 <em>before</em> the secret goes in. Three lines inside: user, database, and the password in single quotes.</div>
+          <div class="wcmd">MYSQL_PWD='&lt;the 20 characters&gt;' mysql -u noticeboard noticeboard -e "SHOW GRANTS;"</div>
+          <div class="wwhy" data-th="ทดสอบรหัสผ่านก่อนเอาไปแปะใน .env — <code>MYSQL_PWD=</code> นำหน้าทำให้รหัสอยู่แค่ในคำสั่งนั้นคำสั่งเดียว ไม่ติดใน <code>ps</code> และ history (ห้ามใช้ <code>-p</code> ติดกับรหัสเด็ดขาด) ⚠️ noticeboard ไม่มีโฟลเดอร์ <span class='path'>db/</span> เหมือน school — รหัสของมันจะไปอยู่ที่ <span class='path'>/srv/noticeboard/backend/.env</span> ในข้อ 18 ที่เดียว และต้อง <strong>ไม่ซ้ำ</strong> กับรหัสของ school เพราะ checker ของ lab04 เทียบสองอันนี้">Prove the credential works before you paste it anywhere. The <code>MYSQL_PWD=</code> prefix keeps it out of <code>ps</code> and your history — never stick it to <code>-p</code>. ⚠️ Unlike school, noticeboard ships no <span class="path">db/</span> folder: this password's only home is <span class="path">/srv/noticeboard/backend/.env</span> in step 18, and it must <strong>differ</strong> from your school one — lab04's checker compares them.</div>
         </div></div>
       </div>
 
@@ -1173,7 +1173,7 @@ sudo nginx -t &amp;&amp; sudo systemctl reload nginx</div>
           <div class="wcmd">sudo micro /srv/noticeboard/backend/.env
 sudo systemctl restart noticeboard-api
 sudo ufw delete allow 3000/tcp</div>
-          <div class="wwhy" data-th="แก้ <code>HOST</code> เป็น <code>127.0.0.1</code> ให้ backend ฟังเฉพาะในเครื่อง (nginx เรียกผ่าน loopback อยู่แล้ว) ต้อง <code>restart</code> ไม่ใช่ <code>reload</code> เพราะ EnvironmentFile อ่านตอน start เท่านั้น แล้วปิดพอร์ต 3000 ที่เปิดไว้ข้อ 21">Set <code>HOST</code> to <code>127.0.0.1</code> so the API only listens locally — nginx reaches it over loopback anyway. Use <code>restart</code>, not reload: EnvironmentFile is read only at start. Then close the port you opened in step 21.</div>
+          <div class="wwhy" data-th="แก้ <code>HOST</code> เป็น <code>127.0.0.1</code> ให้ backend ฟังเฉพาะในเครื่อง (nginx เรียกผ่าน loopback อยู่แล้ว) ต้อง <code>restart</code> ไม่ใช่ <code>reload</code> เพราะ EnvironmentFile อ่านตอน start เท่านั้น แล้วปิดพอร์ต 3000 ที่เปิดไว้ข้อ 21 ⚠️ <strong>ข้อนี้คือปลายทางของสัปดาห์ 5</strong> — ถ้ากำลังส่ง lab04 อยู่ ให้หยุดที่ข้อ 21 เพราะ checker ของ lab04 ต้องการ <code>HOST=0.0.0.0</code> และต้องยิง API จากข้างนอกได้">Set <code>HOST</code> to <code>127.0.0.1</code> so the API only listens locally — nginx reaches it over loopback anyway. Use <code>restart</code>, not reload: EnvironmentFile is read only at start. Then close the port you opened in step 21. ⚠️ <strong>This is the week-5 end state.</strong> If you're submitting lab04, stop at step 21 — that checker wants <code>HOST=0.0.0.0</code> and probes the API from outside.</div>
         </div></div>
       </div>
 
