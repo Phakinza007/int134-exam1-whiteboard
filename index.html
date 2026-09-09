@@ -285,6 +285,23 @@
   .footer-card ul{margin:0; padding-left:18px; font-size:13.6px; line-height:1.6; color:var(--ink-soft);}
   .footer-card p{font-size:13.6px; line-height:1.6; color:var(--ink-soft); margin:0 0 10px;}
   .kbd{font-family:var(--font-mono); background:var(--surface-2); border-radius:4px; padding:1px 6px; font-size:12.3px; color:var(--ink);}
+  .tiers-wrap{overflow-x:auto; margin-top:20px;}
+  .tiers{display:grid; grid-template-columns:132px repeat(3, minmax(268px,1fr)); gap:1px; background:var(--line); min-width:1030px; border:1px solid var(--line); border-radius:10px; overflow:hidden;}
+  .tcell{background:var(--surface); padding:12px 13px;}
+  .thead{background:var(--surface-2); font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; font-weight:700; color:var(--ink-faint);}
+  .thead.f{color:var(--accent); box-shadow:inset 0 3px 0 var(--accent);}
+  .thead.d{color:var(--amber); box-shadow:inset 0 3px 0 var(--amber);}
+  .thead.b{color:var(--violet); box-shadow:inset 0 3px 0 var(--violet);}
+  .thead small{display:block; font-family:var(--font-sans); text-transform:none; letter-spacing:0; font-weight:500; color:var(--ink-faint); font-size:11px; margin-top:4px;}
+  .tstage{background:var(--surface-2); font-size:12.4px; font-weight:600; line-height:1.4;}
+  .tstage b{font-family:var(--font-mono); color:var(--ink-faint); display:block; font-size:11px; font-weight:700; margin-bottom:4px;}
+  .tnum{font-family:var(--font-mono); font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px; margin-bottom:7px; display:inline-block;}
+  .tnum.f{background:var(--accent-soft); color:var(--accent);}
+  .tnum.d{background:var(--amber-soft); color:var(--amber);}
+  .tnum.b{background:var(--violet-soft); color:var(--violet);}
+  .tcmd{font-family:var(--font-mono); font-size:11.2px; line-height:1.6; color:var(--ink); white-space:pre-wrap; word-break:break-word; margin-bottom:7px;}
+  .twhy{font-size:11.8px; color:var(--ink-soft); line-height:1.5;}
+  .tnone{font-size:11.8px; color:var(--ink-faint); font-style:italic; line-height:1.5;}
   .walk{margin-top:20px;}
   .phase{border-left:3px solid var(--accent); padding-left:18px; margin-bottom:28px;}
   .phase.p2{border-color:var(--violet);}
@@ -1201,6 +1218,133 @@ curl -s -X POST -H 'Content-Type: application/json' \
         </div></div>
       </div>
 
+    </div>
+  </section>
+
+  <!-- ================= THREE TIERS ================= -->
+  <section class="band" style="margin-top:44px;">
+    <div class="band-head">
+      <span class="wk-pill">3 tiers</span>
+      <h2 data-th="สูตรเดียวกัน สามฝั่ง — frontend / database / backend">The same five stages, in three columns</h2>
+      <span class="band-tag" data-th="อ่านลงตามคอลัมน์ = deploy ฝั่งนั้นจนจบ · อ่านข้ามแถว = เห็นว่าขั้นเดียวกันหน้าตาต่างกันยังไงในแต่ละฝั่ง ช่องที่ว่างคือว่างจริงๆ และเป็นบทเรียนในตัวมันเอง">Read down a column to deploy that tier. Read across a row to see how the same stage looks for each. The empty cells are genuinely empty — and each one is a lesson.</span>
+    </div>
+
+    <div class="tiers-wrap">
+      <div class="tiers">
+
+        <div class="tcell thead" data-th="ขั้นตอน">Stage</div>
+        <div class="tcell thead f">Frontend<small data-th="nginx · ไฟล์ static">nginx · static files</small></div>
+        <div class="tcell thead d">Database<small data-th="MySQL 8 · เก็บข้อมูล">MySQL 8 · the data</small></div>
+        <div class="tcell thead b">Backend<small data-th="Node API · รับและตอบ">Node API · accepts and answers</small></div>
+
+        <div class="tcell tstage"><b>1</b><span data-th="ติดตั้งแพ็กเกจ">Install the package</span></div>
+        <div class="tcell">
+          <span class="tnum f">F1</span>
+          <div class="tcmd">curl -fsSL …/nginx_signing.key | sudo gpg --dearmor \
+  -o /usr/share/keyrings/nginx-archive-keyring.gpg
+echo "deb [signed-by=…] …" | sudo tee \
+  /etc/apt/sources.list.d/nginx.list
+sudo apt update &amp;&amp; sudo apt install nginx -y</div>
+          <div class="twhy" data-th="ของ Ubuntu เองเป็น 1.24 และใช้ layout sites-enabled วิชานี้ต้องการ 1.30.x จาก nginx.org ที่ใช้ conf.d — เช็กด้วย <code>nginx -v</code>">Ubuntu's own is 1.24 with the sites-enabled layout; this course wants nginx.org's 1.30.x with conf.d. Confirm with <code>nginx -v</code>.</div>
+        </div>
+        <div class="tcell">
+          <span class="tnum d">D1</span>
+          <div class="tcmd">sudo apt install mysql-server -y</div>
+          <div class="twhy" data-th="ฝั่งนี้ไม่ต้องเพิ่ม repo อะไรเลย — MySQL 8 อยู่ใน archive ของ Ubuntu 24.04 อยู่แล้ว">No third-party repo at all here — MySQL 8 already lives in Ubuntu 24.04's own archive.</div>
+        </div>
+        <div class="tcell">
+          <span class="tnum b">B1</span>
+          <div class="tcmd">curl -fsSL …/nodesource-repo.gpg.key | sudo gpg --dearmor \
+  -o /usr/share/keyrings/nodesource.gpg
+echo "deb [signed-by=…] …/node_24.x nodistro main" | sudo tee \
+  /etc/apt/sources.list.d/nodesource.list
+sudo apt update &amp;&amp; sudo apt install nodejs -y</div>
+          <div class="twhy" data-th="ของ Ubuntu เป็น Node 18 ที่หมดอายุไปตั้งแต่ เม.ย. 2025 — รูปทรงคำสั่งเหมือน nginx เป๊ะ: กุญแจ → ไฟล์ repo → update → install">Ubuntu ships Node 18, unsupported since April 2025. Exactly the same shape as nginx: key → repo file → update → install.</div>
+        </div>
+
+        <div class="tcell tstage"><b>2</b><span data-th="ทำให้ service วิ่ง">Start the service</span></div>
+        <div class="tcell">
+          <span class="tnum f">F2</span>
+          <div class="tcmd">sudo systemctl enable --now nginx
+systemctl is-enabled nginx ; systemctl is-active nginx</div>
+          <div class="twhy" data-th="ติดตั้งเสร็จ nginx ยังไม่วิ่ง ต้องสั่งเอง และมีสองสวิตช์: enabled (ตอนบูต) กับ active (ตอนนี้)">Installing nginx does not start it. Two switches to satisfy: enabled (at boot) and active (right now).</div>
+        </div>
+        <div class="tcell">
+          <span class="tnum d">D2</span>
+          <div class="tcmd">systemctl is-enabled mysql ; systemctl is-active mysql</div>
+          <div class="twhy" data-th="ไม่มีอะไรต้องสั่ง — MySQL enable และ start ให้เองตั้งแต่ติดตั้ง แค่ยืนยันสองคำตอบ นี่คือจุดที่ต่างจาก nginx ชัดที่สุด">Nothing to run — MySQL enabled and started itself on install. Just confirm both answers. This is the sharpest contrast with nginx.</div>
+        </div>
+        <div class="tcell">
+          <span class="tnum b">B2</span>
+          <div class="tnone" data-th="— ยังไม่มีอะไรให้ start —">— nothing to start yet —</div>
+          <div class="twhy" data-th="ยังไม่มี service ให้สั่งจนกว่าจะเขียน unit file ในขั้น 4 ตอนนี้มันเป็นแค่โปรแกรมธรรมดา ไม่ใช่ service">There is no service to start until you write its unit file in stage 4. Right now it is only a program, not a service.</div>
+        </div>
+
+        <div class="tcell tstage"><b>3</b><span data-th="เอาซอร์สลงเครื่อง">Install the source</span></div>
+        <div class="tcell">
+          <span class="tnum f">F3</span>
+          <div class="tcmd">sudo rsync -a --chmod=D755,F644 --delete --exclude config.js \
+  /srv/noticeboard/frontend/ /var/www/noticeboard/</div>
+          <div class="twhy" data-th="เสิร์ฟจาก <span class='path'>/var/www/noticeboard</span> ซึ่งเป็นสำเนา ไม่ใช่ <span class='path'>/srv/noticeboard</span> ที่มี backend และ .git อยู่ด้วย">Serve the copy at <span class="path">/var/www/noticeboard</span>, never <span class="path">/srv/noticeboard</span> — the source tree also holds the backend and, later, a .git directory.</div>
+        </div>
+        <div class="tcell">
+          <span class="tnum d">D3</span>
+          <div class="tcmd">sudo mysql
+  CREATE DATABASE noticeboard CHARACTER SET utf8mb4;
+  CREATE USER 'noticeboard'@'localhost' IDENTIFIED BY RANDOM PASSWORD;
+  GRANT ALL PRIVILEGES ON noticeboard.* TO 'noticeboard'@'localhost';</div>
+          <div class="twhy" data-th="“ซอร์ส” ของฐานข้อมูลคือ schema กับ user ของมันเอง — หนึ่งแอป หนึ่ง database หนึ่ง user ห้ามให้แอปใช้ root">A database's "source" is its schema and its own scoped user. One app, one database, one user — never let the app use root.</div>
+        </div>
+        <div class="tcell">
+          <span class="tnum b">B3</span>
+          <div class="tcmd">tar -xzf …/noticeboard.tar.gz -C /srv/noticeboard --strip-components=1
+cd /srv/noticeboard/backend &amp;&amp; npm ci
+npx prisma migrate deploy &amp;&amp; npx prisma generate</div>
+          <div class="twhy" data-th="<code>npm ci</code> ลงเวอร์ชันตรงตาม lock file เป๊ะ ส่วน <code>migrate deploy</code> เอา migration ที่มากับแอปไปลง (<code>migrate dev</code> เป็นของนักพัฒนา และจะพังที่ shadow database — ถูกแล้ว)">
+<code>npm ci</code> installs exactly what the lock file records. <code>migrate deploy</code> applies the migration that ships — <code>migrate dev</code> is the developer's command and will fail on the shadow database, correctly.</div>
+        </div>
+
+        <div class="tcell tstage"><b>4</b><span data-th="ตั้งค่า service">Configure the service</span></div>
+        <div class="tcell">
+          <span class="tnum f">F4</span>
+          <div class="tcmd">micro /var/www/noticeboard/config.js
+sudo micro /etc/nginx/conf.d/noticeboard.conf</div>
+          <div class="twhy" data-th="config.js ถือรหัสนักศึกษา ส่วน server block บอกพอร์ต ชื่อเครื่องทั้งสองชื่อ root, index และ log ของตัวเองที่ <span class='path'>/var/log/nginx/noticeboard.access.log</span>">config.js carries your student ID; the server block names the port, both hostnames, root, index, and its own <span class="path">/var/log/nginx/noticeboard.access.log</span>.</div>
+        </div>
+        <div class="tcell">
+          <span class="tnum d">D4</span>
+          <div class="tcmd">MYSQL_PWD='…' mysql -u noticeboard noticeboard -e "SHOW GRANTS;"</div>
+          <div class="twhy" data-th="พิสูจน์ว่ารหัสที่ scope ไว้ใช้ได้จริง ก่อนที่อย่างอื่นจะไปพึ่งมัน — <code>MYSQL_PWD=</code> นำหน้าทำให้รหัสไม่ติดใน <code>ps</code> และ history">Prove the scoped credential actually works before anything depends on it. The <code>MYSQL_PWD=</code> prefix keeps it out of <code>ps</code> and your shell history.</div>
+        </div>
+        <div class="tcell">
+          <span class="tnum b">B4</span>
+          <div class="tcmd">micro /srv/noticeboard/backend/.env
+sudo micro /etc/systemd/system/noticeboard-api.service</div>
+          <div class="twhy" data-th="<code>.env</code> ถือ DATABASE_URL (รหัส percent-encode แล้ว เขียนตรงตัว ห้าม <code>${VAR}</code>) ส่วน unit ต้องมี User=, WorkingDirectory=, EnvironmentFile=, ExecStart= เป็น path เต็ม, Restart=always, After=…mysql.service">
+<code>.env</code> holds DATABASE_URL (percent-encoded password, written literally — never <code>${VAR}</code>). The unit needs User=, WorkingDirectory=, EnvironmentFile=, an absolute ExecStart=, Restart=always and After=…mysql.service.</div>
+        </div>
+
+        <div class="tcell tstage"><b>5</b><span data-th="รันจริง แล้วพิสูจน์">Run it, then prove it</span></div>
+        <div class="tcell">
+          <span class="tnum f">F5</span>
+          <div class="tcmd">sudo nginx -t &amp;&amp; sudo systemctl reload nginx
+sudo ufw allow 80/tcp</div>
+          <div class="twhy" data-th="ทดสอบก่อน reload เสมอ เพราะ reload ที่พังจะเงียบๆ ใช้ config เก่าต่อ แล้วเปิดประตูแค่บานเดียว">Always test before reloading — a failed reload silently keeps the old config. Then open exactly one door.</div>
+        </div>
+        <div class="tcell">
+          <span class="tnum d">D5</span>
+          <div class="tnone" data-th="— ไม่มีพอร์ต ไม่มี rule —">— no port, no firewall rule —</div>
+          <div class="twhy" data-th="MySQL bind อยู่ที่ 127.0.0.1 ทราฟฟิกจึงไม่เคยผ่าน firewall เลย การเปิด 3306 คือเพิ่มความเสี่ยงเปล่าๆ ถ้าจะดูด้วย Workbench ให้ต่อผ่าน SSH tunnel">MySQL binds 127.0.0.1, so its traffic never reaches the firewall at all. Opening 3306 is pure added risk — reach it through an SSH tunnel instead.</div>
+        </div>
+        <div class="tcell">
+          <span class="tnum b">B5</span>
+          <div class="tcmd">sudo systemctl daemon-reload
+sudo systemctl enable --now noticeboard-api
+curl -s http://127.0.0.1:3000/api/health</div>
+          <div class="twhy" data-th="แก้ unit file แล้วต้อง daemon-reload ไม่งั้น systemd ยังตอบจากไฟล์เวอร์ชันที่อ่านไว้ครั้งก่อน สุดท้ายต้อง reboot แล้วเช็กว่ามันกลับมาเองจริง">After editing a unit you must daemon-reload, or systemd keeps answering from the version it read last. Finally: reboot, and check it came back on its own.</div>
+        </div>
+
+      </div>
     </div>
   </section>
 
